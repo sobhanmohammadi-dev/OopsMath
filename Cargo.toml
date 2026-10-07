@@ -1,6 +1,11 @@
-[package]
-name = "OopsMath"
-version = "0.1.0"
-edition = "2024"
+[workspace]
+resolver = "3"
 
-[dependencies]
+members = [
+    "crates/oopsmath-engine",
+    "crates/oopsmath-game",
+]
+
+default-members = [
+    "crates/oopsmath-game",
+]

@@ -1,0 +1,8 @@
+[package]
+name = "oopsmath"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+oopsmath-engine = { path = "../oopsmath-engine" }
+bevy = "0.19"

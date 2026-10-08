@@ -1,9 +1,12 @@
 use bevy::prelude::*;
 
-use crate::app::states::AppState;
-use crate::ui::{
-    components::PlayButton,
-    theme::UiTheme,
+use crate::{
+    app::states::AppState,
+    ui::{
+        common::button,
+        components::{UiAction, UiButton},
+        theme::UiTheme,
+    },
 };
 
 pub fn spawn(
@@ -34,41 +37,35 @@ pub fn spawn(
                 TextColor(theme.text),
             ));
 
-            parent.spawn((
-                Button,
-                PlayButton,
-                Node {
-                    width: px(220),
-                    height: px(70),
-                    align_items: AlignItems::Center,
-                    justify_content: JustifyContent::Center,
-                    ..default()
-                },
-                BackgroundColor(theme.panel),
-                children![
-                    (
-                        Text::new("PLAY"),
-                        TextFont {
-                            font_size: FontSize::Px(28.0),
-                            ..default()
-                        },
-                        TextColor(theme.text),
-                    )
-                ],
-            ));
+            parent
+                .spawn(button(&theme, UiAction::Play, 220.0, 70.0))
+                .with_child((
+                    Text::new("PLAY"),
+                    TextFont {
+                        font_size: FontSize::Px(28.0),
+                        ..default()
+                    },
+                    TextColor(theme.text),
+                ));
         });
 }
 
-pub fn handle_play_button(
+pub fn handle_buttons(
     mut interactions: Query<
-        &Interaction,
-        (Changed<Interaction>, With<PlayButton>),
+        (&Interaction, &UiButton),
+        (Changed<Interaction>, With<Button>),
     >,
     mut next_state: ResMut<NextState<AppState>>,
 ) {
-    for interaction in &mut interactions {
-        if *interaction == Interaction::Pressed {
-            next_state.set(AppState::LoadingStage);
+    for (interaction, button) in &mut interactions {
+        if *interaction != Interaction::Pressed {
+            continue;
+        }
+
+        match button.action {
+            UiAction::Play => {
+                next_state.set(AppState::LoadingStage);
+            }
         }
     }
 }

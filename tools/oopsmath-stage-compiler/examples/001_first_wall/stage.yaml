@@ -1,0 +1,524 @@
+schema_version: 1
+
+stage:
+  id: "001_first_wall"
+  title: "stage.001.title"
+  description: "stage.001.description"
+
+  difficulty: easy
+  level: 1
+
+  requirements:
+    player_level: 1
+    stages: []
+
+  tags:
+    - grade_7
+    - multiplication
+    - division
+    - construction
+    - beginner
+
+  metadata:
+    author: "OopsMath Team"
+    revision: 1
+    notes: "First construction stage."
+
+
+story:
+  dialogue:
+    - id: "intro"
+      speaker: "client"
+      text: "stage.001.dialogue.intro"
+
+    - id: "instruction"
+      speaker: "client"
+      text: "stage.001.dialogue.instruction"
+
+    - id: "warning"
+      speaker: "engineer_supervisor"
+      text: "stage.001.dialogue.warning"
+
+
+learning:
+  question: "stage.001.question"
+
+  curriculum:
+    grade:
+      min: 7
+      max: 7
+
+    topics:
+      - multiplication
+      - division
+      - measurement
+
+  lesson:
+    markdown: "lesson.md"
+
+  tutorial_stage:
+    enabled: false
+
+  solution:
+    explanation: "stage.001.solution"
+    markdown: "solution.md"
+
+    demonstration:
+      enabled: true
+      replay_tasks: true
+      show_calculations: true
+      show_construction: true
+      simulate_physics: true
+
+  hints:
+    - id: "hint_01"
+      text: "stage.001.hint.01"
+
+    - id: "hint_02"
+      text: "stage.001.hint.02"
+
+
+player:
+  spawn:
+    position: [8, 1, 8]
+    rotation: [0, 180, 0]
+
+  initial_state:
+    health: 100
+
+
+camera:
+  mode: orthographic
+  position: [12, 10, 14]
+  target: [12, 2, 4]
+  zoom: 1.0
+
+
+world:
+  bounds:
+    size: [32, 16, 32]
+    origin: [0, 0, 0]
+
+  environment:
+    preset: "urban_worksite"
+    weather: "clear"
+    time_of_day: "day"
+    seed: 1001
+
+  terrain:
+    type: flat
+    preset: "construction_ground"
+    height: 0
+
+  initial_structure:
+    blocks:
+
+      # Left support column
+      - id: "support_left_01"
+        block: "concrete"
+        position: [11, 1, 4]
+        rotation: [0, 0, 0]
+        state:
+          anchored: true
+
+      - id: "support_left_02"
+        block: "concrete"
+        position: [11, 2, 4]
+        rotation: [0, 0, 0]
+        state:
+          anchored: true
+
+      - id: "support_left_03"
+        block: "concrete"
+        position: [11, 3, 4]
+        rotation: [0, 0, 0]
+        state:
+          anchored: true
+
+      - id: "support_left_04"
+        block: "concrete"
+        position: [11, 4, 4]
+        rotation: [0, 0, 0]
+        state:
+          anchored: true
+
+      # Right support column
+      - id: "support_right_01"
+        block: "concrete"
+        position: [20, 1, 4]
+        rotation: [0, 0, 0]
+        state:
+          anchored: true
+
+      - id: "support_right_02"
+        block: "concrete"
+        position: [20, 2, 4]
+        rotation: [0, 0, 0]
+        state:
+          anchored: true
+
+      - id: "support_right_03"
+        block: "concrete"
+        position: [20, 3, 4]
+        rotation: [0, 0, 0]
+        state:
+          anchored: true
+
+      - id: "support_right_04"
+        block: "concrete"
+        position: [20, 4, 4]
+        rotation: [0, 0, 0]
+        state:
+          anchored: true
+
+
+assets:
+  custom: []
+
+
+construction:
+  allowed_blocks:
+
+    - id: "brick"
+      min_count: 32
+      max_count: 32
+
+  allowed_tools:
+
+    - id: "hammer"
+      max_durability: 100
+
+    - id: "tape_measure"
+      max_durability: 100
+
+  starting_inventory:
+    blocks:
+      brick: 0
+
+    tools:
+      hammer: 1
+      tape_measure: 1
+
+  targets:
+
+    - id: "wall_04"
+      type: wall
+
+      region:
+        min: [12, 1, 4]
+        max: [19, 4, 4]
+
+      required_block: "brick"
+
+      dimensions:
+        width: 4.0
+        height: 2.0
+        depth: 0.5
+        tolerance: 0.0
+
+      required_roles:
+        - wall
+
+      constraints:
+        exact_block_count: 32
+        continuous: true
+        attached_to:
+          - "support_left_04"
+          - "support_right_04"
+
+  constraints:
+
+    max_total_blocks: 32
+    max_height: 4
+    max_depth_below_ground: 0
+
+    allowed_regions:
+      - min: [12, 1, 4]
+        max: [19, 4, 4]
+
+    forbidden_regions: []
+
+    foundation:
+      required: false
+      max_depth: 0
+      allowed_roles: []
+
+    structural_roles:
+      required:
+        - wall
+
+      min_support_count: 2
+      max_support_count: 2
+      require_path_to_ground: true
+
+    overhang:
+      allowed: false
+      max_length: 0
+
+    placement:
+      require_support: true
+      allow_floating: false
+      snap_to_grid: true
+      rotation_allowed: false
+
+    material_limits:
+      brick:
+        min: 32
+        max: 32
+
+  validation:
+    dimensions: true
+    target_geometry: true
+    material_limits: true
+    support_graph: true
+    architecture: true
+    block_roles: true
+
+
+economy:
+  budget: 120
+
+  rules:
+    allow_overdraft: false
+    waste_percentage: 0
+    must_finish_within_budget: true
+
+  multipliers:
+    brick: 1.0
+
+
+physics:
+  enabled: true
+
+  gravity: 9.81
+
+  structural:
+    stability_required: true
+    collapse_enabled: true
+    ground_support_required: true
+    max_displacement: 0.05
+    max_rotation: 2.0
+
+  tests:
+
+    - id: "wall_static_load_test"
+      type: static_load
+
+      duration_seconds: 5
+
+      load:
+        mass_kg: 150
+
+        target:
+          type: region
+
+          region:
+            min: [12, 4, 4]
+            max: [19, 4, 4]
+
+        distribution: uniform
+
+        direction: [0, -1, 0]
+
+      acceptance:
+        must_not_collapse: true
+        max_displacement_m: 0.05
+        max_rotation_deg: 2
+
+
+objectives:
+
+  tasks:
+
+    - id: "calculate_bricks_per_row"
+      type: math
+
+      depends_on: []
+
+      optional: false
+
+      math:
+        type: division
+
+        expression: "4 / 0.5"
+
+        answer:
+          mode: exact
+          value: 8
+
+
+    - id: "calculate_rows"
+      type: math
+
+      depends_on:
+        - "calculate_bricks_per_row"
+
+      optional: false
+
+      math:
+        type: division
+
+        expression: "2 / 0.5"
+
+        answer:
+          mode: exact
+          value: 4
+
+
+    - id: "calculate_total_bricks"
+      type: math
+
+      depends_on:
+        - "calculate_bricks_per_row"
+        - "calculate_rows"
+
+      optional: false
+
+      math:
+        type: multiplication
+
+        expression: "8 * 4"
+
+        answer:
+          mode: exact
+          value: 32
+
+
+    - id: "buy_bricks"
+      type: purchase
+
+      depends_on:
+        - "calculate_total_bricks"
+
+      optional: false
+
+      data:
+        item: "brick"
+        quantity: 32
+
+
+    - id: "build_wall"
+      type: construction
+
+      depends_on:
+        - "buy_bricks"
+
+      optional: false
+
+      target: "wall_04"
+
+
+  completion:
+    all:
+
+      - task_completed: "calculate_bricks_per_row"
+      - task_completed: "calculate_rows"
+      - task_completed: "calculate_total_bricks"
+      - task_completed: "buy_bricks"
+      - target_completed: "wall_04"
+      - structure_stable: true
+      - physics_test_passed: "wall_static_load_test"
+
+      - compare:
+          metric: "budget_remaining"
+          operator: ">="
+          value: 0
+
+
+  failure:
+    any:
+
+      - compare:
+          metric: "budget_remaining"
+          operator: "<"
+          value: 0
+
+      - structure_stable: false
+
+      - compare:
+          metric: "placed_brick_count"
+          operator: ">"
+          value: 32
+
+
+  checkpoints:
+
+    - id: "math_complete"
+      after_task: "calculate_total_bricks"
+      autosave: true
+
+    - id: "materials_purchased"
+      after_task: "buy_bricks"
+      autosave: true
+
+  time_limit_seconds: 0
+
+  scoring:
+    enabled: true
+    maximum: 100
+
+    criteria:
+      mathematics: 40
+      budget: 30
+      construction: 30
+
+
+events:
+
+  - id: "math_completed"
+    trigger:
+      type: "task_completed"
+      condition:
+        all:
+          - task_completed: "calculate_total_bricks"
+
+    actions:
+      - type: "dialogue"
+        dialogue_id: "stage.001.dialogue.math_complete"
+
+  - id: "wall_collapsed"
+    trigger:
+      type: "structure_collapsed"
+
+    actions:
+      - type: "dialogue"
+        dialogue_id: "stage.001.dialogue.collapse"
+
+  - id: "stage_completed"
+    trigger:
+      type: "stage_completed"
+
+    actions:
+      - type: "dialogue"
+        dialogue_id: "stage.001.dialogue.success"
+
+
+rewards:
+  money: 100
+  xp: 50
+
+  unlocks:
+    blocks:
+      - "wood"
+
+    tools: []
+
+    stages:
+      - "002_floor"
+
+    assets: []
+
+
+audio:
+  music: "construction_day"
+  ambience: "urban_day"
+
+  sounds:
+    build: "brick_place"
+    success: "stage_complete"
+    failure: "structure_collapse"
+
+
+localization:
+  ftl: "localization"
+  namespace: "stage.001"

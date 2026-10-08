@@ -1,0 +1,1384 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://oopsmath.dev/schemas/stage/v1"
+title: "OopsMath Stage Schema"
+description: "Schema v1 for OopsMath data-driven stages."
+type: object
+additionalProperties: false
+
+required:
+  - schema_version
+  - stage
+  - learning
+  - world
+  - construction
+  - objectives
+  - rewards
+
+properties:
+
+  schema_version:
+    type: integer
+    const: 1
+
+  stage:
+    type: object
+    additionalProperties: false
+
+    required:
+      - id
+      - title
+      - description
+      - difficulty
+      - level
+
+    properties:
+
+      id:
+        $ref: "#/$defs/id"
+
+      title:
+        $ref: "#/$defs/localization_key"
+
+      description:
+        $ref: "#/$defs/localization_key"
+
+      difficulty:
+        type: string
+        enum:
+          - tutorial
+          - easy
+          - medium
+          - hard
+          - expert
+
+      level:
+        type: integer
+        minimum: 1
+
+      requirements:
+        type: object
+        additionalProperties: false
+
+        properties:
+
+          player_level:
+            type: integer
+            minimum: 1
+
+          stages:
+            type: array
+            uniqueItems: true
+            items:
+              $ref: "#/$defs/id"
+
+      tags:
+        type: array
+        uniqueItems: true
+        items:
+          type: string
+          minLength: 1
+
+      metadata:
+        type: object
+        additionalProperties: true
+
+        properties:
+          author:
+            type: string
+
+          revision:
+            type: integer
+            minimum: 1
+
+          notes:
+            type: string
+
+
+  story:
+    type: object
+    additionalProperties: false
+
+    properties:
+
+      dialogue:
+        type: array
+
+        items:
+          type: object
+          additionalProperties: false
+
+          required:
+            - id
+            - speaker
+            - text
+
+          properties:
+
+            id:
+              $ref: "#/$defs/id"
+
+            speaker:
+              type: string
+              minLength: 1
+
+            text:
+              $ref: "#/$defs/localization_key"
+
+            condition:
+              $ref: "#/$defs/condition"
+
+
+  learning:
+    type: object
+    additionalProperties: false
+
+    required:
+      - question
+      - curriculum
+
+    properties:
+
+      question:
+        $ref: "#/$defs/localization_key"
+
+      curriculum:
+        type: object
+        additionalProperties: false
+
+        required:
+          - grade
+
+        properties:
+
+          grade:
+            type: object
+            additionalProperties: false
+
+            required:
+              - min
+              - max
+
+            properties:
+
+              min:
+                type: integer
+                minimum: 7
+                maximum: 9
+
+              max:
+                type: integer
+                minimum: 7
+                maximum: 9
+
+          topics:
+            type: array
+            uniqueItems: true
+
+            items:
+              type: string
+              minLength: 1
+
+      lesson:
+        type: object
+        additionalProperties: false
+
+        properties:
+
+          markdown:
+            $ref: "#/$defs/relative_path"
+
+      tutorial_stage:
+        type: object
+        additionalProperties: false
+
+        properties:
+
+          enabled:
+            type: boolean
+            default: false
+
+          stage_id:
+            $ref: "#/$defs/id"
+
+      solution:
+        type: object
+        additionalProperties: false
+
+        properties:
+
+          explanation:
+            $ref: "#/$defs/localization_key"
+
+          markdown:
+            $ref: "#/$defs/relative_path"
+
+          demonstration:
+            type: object
+            additionalProperties: false
+
+            properties:
+
+              enabled:
+                type: boolean
+                default: true
+
+              replay_tasks:
+                type: boolean
+                default: true
+
+              show_calculations:
+                type: boolean
+                default: true
+
+              show_construction:
+                type: boolean
+                default: true
+
+              simulate_physics:
+                type: boolean
+                default: false
+
+      hints:
+        type: array
+
+        items:
+          type: object
+          additionalProperties: false
+
+          required:
+            - id
+            - text
+
+          properties:
+
+            id:
+              $ref: "#/$defs/id"
+
+            text:
+              $ref: "#/$defs/localization_key"
+
+            markdown:
+              $ref: "#/$defs/relative_path"
+
+
+  player:
+    type: object
+    additionalProperties: false
+
+    properties:
+
+      spawn:
+        $ref: "#/$defs/transform"
+
+      initial_state:
+        type: object
+        additionalProperties: true
+
+
+  camera:
+    type: object
+    additionalProperties: false
+
+    properties:
+
+      mode:
+        type: string
+        enum:
+          - orthographic
+
+      position:
+        $ref: "#/$defs/vec3_number"
+
+      target:
+        $ref: "#/$defs/vec3_number"
+
+      zoom:
+        type: number
+        exclusiveMinimum: 0
+
+
+  world:
+    type: object
+    additionalProperties: false
+
+    required:
+      - bounds
+      - environment
+
+    properties:
+
+      bounds:
+        type: object
+        additionalProperties: false
+
+        required:
+          - size
+
+        properties:
+
+          size:
+            $ref: "#/$defs/vec3_integer"
+
+          origin:
+            $ref: "#/$defs/vec3_integer"
+
+      environment:
+        type: object
+        additionalProperties: false
+
+        required:
+          - preset
+
+        properties:
+
+          preset:
+            type: string
+            minLength: 1
+
+          weather:
+            type: string
+
+          time_of_day:
+            type: string
+
+          seed:
+            type: integer
+
+      terrain:
+        type: object
+        additionalProperties: false
+
+        properties:
+
+          type:
+            type: string
+
+          preset:
+            type: string
+
+          height:
+            type: number
+
+      source:
+        type: object
+        additionalProperties: false
+
+        properties:
+
+          voxel_file:
+            $ref: "#/$defs/relative_path"
+
+      initial_structure:
+        type: object
+        additionalProperties: false
+
+        properties:
+
+          blocks:
+            type: array
+
+            items:
+              $ref: "#/$defs/initial_block"
+
+
+  assets:
+    type: object
+    additionalProperties: false
+
+    properties:
+
+      custom:
+        type: array
+
+        items:
+          type: object
+          additionalProperties: false
+
+          required:
+            - id
+            - file
+            - type
+
+          properties:
+
+            id:
+              $ref: "#/$defs/id"
+
+            file:
+              $ref: "#/$defs/relative_path"
+
+            type:
+              type: string
+              enum:
+                - environment
+                - prop
+                - construction_piece
+                - structure
+                - machinery
+                - interactive
+
+            transform:
+              $ref: "#/$defs/transform"
+
+            behavior:
+              type: object
+              additionalProperties: true
+
+              properties:
+
+                placeable:
+                  type: boolean
+
+                removable:
+                  type: boolean
+
+                mass_kg:
+                  type: number
+                  minimum: 0
+
+                structural_role:
+                  type: string
+
+                collider:
+                  type: string
+
+                snap_profile:
+                  type: string
+
+
+  construction:
+    type: object
+    additionalProperties: false
+
+    required:
+      - allowed_blocks
+      - allowed_tools
+
+    properties:
+
+      allowed_blocks:
+        type: array
+        uniqueItems: true
+
+        items:
+          type: object
+          additionalProperties: false
+
+          required:
+            - id
+
+          properties:
+
+            id:
+              $ref: "#/$defs/id"
+
+            max_count:
+              type: integer
+              minimum: 0
+
+            min_count:
+              type: integer
+              minimum: 0
+
+      allowed_tools:
+        type: array
+        uniqueItems: true
+
+        items:
+          type: object
+          additionalProperties: false
+
+          required:
+            - id
+
+          properties:
+
+            id:
+              $ref: "#/$defs/id"
+
+            max_durability:
+              type: number
+              minimum: 0
+
+      starting_inventory:
+        type: object
+        additionalProperties: false
+
+        properties:
+
+          blocks:
+            type: object
+            additionalProperties:
+              type: integer
+              minimum: 0
+
+          tools:
+            type: object
+            additionalProperties:
+              type: integer
+              minimum: 0
+
+      targets:
+        type: array
+
+        items:
+          $ref: "#/$defs/construction_target"
+
+      constraints:
+        type: object
+        additionalProperties: false
+
+        properties:
+
+          max_total_blocks:
+            type: integer
+            minimum: 0
+
+          max_height:
+            type: integer
+            minimum: 0
+
+          max_depth_below_ground:
+            type: integer
+            minimum: 0
+
+          allowed_regions:
+            type: array
+
+            items:
+              $ref: "#/$defs/region"
+
+          forbidden_regions:
+            type: array
+
+            items:
+              $ref: "#/$defs/region"
+
+          foundation:
+            type: object
+            additionalProperties: false
+
+            properties:
+
+              required:
+                type: boolean
+
+              max_depth:
+                type: integer
+                minimum: 0
+
+              allowed_roles:
+                type: array
+                items:
+                  type: string
+
+          structural_roles:
+            type: object
+            additionalProperties: false
+
+            properties:
+
+              required:
+                type: array
+                uniqueItems: true
+                items:
+                  type: string
+
+              min_support_count:
+                type: integer
+                minimum: 0
+
+              max_support_count:
+                type: integer
+                minimum: 0
+
+              require_path_to_ground:
+                type: boolean
+
+          overhang:
+            type: object
+            additionalProperties: false
+
+            properties:
+
+              allowed:
+                type: boolean
+
+              max_length:
+                type: number
+                minimum: 0
+
+          placement:
+            type: object
+            additionalProperties: false
+
+            properties:
+
+              require_support:
+                type: boolean
+
+              allow_floating:
+                type: boolean
+
+              snap_to_grid:
+                type: boolean
+
+              rotation_allowed:
+                type: boolean
+
+          material_limits:
+            type: object
+            additionalProperties:
+              type: object
+              additionalProperties: false
+
+              properties:
+
+                min:
+                  type: integer
+                  minimum: 0
+
+                max:
+                  type: integer
+                  minimum: 0
+
+      validation:
+        type: object
+        additionalProperties: false
+
+        properties:
+
+          dimensions:
+            type: boolean
+
+          target_geometry:
+            type: boolean
+
+          material_limits:
+            type: boolean
+
+          support_graph:
+            type: boolean
+
+          architecture:
+            type: boolean
+
+          block_roles:
+            type: boolean
+
+
+  economy:
+    type: object
+    additionalProperties: false
+
+    required:
+      - budget
+
+    properties:
+
+      budget:
+        type: number
+        minimum: 0
+
+      rules:
+        type: object
+        additionalProperties: false
+
+        properties:
+
+          allow_overdraft:
+            type: boolean
+
+          waste_percentage:
+            type: number
+            minimum: 0
+            maximum: 100
+
+          must_finish_within_budget:
+            type: boolean
+
+      multipliers:
+        type: object
+        additionalProperties:
+          type: number
+          minimum: 0
+
+
+  physics:
+    type: object
+    additionalProperties: false
+
+    properties:
+
+      enabled:
+        type: boolean
+
+      gravity:
+        type: number
+        exclusiveMinimum: 0
+
+      structural:
+        type: object
+        additionalProperties: false
+
+        properties:
+
+          stability_required:
+            type: boolean
+
+          collapse_enabled:
+            type: boolean
+
+          ground_support_required:
+            type: boolean
+
+          max_displacement:
+            type: number
+            minimum: 0
+
+          max_rotation:
+            type: number
+            minimum: 0
+
+      tests:
+        type: array
+
+        items:
+          type: object
+          additionalProperties: false
+
+          required:
+            - id
+            - type
+
+          properties:
+
+            id:
+              $ref: "#/$defs/id"
+
+            type:
+              type: string
+              enum:
+                - static_load
+                - moving_load
+                - earthquake
+                - wind
+                - impact
+
+            duration_seconds:
+              type: number
+              minimum: 0
+
+            load:
+              $ref: "#/$defs/load_case"
+
+            environment:
+              type: object
+              additionalProperties: true
+
+            acceptance:
+              type: object
+              additionalProperties: true
+
+
+  objectives:
+    type: object
+    additionalProperties: false
+
+    required:
+      - tasks
+      - completion
+      - failure
+
+    properties:
+
+      tasks:
+        type: array
+
+        items:
+          $ref: "#/$defs/task"
+
+      completion:
+        $ref: "#/$defs/condition"
+
+      failure:
+        $ref: "#/$defs/condition"
+
+      checkpoints:
+        type: array
+
+        items:
+          type: object
+          additionalProperties: false
+
+          required:
+            - id
+
+          properties:
+
+            id:
+              $ref: "#/$defs/id"
+
+            after_task:
+              $ref: "#/$defs/id"
+
+            autosave:
+              type: boolean
+
+      time_limit_seconds:
+        type: number
+        minimum: 0
+
+      scoring:
+        type: object
+        additionalProperties: false
+
+        properties:
+
+          enabled:
+            type: boolean
+
+          maximum:
+            type: number
+            minimum: 0
+
+          criteria:
+            type: object
+            additionalProperties:
+              type: number
+              minimum: 0
+
+
+  events:
+    type: array
+
+    items:
+      type: object
+      additionalProperties: false
+
+      required:
+        - id
+        - trigger
+        - actions
+
+      properties:
+
+        id:
+          $ref: "#/$defs/id"
+
+        trigger:
+          type: object
+          additionalProperties: true
+
+          required:
+            - type
+
+          properties:
+
+            type:
+              type: string
+
+            condition:
+              $ref: "#/$defs/condition"
+
+        actions:
+          type: array
+
+          items:
+            type: object
+            additionalProperties: true
+
+            required:
+              - type
+
+            properties:
+
+              type:
+                type: string
+
+
+  rewards:
+    type: object
+    additionalProperties: false
+
+    properties:
+
+      money:
+        type: number
+        minimum: 0
+
+      xp:
+        type: integer
+        minimum: 0
+
+      unlocks:
+        type: object
+        additionalProperties: false
+
+        properties:
+
+          blocks:
+            type: array
+            uniqueItems: true
+            items:
+              $ref: "#/$defs/id"
+
+          tools:
+            type: array
+            uniqueItems: true
+            items:
+              $ref: "#/$defs/id"
+
+          stages:
+            type: array
+            uniqueItems: true
+            items:
+              $ref: "#/$defs/id"
+
+          assets:
+            type: array
+            uniqueItems: true
+            items:
+              $ref: "#/$defs/id"
+
+
+  audio:
+    type: object
+    additionalProperties: false
+
+    properties:
+
+      music:
+        type:
+          - string
+          - "null"
+
+      ambience:
+        type:
+          - string
+          - "null"
+
+      sounds:
+        type: object
+        additionalProperties:
+          type: string
+
+
+  localization:
+    type: object
+    additionalProperties: false
+
+    description: "Optional stage-local FTL bundle. Semantic compiler validation decides whether it is required."
+
+    properties:
+
+      ftl:
+        $ref: "#/$defs/relative_path"
+
+      namespace:
+        type: string
+        minLength: 1
+
+
+  extensions:
+    type: object
+    additionalProperties: true
+
+
+$defs:
+
+  id:
+    type: string
+    pattern: "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$"
+
+  localization_key:
+    type: string
+    pattern: "^[a-zA-Z0-9._-]+$"
+
+  relative_path:
+    type: string
+    pattern: "^(?!/)(?!.*\\.\\.).+$"
+
+  vec3_integer:
+    type: array
+    prefixItems:
+      - type: integer
+      - type: integer
+      - type: integer
+    minItems: 3
+    maxItems: 3
+
+  vec3_number:
+    type: array
+    prefixItems:
+      - type: number
+      - type: number
+      - type: number
+    minItems: 3
+    maxItems: 3
+
+  transform:
+    type: object
+    additionalProperties: false
+
+    properties:
+
+      position:
+        $ref: "#/$defs/vec3_number"
+
+      rotation:
+        $ref: "#/$defs/vec3_number"
+
+      scale:
+        $ref: "#/$defs/vec3_number"
+
+
+  region:
+    type: object
+    additionalProperties: false
+
+    required:
+      - min
+      - max
+
+    properties:
+
+      min:
+        $ref: "#/$defs/vec3_integer"
+
+      max:
+        $ref: "#/$defs/vec3_integer"
+
+
+  initial_block:
+    type: object
+    additionalProperties: false
+
+    required:
+      - id
+      - block
+      - position
+
+    properties:
+
+      id:
+        $ref: "#/$defs/id"
+
+      block:
+        $ref: "#/$defs/id"
+
+      position:
+        $ref: "#/$defs/vec3_integer"
+
+      rotation:
+        $ref: "#/$defs/vec3_integer"
+
+      state:
+        type: object
+        additionalProperties: true
+
+
+  construction_target:
+    type: object
+    additionalProperties: false
+
+    required:
+      - id
+      - type
+
+    properties:
+
+      id:
+        $ref: "#/$defs/id"
+
+      type:
+        type: string
+        enum:
+          - block_group
+          - wall
+          - floor
+          - roof
+          - room
+          - house
+          - bridge
+          - building
+          - custom
+
+      region:
+        $ref: "#/$defs/region"
+
+      required_block:
+        $ref: "#/$defs/id"
+
+      dimensions:
+        type: object
+        additionalProperties: false
+
+        properties:
+
+          width:
+            type: number
+            minimum: 0
+
+          height:
+            type: number
+            minimum: 0
+
+          depth:
+            type: number
+            minimum: 0
+
+          tolerance:
+            type: number
+            minimum: 0
+
+      required_roles:
+        type: array
+        uniqueItems: true
+
+        items:
+          type: string
+
+      constraints:
+        type: object
+        additionalProperties: true
+
+
+  task:
+    type: object
+    additionalProperties: false
+
+    required:
+      - id
+      - type
+
+    properties:
+
+      id:
+        $ref: "#/$defs/id"
+
+      type:
+        type: string
+        enum:
+          - math
+          - construction
+          - purchase
+          - inspection
+          - dialogue
+          - custom
+
+      depends_on:
+        type: array
+        uniqueItems: true
+        items:
+          $ref: "#/$defs/id"
+
+      optional:
+        type: boolean
+
+      math:
+        type: object
+        additionalProperties: true
+
+        properties:
+
+          type:
+            type: string
+
+          generator:
+            type: object
+            additionalProperties: true
+
+          answer:
+            type: object
+            additionalProperties: false
+
+            required:
+              - mode
+
+            properties:
+
+              mode:
+                type: string
+                enum:
+                  - exact
+                  - tolerance
+                  - expression
+                  - multiple_choice
+                  - custom
+
+              value: {}
+
+              tolerance:
+                type: number
+                minimum: 0
+
+              expression:
+                type: string
+
+      target:
+        $ref: "#/$defs/id"
+
+      data:
+        type: object
+        additionalProperties: true
+
+
+  load_case:
+    type: object
+    additionalProperties: false
+
+    properties:
+
+      mass_kg:
+        type: number
+        minimum: 0
+
+      force_n:
+        type: number
+        minimum: 0
+
+      target:
+        type: object
+        additionalProperties: false
+
+        required:
+          - type
+
+        properties:
+
+          type:
+            type: string
+            enum:
+              - point
+              - surface
+              - region
+              - structure
+              - body
+
+          id:
+            $ref: "#/$defs/id"
+
+          position:
+            $ref: "#/$defs/vec3_number"
+
+          region:
+            $ref: "#/$defs/region"
+
+      distribution:
+        type: string
+        enum:
+          - point
+          - uniform
+          - moving_point
+          - uniform_surface
+
+      direction:
+        $ref: "#/$defs/vec3_number"
+
+
+  condition:
+    oneOf:
+
+      - type: object
+        additionalProperties: false
+        required:
+          - all
+
+        properties:
+          all:
+            type: array
+            minItems: 1
+            items:
+              $ref: "#/$defs/condition"
+
+      - type: object
+        additionalProperties: false
+        required:
+          - any
+
+        properties:
+          any:
+            type: array
+            minItems: 1
+            items:
+              $ref: "#/$defs/condition"
+
+      - type: object
+        additionalProperties: false
+        required:
+          - not
+
+        properties:
+          not:
+            $ref: "#/$defs/condition"
+
+      - type: object
+        additionalProperties: false
+        required:
+          - task_completed
+
+        properties:
+          task_completed:
+            $ref: "#/$defs/id"
+
+      - type: object
+        additionalProperties: false
+        required:
+          - target_completed
+
+        properties:
+          target_completed:
+            $ref: "#/$defs/id"
+
+      - type: object
+        additionalProperties: false
+        required:
+          - structure_stable
+
+        properties:
+          structure_stable:
+            type: boolean
+
+      - type: object
+        additionalProperties: false
+        required:
+          - physics_test_passed
+
+        properties:
+          physics_test_passed:
+            $ref: "#/$defs/id"
+
+      - type: object
+        additionalProperties: false
+        required:
+          - compare
+
+        properties:
+
+          compare:
+            type: object
+            additionalProperties: false
+
+            required:
+              - metric
+              - operator
+              - value
+
+            properties:
+
+              metric:
+                type: string
+                minLength: 1
+
+              operator:
+                type: string
+                enum:
+                  - "=="
+                  - "!="
+                  - ">"
+                  - ">="
+                  - "<"
+                  - "<="
+
+              value: {}

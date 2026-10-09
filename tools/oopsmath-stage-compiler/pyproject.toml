@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "oopsmath-stage-compiler"
+version = "1.0.0"
+description = "OopsMath Stage Compiler (OMSC): compiles stage sources into deterministic DAT v1 packages"
+requires-python = ">=3.9"
+dependencies = ["PyYAML", "jsonschema", "msgpack", "zstandard", "textual"]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[project.scripts]
+omsc = "oopsmath_stage._launch:run"
+
+[tool.setuptools]
+packages = ["oopsmath_stage", "oopsmath_stage.validation"]

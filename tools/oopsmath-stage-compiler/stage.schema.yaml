@@ -1,5 +1,4 @@
 $schema: "https://json-schema.org/draft/2020-12/schema"
-$id: "https://oopsmath.dev/schemas/stage/v1"
 title: "OopsMath Stage Schema"
 description: "Schema v1 for OopsMath data-driven stages."
 type: object

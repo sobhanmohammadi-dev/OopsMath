@@ -1,0 +1,5 @@
+PyYAML
+jsonschema
+msgpack
+zstandard
+textual

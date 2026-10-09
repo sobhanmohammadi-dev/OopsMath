@@ -1,1 +1,9 @@
 /target
+
+# OopsMathStageCompiler (OMSC)
+/tools/oopsmath-stage-compiler/**/__pycache__/
+/tools/oopsmath-stage-compiler/**/*.pyc
+/tools/oopsmath-stage-compiler/**/build/
+/tools/oopsmath-stage-compiler/**/*.dat
+/tools/oopsmath-stage-compiler/**/.pytest_cache/
+/tools/oopsmath-stage-compiler/**/*.egg-info/

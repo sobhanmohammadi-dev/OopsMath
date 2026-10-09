@@ -9,10 +9,7 @@ use crate::{
     },
 };
 
-pub fn spawn(
-    mut commands: Commands,
-    theme: Res<UiTheme>,
-) {
+pub fn spawn(mut commands: Commands, theme: Res<UiTheme>) {
     commands
         .spawn((
             DespawnOnExit(AppState::MainMenu),
@@ -51,10 +48,7 @@ pub fn spawn(
 }
 
 pub fn handle_buttons(
-    mut interactions: Query<
-        (&Interaction, &UiButton),
-        (Changed<Interaction>, With<Button>),
-    >,
+    mut interactions: Query<(&Interaction, &UiButton), (Changed<Interaction>, With<Button>)>,
     mut next_state: ResMut<NextState<AppState>>,
 ) {
     for (interaction, button) in &mut interactions {

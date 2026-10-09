@@ -1,19 +1,10 @@
 use bevy::prelude::*;
 
 use crate::app::states::AppState;
-use crate::ui::components::{
-    GameplayHud,
-    MaterialText,
-    MoneyText,
-    ObjectiveText,
-    ToolText,
-};
+use crate::ui::components::{GameplayHud, MaterialText, MoneyText, ObjectiveText, ToolText};
 use crate::ui::theme::UiTheme;
 
-pub fn spawn(
-    mut commands: Commands,
-    theme: Res<UiTheme>,
-) {
+pub fn spawn(mut commands: Commands, theme: Res<UiTheme>) {
     commands
         .spawn((
             GameplayHud,

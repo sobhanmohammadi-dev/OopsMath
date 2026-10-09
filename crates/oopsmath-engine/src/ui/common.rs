@@ -15,12 +15,7 @@ pub fn panel(theme: &UiTheme) -> impl Bundle {
     )
 }
 
-pub fn button(
-    theme: &UiTheme,
-    action: UiAction,
-    width: f32,
-    height: f32,
-) -> impl Bundle {
+pub fn button(theme: &UiTheme, action: UiAction, width: f32, height: f32) -> impl Bundle {
     (
         Button,
         UiButton { action },

@@ -7,3 +7,6 @@
 /tools/oopsmath-stage-compiler/**/*.dat
 /tools/oopsmath-stage-compiler/**/.pytest_cache/
 /tools/oopsmath-stage-compiler/**/*.egg-info/
+
+# Compiled stage DAT fixtures (regenerate with the Python OMSC compiler)
+/build/

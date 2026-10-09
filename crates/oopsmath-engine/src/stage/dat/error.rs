@@ -1,44 +1,15 @@
-use std::fmt;
+//! Typed errors for every layer of the DAT v1 reader.
+//!
+//! * [`HeaderError`]  - the fixed 64-byte header.
+//! * [`SectionError`] - the section directory and raw section payloads.
+//! * [`DecodeError`]  - decoding of an already verified payload (MessagePack, WRLD).
+//! * [`WorldError`]   - malformed Binary Voxel World v1 data.
+//!
+//! The high-level `StageLoadError` wraps all of them.
 
 use thiserror::Error;
 
-/// A four-byte ASCII section type in the OopsMath DAT format.
-///
-/// Examples: META, STAG, WRLD, LOCL, DOCS, ASIX, ASDT.
-///
-/// This type represents the raw identifier. The DAT reader is responsible
-/// for validating that the four bytes contain valid printable ASCII.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub struct SectionType(pub(crate) [u8; 4]);
-
-impl SectionType {
-    pub const META: Self = Self(*b"META");
-    pub const STAG: Self = Self(*b"STAG");
-    pub const WRLD: Self = Self(*b"WRLD");
-    pub const LOCL: Self = Self(*b"LOCL");
-    pub const DOCS: Self = Self(*b"DOCS");
-    pub const ASIX: Self = Self(*b"ASIX");
-    pub const ASDT: Self = Self(*b"ASDT");
-
-    pub const fn new(bytes: [u8; 4]) -> Self {
-        Self(bytes)
-    }
-
-    pub const fn as_bytes(&self) -> &[u8; 4] {
-        &self.0
-    }
-
-    /// Returns true when all bytes are printable ASCII characters.
-    pub(crate) fn is_printable_ascii(&self) -> bool {
-        self.0.iter().all(|byte| (0x21..=0x7E).contains(byte))
-    }
-}
-
-impl fmt::Display for SectionType {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.write_str(&String::from_utf8_lossy(&self.0))
-    }
-}
+use crate::stage::dat::section_type::SectionType;
 
 // -----------------------------------------------------------------------------
 // Header errors
@@ -232,7 +203,7 @@ pub enum DecodeError {
 /// Errors describing malformed OopsMath Binary Voxel World v1 data.
 #[derive(Debug, Error, PartialEq, Eq)]
 pub enum WorldError {
-    #[error("WRLD payload is too small to contain the 24-byte header")]
+    #[error("WRLD payload is too small to contain the 28-byte header")]
     HeaderTooSmall,
 
     #[error("Invalid WRLD magic: expected OWLD")]
@@ -285,6 +256,9 @@ pub enum WorldError {
     #[error("WRLD chunk {x},{y},{z} does not contain 4096 cells after decoding")]
     ChunkCellCountMismatch { x: u16, y: u16, z: u16 },
 
+    #[error("WRLD chunk {x},{y},{z} has an RLE payload of {len} bytes that is not a whole number of runs")]
+    MalformedRlePayload { x: u16, y: u16, z: u16, len: u64 },
+
     #[error("WRLD chunk {x},{y},{z} declares {runs} runs, exceeding the limit of {limit}")]
     ChunkRunCountTooLarge {
         x: u16,
@@ -304,27 +278,4 @@ pub enum WorldError {
         z: u16,
         dims: [u32; 3],
     },
-}
-
-// -----------------------------------------------------------------------------
-// DAT container error
-// -----------------------------------------------------------------------------
-
-/// Errors produced while reading and validating the DAT container.
-///
-/// MessagePack decoding, world decoding, and higher-level stage loading errors
-/// should be represented by their respective layers.
-#[derive(Debug, Error)]
-pub(crate) enum DatError {
-    #[error(transparent)]
-    Header(#[from] HeaderError),
-
-    #[error(transparent)]
-    Section(#[from] SectionError),
-
-    #[error(transparent)]
-    Decode(#[from] DecodeError),
-
-    #[error("Failed to read DAT file: {0}")]
-    Io(#[from] std::io::Error),
 }

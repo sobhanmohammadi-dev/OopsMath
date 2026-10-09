@@ -184,7 +184,7 @@ Result: valid (0 error(s), 0 warning(s))
 ```bash
 python omsc.py build examples/001_first_wall
 python omsc.py build examples/001_first_wall -o build/001.dat
-python omsc.py build examples/001_first_wall -o build/        # -> build/001_first_wall.dat
+python omsc.py build examples/001_first_wall -o build/001_first_wall.dat
 ```
 
 ```text

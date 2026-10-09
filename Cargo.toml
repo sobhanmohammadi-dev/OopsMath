@@ -9,3 +9,7 @@ members = [
 default-members = [
     "crates/oopsmath-game",
 ]
+
+[workspace.package]
+license = "Apache-2.0"
+authors = ["Sobhan Mohammadi"]

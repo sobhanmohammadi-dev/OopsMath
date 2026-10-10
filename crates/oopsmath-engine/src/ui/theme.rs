@@ -15,6 +15,8 @@ pub struct UiTheme {
 
     pub text: Color,
     pub secondary_text: Color,
+    /// Emphasis color for the selected list entry's title.
+    pub accent: Color,
 }
 
 impl Default for UiTheme {
@@ -32,6 +34,7 @@ impl Default for UiTheme {
 
             text: Color::WHITE,
             secondary_text: Color::srgb(0.7, 0.7, 0.7),
+            accent: Color::srgb(0.45, 0.75, 1.0),
         }
     }
 }

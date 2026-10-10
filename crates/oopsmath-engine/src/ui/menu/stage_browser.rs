@@ -364,7 +364,14 @@ fn spawn_entries(
                             font_size: FontSize::Px(20.0),
                             ..default()
                         },
-                        TextColor(theme.text),
+                        // Text color is not touched by the generic button
+                        // interaction system, so it marks the selection even
+                        // while the entry is hovered.
+                        TextColor(if is_selected {
+                            theme.accent
+                        } else {
+                            theme.text
+                        }),
                     ));
                     entry_node.spawn((
                         Text::new(entry_summary_line(entry)),
@@ -724,6 +731,14 @@ mod tests {
         reset_selection(&catalog(vec![]), &mut selection);
         assert_eq!(selection.index, None);
         assert_eq!(selection.dat_path, None);
+    }
+
+    #[test]
+    fn the_selected_entry_title_is_marked() {
+        let entry = entry("a");
+        let locale = StageLocale::from("en-US");
+        assert_eq!(entry_title_line(&entry, &locale, false), "Title a");
+        assert_eq!(entry_title_line(&entry, &locale, true), "> Title a");
     }
 
     #[test]

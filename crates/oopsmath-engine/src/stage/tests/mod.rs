@@ -6,8 +6,10 @@
 
 mod support;
 
+mod catalog;
 mod directory;
 mod header;
 mod loader;
+mod localization;
 mod payload;
 mod world;

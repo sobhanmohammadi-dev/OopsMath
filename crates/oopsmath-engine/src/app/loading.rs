@@ -55,3 +55,20 @@ fn resolve_selected_path(selection: &StageSelection) -> Option<PathBuf> {
         .filter(|value| !value.is_empty())
         .map(PathBuf::from)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn the_selected_path_is_used_verbatim() {
+        let selection = StageSelection {
+            index: Some(1),
+            dat_path: Some(PathBuf::from("stages/001_first_wall.dat")),
+        };
+        assert_eq!(
+            resolve_selected_path(&selection),
+            Some(PathBuf::from("stages/001_first_wall.dat"))
+        );
+    }
+}

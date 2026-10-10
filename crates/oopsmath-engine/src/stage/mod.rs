@@ -11,7 +11,8 @@
 //! `- error         `StageLoadError` and the re-exported container errors
 //! ```
 //!
-//! The [`catalog`] scans the runtime stages directory, loads each `.dat`
+//! The [`catalog`] scans the runtime stages directory (the workspace-root
+//! `stages/`, overridable with `OOPSMATH_STAGES_DIR`), loads each `.dat`
 //! through [`load`] and keeps only a lightweight summary for the stage
 //! browser. [`localization`] resolves the localization keys inside a package
 //! against the app locale with a predictable fallback chain.
@@ -19,7 +20,7 @@
 //! Most callers only need [`load`] (from a path) or [`load_from_bytes`]:
 //!
 //! ```rust,ignore
-//! let package = oopsmath_engine::stage::load("build/001_first_wall.dat")?;
+//! let package = oopsmath_engine::stage::load("stages/001_first_wall.dat")?;
 //! println!("{}", package.meta.stage_id);
 //! ```
 

@@ -27,7 +27,7 @@ use crate::stage::package::StagePackage;
 /// Loads a compiled stage from a DAT v1 file.
 ///
 /// ```rust,ignore
-/// let package = oopsmath_engine::stage::load("build/001_first_wall.dat")?;
+/// let package = oopsmath_engine::stage::load("stages/001_first_wall.dat")?;
 /// ```
 pub fn load(path: impl AsRef<Path>) -> Result<StagePackage, StageLoadError> {
     let bytes = std::fs::read(path.as_ref())?;

@@ -4,11 +4,12 @@
 //! The fixture is looked up, in order, at:
 //!
 //! 1. the path in the `OOPSMATH_STAGE_DAT` environment variable;
-//! 2. `build/001_first_wall.dat` in the workspace root.
+//! 2. `stages/001_first_wall.dat` in the workspace root (the runtime stage
+//!    directory);
+//! 3. `build/001_first_wall.dat` in the workspace root.
 //!
-//! `build/` is git-ignored, so when no fixture exists the tests print a note
-//! and return early. A fixture that exists but fails to load is a test
-//! failure, never a skip.
+//! When no fixture exists the tests print a note and return early. A fixture
+//! that exists but fails to load is a test failure, never a skip.
 //!
 //! Synthetic DAT files (container, corruption and decoder cases) are covered
 //! by the unit tests in `src/stage/tests/`.
@@ -26,8 +27,11 @@ fn fixture_path() -> Option<PathBuf> {
             return Some(path);
         }
     }
-    let default = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../build/001_first_wall.dat");
-    default.is_file().then_some(default)
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
+    ["stages/001_first_wall.dat", "build/001_first_wall.dat"]
+        .into_iter()
+        .map(|relative| root.join(relative))
+        .find(|path| path.is_file())
 }
 
 /// The fixture bytes, or `None` (with a note) when no fixture is available.

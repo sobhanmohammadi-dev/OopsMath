@@ -11,11 +11,31 @@ use std::sync::atomic::{AtomicU64, Ordering};
 use serde_bytes::ByteBuf;
 use serde_json::{Value, json};
 
-use crate::stage::catalog::{CatalogDiagnosticKind, StageCatalog};
+use crate::stage::catalog::{
+    CatalogDiagnosticKind, STAGES_DIR_ENV, StageCatalog, default_stages_dir,
+};
 use crate::stage::dat::flags::HEADER_FLAG_HAS_LOCALIZATION;
 use crate::stage::localization::StageLocale;
 
 use super::support::{SectionSpec, build_dat};
+
+#[test]
+fn default_stages_dir_resolves_a_real_workspace_directory() {
+    // The override is the caller's responsibility; skip when it is set so the
+    // test never depends on a developer's shell.
+    if std::env::var_os(STAGES_DIR_ENV).is_some() {
+        return;
+    }
+    let dir = default_stages_dir();
+    if !dir.is_dir() {
+        return;
+    }
+    assert!(
+        dir.ends_with("stages"),
+        "expected the workspace stages directory, got {}",
+        dir.display()
+    );
+}
 
 /// Self-cleaning temporary directory (no external dependency).
 struct TempDir {

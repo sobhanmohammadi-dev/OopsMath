@@ -18,6 +18,19 @@ impl Plugin for OopsMathUiPlugin {
                 Update,
                 menu::main_menu::handle_buttons.run_if(in_state(AppState::MainMenu)),
             )
+            .add_systems(OnEnter(AppState::StageBrowser), menu::stage_browser::spawn)
+            .add_systems(
+                Update,
+                (
+                    menu::stage_browser::handle_buttons,
+                    menu::stage_browser::rebuild_list,
+                    menu::stage_browser::update_details,
+                    menu::stage_browser::update_status,
+                    menu::stage_browser::scroll_list,
+                )
+                    .chain()
+                    .run_if(in_state(AppState::StageBrowser)),
+            )
             .add_systems(OnEnter(AppState::InGame), hud::gameplay::spawn)
             .add_systems(Update, common_button_interaction);
     }

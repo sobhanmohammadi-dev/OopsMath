@@ -60,6 +60,8 @@ pub fn handle_buttons(
             UiAction::Play => {
                 next_state.set(AppState::LoadingStage);
             }
+            // Other actions belong to the stage browser.
+            _ => {}
         }
     }
 }

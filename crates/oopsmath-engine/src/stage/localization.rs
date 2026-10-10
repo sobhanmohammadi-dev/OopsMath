@@ -172,10 +172,11 @@ fn push_locale(chain: &mut Vec<String>, locale: &str) {
         }
     };
     push(locale.to_string());
-    if let Some((base, _region)) = locale.split_once(['-', '_']) {
-        if !base.is_empty() {
-            push(base.to_string());
-        }
+    if let Some((base, _region)) = locale
+        .split_once(['-', '_'])
+        .filter(|(base, _)| !base.is_empty())
+    {
+        push(base.to_string());
     }
 }
 

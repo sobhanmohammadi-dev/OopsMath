@@ -246,15 +246,19 @@ fn extracts_metadata_and_resolves_localization() {
     assert_eq!(entry.reward_xp, Some(10));
 
     let en = StageLocale::from("en-US");
+    assert_eq!(entry.translated_title(&en), Some("My first stage"));
     assert_eq!(entry.title(&en), "My first stage");
-    assert_eq!(entry.description(&en), Some("Build a wall."));
-    assert_eq!(entry.question(&en), Some("How many bricks?"));
+    assert_eq!(entry.translated_description(&en), Some("Build a wall."));
+    assert_eq!(entry.translated_question(&en), Some("How many bricks?"));
 
     // Persian exists for the title; the description is missing in `fa` and
     // falls back to the `en-US` translation.
     let fa = StageLocale::from("fa");
-    assert_eq!(entry.title(&fa), "\u{0645}\u{0631}\u{062d}\u{0644}\u{0647}");
-    assert_eq!(entry.description(&fa), Some("Build a wall."));
+    assert_eq!(
+        entry.translated_title(&fa),
+        Some("\u{0645}\u{0631}\u{062d}\u{0644}\u{0647}")
+    );
+    assert_eq!(entry.translated_description(&fa), Some("Build a wall."));
 }
 
 #[test]
@@ -294,6 +298,9 @@ fn missing_optional_metadata_does_not_fail() {
     assert_eq!(entry.objective_task_count, None);
     assert_eq!(entry.reward_money, None);
     assert_eq!(entry.reward_xp, None);
-    // The title key is always present, even without a translation.
-    assert_eq!(entry.title(&StageLocale::from("en-US")), "stage.bare.title");
+    // The title key is always present; without a translation the raw key is
+    // the last-resort fallback, but the UI can detect the miss.
+    let locale = StageLocale::from("en-US");
+    assert_eq!(entry.title(&locale), "stage.bare.title");
+    assert_eq!(entry.translated_title(&locale), None);
 }

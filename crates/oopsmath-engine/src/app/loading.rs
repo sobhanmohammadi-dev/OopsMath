@@ -1,50 +1,57 @@
+use std::path::PathBuf;
+
 use bevy::prelude::*;
 
+use super::stages::{LoadedStage, StageLoadFailure, StageSelection};
 use super::states::AppState;
 use crate::stage::loader as stage_loader;
-use crate::stage::package::StagePackage;
 
-/// The stage DAT selected for loading. Defaults to `build/001_first_wall.dat`
-/// resolved relative to the workspace root; override with the
-/// `OOPSMATH_STAGE_DAT` environment variable. No machine-specific absolute
-/// path is hard-coded.
-#[derive(Resource)]
-pub struct SelectedStage(pub String);
+/// Environment variable that launches a specific DAT without the browser.
+/// Intended for development and headless runs.
+pub const STAGE_DAT_ENV: &str = "OOPSMATH_STAGE_DAT";
 
-impl Default for SelectedStage {
-    fn default() -> Self {
-        Self(
-            std::env::var("OOPSMATH_STAGE_DAT")
-                .unwrap_or_else(|_| "build/001_first_wall.dat".to_string()),
-        )
-    }
-}
-
-/// Resource set after a successful stage load, so gameplay systems can
-/// consume the package without re-reading the DAT file.
-#[derive(Resource, Default)]
-pub struct LoadedStage(pub Option<StagePackage>);
-
-/// Loads the selected stage package synchronously and transitions to InGame
-/// on success, or to MainMenu when the DAT cannot be loaded (the UruiTheme
-/// main menu then shows a sensible fallback rather than a hard crash).
-pub fn load_test_stage(
-    selection: Option<Res<SelectedStage>>,
+/// Loads the selected stage package with the existing DAT v1 loader and
+/// transitions to [`AppState::InGame`] on success.
+///
+/// On failure the browser is re-entered with the error in
+/// [`StageLoadFailure`], so a bad package is recoverable rather than fatal.
+pub fn load_selected_stage(
+    selection: Res<StageSelection>,
     mut loaded: ResMut<LoadedStage>,
+    mut failure: ResMut<StageLoadFailure>,
     mut next_state: ResMut<NextState<AppState>>,
 ) {
-    let path = selection
-        .map(|sel| sel.0.clone())
-        .unwrap_or_else(|| "build/001_first_wall.dat".to_string());
+    let Some(path) = resolve_selected_path(&selection) else {
+        failure.0 = Some("No stage is selected.".to_string());
+        next_state.set(AppState::StageBrowser);
+        return;
+    };
+
     match stage_loader::load(&path) {
         Ok(package) => {
-            info!("Loaded stage '{}' from {path}", package.meta.stage_id);
+            info!(
+                "Loaded stage '{}' from {}",
+                package.meta.stage_id,
+                path.display()
+            );
             loaded.0 = Some(package);
+            failure.0 = None;
             next_state.set(AppState::InGame);
         }
         Err(err) => {
-            warn!("Failed to load stage from {path}: {err}");
-            next_state.set(AppState::MainMenu);
+            warn!("Failed to load stage from {}: {err}", path.display());
+            failure.0 = Some(format!("Failed to load '{}': {err}", path.display()));
+            next_state.set(AppState::StageBrowser);
         }
     }
+}
+
+/// The selected `.dat` path, or the `OOPSMATH_STAGE_DAT` override.
+fn resolve_selected_path(selection: &StageSelection) -> Option<PathBuf> {
+    if let Some(path) = &selection.dat_path {
+        return Some(path.clone());
+    }
+    std::env::var_os(STAGE_DAT_ENV)
+        .filter(|value| !value.is_empty())
+        .map(PathBuf::from)
 }

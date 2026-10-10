@@ -80,21 +80,28 @@ pub struct StageCatalogEntry {
 }
 
 impl StageCatalogEntry {
-    /// Localized title, falling back to the raw key when untranslated.
+    /// Localized title, or the raw key when untranslated.
     pub fn title(&self, locale: &StageLocale) -> &str {
-        locale.resolve(&self.messages, &self.title_key)
+        self.messages
+            .resolve_or(&self.title_key, &locale.locale, &locale.fallback)
     }
 
-    /// Localized description, when the stage declares one.
-    pub fn description(&self, locale: &StageLocale) -> Option<&str> {
+    /// Localized title, or `None` when no translation is available.
+    pub fn translated_title(&self, locale: &StageLocale) -> Option<&str> {
+        self.messages
+            .resolve(&self.title_key, &locale.locale, &locale.fallback)
+    }
+
+    /// Localized description, only when it is both declared *and* translated.
+    pub fn translated_description(&self, locale: &StageLocale) -> Option<&str> {
         let key = self.description_key.as_deref()?;
-        Some(locale.resolve(&self.messages, key))
+        self.messages.resolve(key, &locale.locale, &locale.fallback)
     }
 
-    /// Localized learning question, when the stage declares one.
-    pub fn question(&self, locale: &StageLocale) -> Option<&str> {
+    /// Localized learning question, only when declared and translated.
+    pub fn translated_question(&self, locale: &StageLocale) -> Option<&str> {
         let key = self.question_key.as_deref()?;
-        Some(locale.resolve(&self.messages, key))
+        self.messages.resolve(key, &locale.locale, &locale.fallback)
     }
 }
 
@@ -265,10 +272,8 @@ fn entry_order(left: &StageCatalogEntry, right: &StageCatalogEntry) -> Ordering 
 /// directory. If none exists, the workspace-root `stages/` path is returned so
 /// the resulting diagnostic is meaningful.
 pub fn default_stages_dir() -> PathBuf {
-    if let Some(override_dir) = std::env::var_os(STAGES_DIR_ENV) {
-        if !override_dir.is_empty() {
-            return PathBuf::from(override_dir);
-        }
+    if let Some(override_dir) = std::env::var_os(STAGES_DIR_ENV).filter(|value| !value.is_empty()) {
+        return PathBuf::from(override_dir);
     }
     for candidate in stage_dir_candidates() {
         if candidate.is_dir() {

@@ -6,6 +6,8 @@ pub struct UiTheme {
 
     pub panel: Color,
     pub panel_hover: Color,
+    /// Background of the currently selected entry in a list.
+    pub selected: Color,
 
     pub button: Color,
     pub button_hover: Color,
@@ -22,6 +24,7 @@ impl Default for UiTheme {
 
             panel: Color::srgb(0.08, 0.08, 0.10),
             panel_hover: Color::srgb(0.12, 0.12, 0.15),
+            selected: Color::srgb(0.16, 0.22, 0.34),
 
             button: Color::srgb(0.10, 0.10, 0.13),
             button_hover: Color::srgb(0.16, 0.16, 0.20),

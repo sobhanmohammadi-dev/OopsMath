@@ -56,12 +56,35 @@ pub fn handle_buttons(
             continue;
         }
 
-        match button.action {
-            UiAction::Play => {
-                next_state.set(AppState::LoadingStage);
-            }
-            // Other actions belong to the stage browser.
-            _ => {}
+        if let Some(next) = menu_transition(button.action) {
+            next_state.set(next);
         }
+    }
+}
+
+/// Maps a main-menu action to the state it opens, if any.
+///
+/// Start opens the stage browser; a stage is loaded only once one has been
+/// chosen and Play Stage is pressed there.
+fn menu_transition(action: UiAction) -> Option<AppState> {
+    match action {
+        UiAction::Play => Some(AppState::StageBrowser),
+        // Other actions belong to the stage browser.
+        _ => None,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn start_opens_the_stage_browser() {
+        assert_eq!(
+            menu_transition(UiAction::Play),
+            Some(AppState::StageBrowser)
+        );
+        assert_eq!(menu_transition(UiAction::Back), None);
+        assert_eq!(menu_transition(UiAction::PlaySelected), None);
     }
 }

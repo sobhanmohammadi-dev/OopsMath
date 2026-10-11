@@ -59,10 +59,12 @@ pub(super) fn decode_custom_assets(
 }
 
 fn resolve_asset(entry: AssetIndexEntry, blob: &[u8]) -> Result<CustomAsset, StageLoadError> {
-    let end = entry
-        .offset
-        .checked_add(entry.size)
-        .ok_or_else(|| asset_error(SectionType::ASIX, format!("asset '{}' range overflows", entry.id)))?;
+    let end = entry.offset.checked_add(entry.size).ok_or_else(|| {
+        asset_error(
+            SectionType::ASIX,
+            format!("asset '{}' range overflows", entry.id),
+        )
+    })?;
     if end > blob.len() as u64 {
         return Err(asset_error(
             SectionType::ASIX,

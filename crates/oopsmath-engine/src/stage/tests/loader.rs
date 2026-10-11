@@ -67,7 +67,10 @@ fn sha256_hex(data: &[u8]) -> String {
         .collect()
 }
 
-fn load_with(header_flags: u32, extra: Vec<SectionSpec>) -> Result<crate::stage::StagePackage, StageLoadError> {
+fn load_with(
+    header_flags: u32,
+    extra: Vec<SectionSpec>,
+) -> Result<crate::stage::StagePackage, StageLoadError> {
     let mut sections = core_sections();
     sections.extend(extra);
     load_from_bytes(&build_dat(header_flags, &sections))
@@ -107,7 +110,11 @@ fn loads_world_section() {
     let mut dense = vec![0u8; 4096];
     dense[0] = 1;
     let world = build_world([16, 16, 16], &["air", "brick"], vec![(0, 0, 0, 0, dense)]);
-    let package = load_with(HEADER_FLAG_HAS_WORLD, vec![SectionSpec::new(b"WRLD", world)]).unwrap();
+    let package = load_with(
+        HEADER_FLAG_HAS_WORLD,
+        vec![SectionSpec::new(b"WRLD", world)],
+    )
+    .unwrap();
     let world = package.world.expect("world section was present");
     assert_eq!(world.block_name([0, 0, 0]), Some("brick"));
 }
@@ -115,12 +122,26 @@ fn loads_world_section() {
 #[test]
 fn loads_localization_sorted_by_locale() {
     let mut files: BTreeMap<String, serde_bytes::ByteBuf> = BTreeMap::new();
-    files.insert("fa".into(), serde_bytes::ByteBuf::from(b"title = salam".to_vec()));
-    files.insert("en-US".into(), serde_bytes::ByteBuf::from(b"title = hello".to_vec()));
+    files.insert(
+        "fa".into(),
+        serde_bytes::ByteBuf::from(b"title = salam".to_vec()),
+    );
+    files.insert(
+        "en-US".into(),
+        serde_bytes::ByteBuf::from(b"title = hello".to_vec()),
+    );
     let locl = rmp_serde::to_vec(&files).unwrap();
 
-    let package = load_with(HEADER_FLAG_HAS_LOCALIZATION, vec![SectionSpec::new(b"LOCL", locl)]).unwrap();
-    let locales: Vec<&str> = package.localization.iter().map(|l| l.locale.as_str()).collect();
+    let package = load_with(
+        HEADER_FLAG_HAS_LOCALIZATION,
+        vec![SectionSpec::new(b"LOCL", locl)],
+    )
+    .unwrap();
+    let locales: Vec<&str> = package
+        .localization
+        .iter()
+        .map(|l| l.locale.as_str())
+        .collect();
     assert_eq!(locales, ["en-US", "fa"]);
     assert_eq!(
         package.localization_for("fa").unwrap().raw,
@@ -173,7 +194,10 @@ fn loads_custom_assets() {
     .unwrap();
 
     assert_eq!(package.custom_assets.len(), 2);
-    assert_eq!(package.custom_asset("first").unwrap().data, b"glb-bytes-one");
+    assert_eq!(
+        package.custom_asset("first").unwrap().data,
+        b"glb-bytes-one"
+    );
     let second = package.custom_asset("second").unwrap();
     assert_eq!(second.data, b"glb-bytes-two");
     assert_eq!(second.sha256_hex, "");
@@ -187,7 +211,9 @@ fn loads_custom_assets() {
 fn rejects_empty_and_zeroed_input() {
     assert!(matches!(
         load_from_bytes(&[]),
-        Err(StageLoadError::Header(HeaderError::HeaderTooSmall { actual: 0 }))
+        Err(StageLoadError::Header(HeaderError::HeaderTooSmall {
+            actual: 0
+        }))
     ));
     assert!(matches!(
         load_from_bytes(&[0u8; 64]),

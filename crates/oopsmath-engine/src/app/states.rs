@@ -10,4 +10,6 @@ pub enum AppState {
     LoadingStage,
     InGame,
     Paused,
+    /// Opt-in development scene for the Blocks module (`OOPSMATH_BLOCK_PREVIEW=1`).
+    BlockPreview,
 }

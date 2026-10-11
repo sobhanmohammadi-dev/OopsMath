@@ -15,8 +15,8 @@ mod sections;
 
 use std::path::Path;
 
-use crate::stage::dat::error::{DecodeError, SectionError};
 use crate::stage::dat::directory::SectionDirectory;
+use crate::stage::dat::error::{DecodeError, SectionError};
 use crate::stage::dat::header::DatHeader;
 use crate::stage::dat::payload::load_section_payload;
 use crate::stage::dat::section_type::SectionType;

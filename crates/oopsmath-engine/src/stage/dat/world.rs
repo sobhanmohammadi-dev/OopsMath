@@ -128,7 +128,8 @@ impl WorldHeader {
 
     /// Number of chunks along each axis.
     fn chunk_grid(&self) -> [u32; 3] {
-        self.size.map(|axis| axis.div_ceil(u32::from(WORLD_CHUNK_SIZE)))
+        self.size
+            .map(|axis| axis.div_ceil(u32::from(WORLD_CHUNK_SIZE)))
     }
 
     /// Palettes above 256 entries use two-byte indices.
@@ -144,14 +145,14 @@ fn read_palette(cursor: &mut Cursor<'_>, count: u32) -> Result<Vec<String>, Worl
         let length = cursor
             .u16()
             .ok_or(WorldError::PaletteLengthOutOfBounds { index, length: 0 })?;
-        let bytes = cursor
-            .take(usize::from(length))
-            .ok_or(WorldError::PaletteLengthOutOfBounds {
-                index,
-                length: u64::from(length),
-            })?;
-        let name =
-            std::str::from_utf8(bytes).map_err(|_| WorldError::PaletteNotUtf8 { index })?;
+        let bytes =
+            cursor
+                .take(usize::from(length))
+                .ok_or(WorldError::PaletteLengthOutOfBounds {
+                    index,
+                    length: u64::from(length),
+                })?;
+        let name = std::str::from_utf8(bytes).map_err(|_| WorldError::PaletteNotUtf8 { index })?;
         palette.push(name.to_owned());
     }
     Ok(palette)
@@ -224,15 +225,16 @@ fn read_chunks(
         }
 
         let remaining = cursor.remaining();
-        let payload = cursor
-            .take(record.payload_len as usize)
-            .ok_or(WorldError::ChunkPayloadTruncated {
-                x,
-                y,
-                z,
-                expected: u64::from(record.payload_len),
-                actual: remaining as u64,
-            })?;
+        let payload =
+            cursor
+                .take(record.payload_len as usize)
+                .ok_or(WorldError::ChunkPayloadTruncated {
+                    x,
+                    y,
+                    z,
+                    expected: u64::from(record.payload_len),
+                    actual: remaining as u64,
+                })?;
 
         let cells = decode_chunk(&record, payload, wide)?;
         insert_voxels(&record, &cells, header, &mut voxels)?;

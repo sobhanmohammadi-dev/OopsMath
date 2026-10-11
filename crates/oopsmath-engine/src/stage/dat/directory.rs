@@ -131,8 +131,8 @@ impl SectionDirectory {
         for index in 0..header.section_count as usize {
             // The table was bounds-checked against the file size above, so
             // this offset fits in `usize`.
-            let base = header.section_table_offset as usize
-                + index * header.section_entry_size as usize;
+            let base =
+                header.section_table_offset as usize + index * header.section_entry_size as usize;
             // Unknown non-critical sections are skipped entirely.
             let Some(entry) = parse_entry(data, base, file_size)? else {
                 continue;

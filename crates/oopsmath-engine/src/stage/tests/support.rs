@@ -154,7 +154,11 @@ pub(super) fn build_dat(header_flags: u32, sections: &[SectionSpec]) -> Vec<u8> 
 
         let base = entry_base(index);
         file[base..base + 4].copy_from_slice(&spec.section_type);
-        patch_u32(&mut file, base + ENTRY_FLAGS, spec.flags | u32::from(spec.zstd));
+        patch_u32(
+            &mut file,
+            base + ENTRY_FLAGS,
+            spec.flags | u32::from(spec.zstd),
+        );
         patch_u64(&mut file, base + ENTRY_OFFSET, offset as u64);
         patch_u64(&mut file, base + ENTRY_STORED_SIZE, stored.len() as u64);
         patch_u64(&mut file, base + ENTRY_RAW_SIZE, spec.raw.len() as u64);

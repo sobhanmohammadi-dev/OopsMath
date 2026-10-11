@@ -26,7 +26,9 @@ fn dense_wide(cells: &[(usize, u16)]) -> Vec<u8> {
 
 /// Narrow RLE payload from `(run, index)` pairs.
 fn rle_narrow(runs: &[(u8, u8)]) -> Vec<u8> {
-    runs.iter().flat_map(|(run, value)| [*run, *value]).collect()
+    runs.iter()
+        .flat_map(|(run, value)| [*run, *value])
+        .collect()
 }
 
 /// Wide RLE payload from `(run, index)` pairs.
@@ -43,7 +45,13 @@ fn rle_wide(runs: &[(u16, u16)]) -> Vec<u8> {
 /// A palette of `count` entries: "air", then "block_1", "block_2", ...
 fn numbered_palette(count: usize) -> Vec<String> {
     (0..count)
-        .map(|i| if i == 0 { "air".into() } else { format!("block_{i}") })
+        .map(|i| {
+            if i == 0 {
+                "air".into()
+            } else {
+                format!("block_{i}")
+            }
+        })
         .collect()
 }
 
@@ -178,7 +186,10 @@ fn rejects_unsupported_version() {
 fn rejects_unsupported_chunk_size() {
     let mut data = build_world([16, 16, 16], &["air"], vec![]);
     data[6] = 32;
-    assert_eq!(parse_world(&data), Err(WorldError::UnsupportedChunkSize(32)));
+    assert_eq!(
+        parse_world(&data),
+        Err(WorldError::UnsupportedChunkSize(32))
+    );
 }
 
 #[test]

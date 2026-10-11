@@ -106,7 +106,9 @@ fn rejects_unknown_header_flags() {
     });
     assert_eq!(
         result,
-        Err(HeaderError::UnknownHeaderFlags(HEADER_FLAG_HAS_WORLD | unknown))
+        Err(HeaderError::UnknownHeaderFlags(
+            HEADER_FLAG_HAS_WORLD | unknown
+        ))
     );
 }
 

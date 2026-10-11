@@ -7,7 +7,8 @@ use crate::stage::dat::payload::{MAX_SECTION_RAW_SIZE, load_section_payload};
 use crate::stage::dat::section_type::SectionType;
 
 use super::support::{
-    ENTRY_CRC, ENTRY_OFFSET, ENTRY_RAW_SIZE, SectionSpec, build_dat, entry_base, patch_u32, patch_u64, read_u64,
+    ENTRY_CRC, ENTRY_OFFSET, ENTRY_RAW_SIZE, SectionSpec, build_dat, entry_base, patch_u32,
+    patch_u64, read_u64,
 };
 
 fn stag() -> SectionSpec {

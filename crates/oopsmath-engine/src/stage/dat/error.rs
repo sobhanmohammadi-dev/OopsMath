@@ -256,7 +256,9 @@ pub enum WorldError {
     #[error("WRLD chunk {x},{y},{z} does not contain 4096 cells after decoding")]
     ChunkCellCountMismatch { x: u16, y: u16, z: u16 },
 
-    #[error("WRLD chunk {x},{y},{z} has an RLE payload of {len} bytes that is not a whole number of runs")]
+    #[error(
+        "WRLD chunk {x},{y},{z} has an RLE payload of {len} bytes that is not a whole number of runs"
+    )]
     MalformedRlePayload { x: u16, y: u16, z: u16, len: u64 },
 
     #[error("WRLD chunk {x},{y},{z} declares {runs} runs, exceeding the limit of {limit}")]

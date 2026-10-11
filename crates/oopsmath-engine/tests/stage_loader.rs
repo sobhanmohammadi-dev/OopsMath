@@ -37,7 +37,9 @@ fn fixture_path() -> Option<PathBuf> {
 /// The fixture bytes, or `None` (with a note) when no fixture is available.
 fn fixture_bytes() -> Option<Vec<u8>> {
     let Some(path) = fixture_path() else {
-        eprintln!("skipping: no stage DAT fixture (set OOPSMATH_STAGE_DAT or build 001_first_wall)");
+        eprintln!(
+            "skipping: no stage DAT fixture (set OOPSMATH_STAGE_DAT or build 001_first_wall)"
+        );
         return None;
     };
     Some(std::fs::read(&path).unwrap_or_else(|err| panic!("cannot read {}: {err}", path.display())))
@@ -55,7 +57,9 @@ fn read_u64(bytes: &[u8], at: usize) -> u64 {
 
 #[test]
 fn loads_compiler_fixture_end_to_end() {
-    let Some(package) = load_fixture() else { return };
+    let Some(package) = load_fixture() else {
+        return;
+    };
 
     assert_eq!(package.meta.stage_id, "001_first_wall");
     assert_eq!(package.meta.format, "OOPSMDAT");
@@ -79,7 +83,9 @@ fn loads_compiler_fixture_end_to_end() {
 
 #[test]
 fn fixture_declares_its_localization_namespace() {
-    let Some(package) = load_fixture() else { return };
+    let Some(package) = load_fixture() else {
+        return;
+    };
 
     let namespace = package
         .stage
@@ -92,10 +98,16 @@ fn fixture_declares_its_localization_namespace() {
 
 #[test]
 fn fixture_world_matches_meta_sections() {
-    let Some(package) = load_fixture() else { return };
+    let Some(package) = load_fixture() else {
+        return;
+    };
 
     // The package has a world exactly when META lists a WRLD section.
-    let lists_world = package.meta.sections.iter().any(|section| section == "WRLD");
+    let lists_world = package
+        .meta
+        .sections
+        .iter()
+        .any(|section| section == "WRLD");
     assert_eq!(package.world.is_some(), lists_world);
 }
 
@@ -112,7 +124,9 @@ fn rejects_truncated_fixture() {
 
 #[test]
 fn rejects_fixture_with_corrupted_section_payload() {
-    let Some(mut bytes) = fixture_bytes() else { return };
+    let Some(mut bytes) = fixture_bytes() else {
+        return;
+    };
 
     // Locate the first section payload through the directory: the table offset
     // is a u64 at header byte 28 and the first entry's offset is a u64 at

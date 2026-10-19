@@ -76,3 +76,54 @@ menu flow is unchanged.
 * `MaterialPolicy` has one policy (preserve). No tint/override yet.
 * Stage block ids (e.g. `brick` in stage 001) are not registered blocks yet.
 * The preview needs a GPU/window; it was **not** run when this was written.
+
+## Stage-aware HUD and block selection
+
+The gameplay HUD (`ui/hud/gameplay.rs`, data mapping in `ui/hud/model.rs`)
+shows the loaded stage's localized title and description and the blocks listed
+in `construction.allowed_blocks`. Each row shows the registry display name and
+price (stage `cost` if present, otherwise the default) plus `min_count` /
+`max_count` only when the stage declares them.
+
+* Clicking a row stores the id in the `SelectedBlock` resource
+  (`blocks/selection.rs`). Only blocks that are both listed by the stage **and**
+  registered are selectable; the selected row is marked with `>`.
+* Stage ids missing from the registry (the sample stage lists `brick`) are shown
+  as "unavailable: not a registered block". The stage loader does not validate
+  block ids, so the HUD is where the mismatch is reported. A malformed list shows
+  an "invalid" message; an empty list shows "no selectable blocks".
+* When the loaded stage changes, a selection the new stage does not allow is
+  cleared. Nothing is auto-selected.
+* Not implemented: placement, previews, inventory, purchasing, balance,
+  objective progress. Tools (`allowed_tools`, e.g. `hammer`) are not displayed.
+
+## Grid block placement (in game)
+
+Select a block in the HUD, aim with the mouse, **left-click** to place it.
+Camera: right-drag orbit, middle-drag pan, wheel zoom (unchanged).
+
+* **Targeting** (`blocks/targeting.rs`): the cursor ray is intersected with the
+  stage floor (cell layer y = 0, origin = stage `world.bounds.origin`, 1 m cells,
+  Y up) and with the boxes of occupied cells; the nearest hit wins. A floor hit
+  targets the cell it lands in (`GridSpec::world_to_cell`, floor); a hit on a
+  block targets the neighbouring cell on the hit face, so blocks stack/extend.
+  The conversion for preview, validation and placement is the same
+  (`StageScene::grid_spec`).
+* **Rules** (`blocks/occupancy.rs::evaluate_placement`, pure): something
+  selected -> allowed by the stage (HUD allow-list) -> registered -> inside the
+  bounds and rotation allowed -> every footprint cell free. Each refusal has a
+  `PlacementRejection` with a player-facing message (shown bottom-left).
+* **State**: `PlacedWorld` is the authoritative occupancy and records
+  (`BlockId`, cell, rotation, entity). Footprints larger than 1 cell occupy all
+  their cells (rotation is always `Deg0` here; there is no rotation control).
+* **Preview**: one ghost model entity for the selected block, moved and
+  shown/hidden (respawned only when the selection changes), plus a green/red cell
+  outline. It is not a `PlacedBlock` and is never in `PlacedWorld`.
+* **Atomicity**: placement re-validates, spawns, then records; the record cannot
+  fail after validation, and on any failure nothing is recorded.
+* **Lifecycle**: occupancy, target and feedback reset on entering and leaving
+  the game; placed and preview entities despawn with the game state. Clicks over
+  HUD panels/buttons never place.
+* Not implemented: removal, rotation, inventory/cost, undo, save/load. The ghost
+  is not tinted (it looks like a placed block; the outline shows validity).
+  Targeting scans occupied cells linearly, fine for small builds.

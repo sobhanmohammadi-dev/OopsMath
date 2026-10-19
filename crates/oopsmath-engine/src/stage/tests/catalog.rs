@@ -13,6 +13,7 @@ use serde_json::{Value, json};
 
 use crate::stage::catalog::{
     CatalogDiagnosticKind, STAGES_DIR_ENV, StageCatalog, default_stages_dir,
+    executable_stages_dir, resolve_stages_dir,
 };
 use crate::stage::dat::flags::HEADER_FLAG_HAS_LOCALIZATION;
 use crate::stage::localization::StageLocale;
@@ -35,6 +36,46 @@ fn default_stages_dir_resolves_a_real_workspace_directory() {
         "expected the workspace stages directory, got {}",
         dir.display()
     );
+}
+
+#[test]
+fn packaged_builds_use_the_stages_folder_next_to_the_executable() {
+    let exe = PathBuf::from("game");
+    let none = |_: &Path| false;
+    // No cargo environment (a packaged build): `<exe dir>/stages`, whether or not it exists,
+    // so a missing folder is reported with the path that is expected.
+    assert_eq!(resolve_stages_dir(None, None, exe.clone(), &none), exe.join("stages"));
+    assert_eq!(resolve_stages_dir(None, None, exe.clone(), &|_| true), exe.join("stages"));
+}
+
+#[test]
+fn development_runs_prefer_the_workspace_stages_folder() {
+    let exe = PathBuf::from("target/debug");
+    let manifest = std::ffi::OsString::from("repo/crates/oopsmath-game");
+    let workspace = PathBuf::from("repo/crates/oopsmath-game/../../stages");
+    let found = resolve_stages_dir(None, Some(manifest.clone()), exe.clone(), &|p| p == workspace);
+    assert_eq!(found, workspace);
+    // A manifest dir without a stages folder falls back to the executable folder.
+    let fallback = resolve_stages_dir(None, Some(manifest), exe.clone(), &|_| false);
+    assert_eq!(fallback, exe.join("stages"));
+}
+
+#[test]
+fn the_override_always_wins() {
+    let dir = std::ffi::OsString::from("custom/levels");
+    let chosen = resolve_stages_dir(
+        Some(dir),
+        Some("repo/crates/oopsmath-game".into()),
+        PathBuf::from("game"),
+        &|_| true,
+    );
+    assert_eq!(chosen, PathBuf::from("custom/levels"));
+}
+
+#[test]
+fn the_real_executable_folder_is_used_for_the_packaged_location() {
+    let expected = std::env::current_exe().unwrap().parent().unwrap().join("stages");
+    assert_eq!(executable_stages_dir(), expected);
 }
 
 /// Self-cleaning temporary directory (no external dependency).

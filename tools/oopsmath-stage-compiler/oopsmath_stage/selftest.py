@@ -106,6 +106,17 @@ def _st_schema() -> None:
     jsonschema.Draft202012Validator.check_schema(STAGE_SCHEMA)
 
 
+def _st_schema_yaml_parity() -> None:
+    """The readable YAML schema must equal the embedded (authoritative) one."""
+    import yaml
+    path = Path(__file__).resolve().parents[1] / "stage.schema.yaml"
+    if not path.is_file():  # installed without the repository documentation
+        return
+    on_disk = yaml.safe_load(path.read_text(encoding="utf-8"))
+    _expect(on_disk == STAGE_SCHEMA,
+            "stage.schema.yaml differs from schema.py; run: python -m oopsmath_stage.schema_export")
+
+
 def _st_header_roundtrip() -> None:
     blob = build_dat([Section("META", pack_msgpack({"a": 1})), Section("STAG", pack_msgpack({"b": 2}))])
     parsed = parse_dat(blob)
@@ -303,6 +314,7 @@ def _st_scaffold() -> None:
 
 TESTS: list[tuple[str, Callable[[], None]]] = [
     ("embedded schema is a valid Draft 2020-12 schema", _st_schema),
+    ("stage.schema.yaml matches the embedded schema", _st_schema_yaml_parity),
     ("header round trip", _st_header_roundtrip),
     ("binary layout is pinned", _st_binary_layout),
     ("section directory round trip", _st_section_directory),

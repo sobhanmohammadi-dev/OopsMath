@@ -6,7 +6,7 @@ import enum
 import re
 import struct
 
-COMPILER_VERSION = "1.0.0"
+COMPILER_VERSION = "1.1.0"
 
 EXIT_OK = 0
 EXIT_VALIDATION = 2

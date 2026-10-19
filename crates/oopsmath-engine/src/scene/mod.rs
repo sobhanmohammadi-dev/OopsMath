@@ -17,6 +17,7 @@ use crate::app::stages::LoadedStage;
 use crate::app::states::AppState;
 use crate::blocks::camera::{OrbitCamera, orbit_camera_system};
 use crate::blocks::debug_scene::{draw_box, draw_grid};
+use crate::blocks::grid::{GridBounds, GridSpec};
 use crate::stage::package::StageDefinition;
 
 /// Used when the stage declares no bounds (matches the stage template).
@@ -31,6 +32,21 @@ pub struct StageScene {
     pub targets: Vec<(Vec3, Vec3)>,
 }
 
+impl StageScene {
+    /// The placement grid of this stage: 1 m cells from `origin`, bounded by
+    /// the stage's world size. Cell (0,0,0) is the minimum corner; Y is up.
+    pub fn grid_spec(&self) -> GridSpec {
+        GridSpec {
+            origin: self.origin,
+            cell_size: Vec3::ONE,
+            bounds: Some(GridBounds {
+                min: IVec3::ZERO,
+                size: self.size,
+            }),
+        }
+    }
+}
+
 pub struct StageScenePlugin;
 
 impl Plugin for StageScenePlugin {
@@ -42,14 +58,18 @@ impl Plugin for StageScenePlugin {
             .add_systems(
                 Update,
                 (orbit_camera_system, draw_stage_gizmos)
-                    .run_if(in_state(AppState::InGame).and(resource_exists::<StageScene>)),
+                    .run_if(in_state(AppState::InGame).and_then(resource_exists::<StageScene>)),
             );
     }
 }
 
 fn vec3_of(value: Option<&Value>) -> Option<[f64; 3]> {
     let a = value?.as_array()?;
-    Some([a.first()?.as_f64()?, a.get(1)?.as_f64()?, a.get(2)?.as_f64()?])
+    Some([
+        a.first()?.as_f64()?,
+        a.get(1)?.as_f64()?,
+        a.get(2)?.as_f64()?,
+    ])
 }
 
 /// Extracts the world geometry from a stage definition; tolerant of missing
@@ -75,7 +95,12 @@ pub fn stage_scene_from(def: &StageDefinition) -> StageScene {
                     let min = vec3_of(region.get("min"))?;
                     let max = vec3_of(region.get("max"))?;
                     let lo = origin + Vec3::new(min[0] as f32, min[1] as f32, min[2] as f32);
-                    let hi = origin + Vec3::new(max[0] as f32 + 1.0, max[1] as f32 + 1.0, max[2] as f32 + 1.0);
+                    let hi = origin
+                        + Vec3::new(
+                            max[0] as f32 + 1.0,
+                            max[1] as f32 + 1.0,
+                            max[2] as f32 + 1.0,
+                        );
                     Some((lo, hi))
                 })
                 .collect()
@@ -124,12 +149,7 @@ fn build_stage_scene(
     let extent = scene.size.as_vec3();
     let center = scene.origin + Vec3::new(extent.x * 0.5, 0.0, extent.z * 0.5);
 
-    let mut orbit = OrbitCamera::new(
-        center + Vec3::Y,
-        extent.x.max(extent.z) * 1.1,
-        0.6,
-        0.6,
-    );
+    let mut orbit = OrbitCamera::new(center + Vec3::Y, extent.x.max(extent.z) * 1.1, 0.6, 0.6);
     orbit.min_distance = 2.0;
     orbit.max_distance = extent.max_element() * 6.0;
     orbit.clamp();
@@ -156,7 +176,8 @@ fn build_stage_scene(
             shadow_maps_enabled: true,
             ..default()
         },
-        Transform::from_translation(center + Vec3::new(10.0, 20.0, 12.0)).looking_at(center, Vec3::Y),
+        Transform::from_translation(center + Vec3::new(10.0, 20.0, 12.0))
+            .looking_at(center, Vec3::Y),
         DespawnOnExit(AppState::InGame),
     ));
 

@@ -5,7 +5,7 @@ use bevy::prelude::*;
 
 use super::definition::{BlockDefinition, BlockId};
 use super::error::BlockError;
-use super::grid::{GridCoord, GridRotation, GridSpec, occupied_cells};
+use super::grid::{GridCoord, GridRotation, GridSpec, footprint_box, rotated_cells};
 use super::registry::BlockRegistry;
 
 /// Runtime instance of a block. Placing or previewing one never charges the
@@ -34,8 +34,8 @@ pub fn validate_placement<'r>(
         });
     }
     if let Some(bounds) = grid.bounds {
-        let size = rotation.rotate_footprint(def.dimensions.footprint_cells);
-        if !bounds.contains_box(cell, size) {
+        let (min, size) = footprint_box(cell, def.dimensions.footprint_cells, rotation);
+        if !bounds.contains_box(min, size) {
             return Err(BlockError::OutOfBounds {
                 id: block.clone(),
                 cell: cell.0,
@@ -64,23 +64,17 @@ impl PlacedBlock {
 
     /// Cells covered by this block, taking rotation into account.
     pub fn occupied_cells(&self, def: &BlockDefinition) -> impl Iterator<Item = GridCoord> {
-        occupied_cells(
-            self.cell,
-            self.rotation
-                .rotate_footprint(def.dimensions.footprint_cells),
-        )
+        rotated_cells(self.cell, def.dimensions.footprint_cells, self.rotation)
     }
 
     /// World transform of the model: footprint centre + offsets, yaw, and the
     /// definition's visual scale.
     pub fn transform(&self, def: &BlockDefinition, grid: &GridSpec) -> Transform {
-        let size = self
-            .rotation
-            .rotate_footprint(def.dimensions.footprint_cells);
         let rotation = self.rotation.to_quat();
-        let translation = grid.box_center(self.cell, size)
-            + def.grid.placement_offset
-            + rotation * def.visuals.model_offset;
+        let translation =
+            grid.footprint_center(self.cell, def.dimensions.footprint_cells, self.rotation)
+                + def.grid.placement_offset
+                + rotation * def.visuals.model_offset;
         Transform {
             translation,
             rotation,

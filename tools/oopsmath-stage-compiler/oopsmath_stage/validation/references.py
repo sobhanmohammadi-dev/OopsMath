@@ -237,6 +237,39 @@ def validate_references(data: dict[str, Any], opts: CompileOptions, diag: Diagno
     for path, value in tool_refs:
         _check_registered("tool", reg.tools, value, path, diag)
 
+    for i, task in enumerate(objectives["tasks"]):
+        math = task.get("math")
+        if task.get("type") == "math" and isinstance(math, dict) and "prompt" in math \
+                and not isinstance(math["prompt"], str):
+            diag.error(f"objectives.tasks[{i}].math.prompt must be a localization key string")
+
+    # --- block-count construction objectives (task.data.kind == "place_block") ---
+    for i, task in enumerate(objectives["tasks"]):
+        info = task.get("data")
+        if task.get("type") != "construction" or not isinstance(info, dict) or "kind" not in info:
+            continue
+        base = f"objectives.tasks[{i}].data"
+        if info["kind"] != "place_block":
+            diag.error(f"{base}.kind must be 'place_block' (the only supported construction "
+                       f"objective kind), found {info['kind']!r}")
+            continue
+        block, count = info.get("block"), info.get("count")
+        if not isinstance(block, str) or not block:
+            diag.error(f"{base}.block must be a block ID string")
+        else:
+            _check_registered("block", reg.blocks, block, f"{base}.block", diag)
+            if allowed_blocks and block not in allowed_block_ids:
+                diag.error(f"{base}.block '{block}' is not listed in construction.allowed_blocks")
+        if isinstance(count, bool) or not isinstance(count, int) or count < 1:
+            diag.error(f"{base}.count must be an integer of at least 1")
+        if "title" in info and not isinstance(info["title"], str):
+            diag.error(f"{base}.title must be a localization key string")
+        required = info.get("requires_challenge")
+        if required is not None:
+            math_ids = {t.get("id") for t in objectives["tasks"] if t.get("type") == "math"}
+            if not isinstance(required, str) or required not in math_ids:
+                diag.error(f"{base}.requires_challenge must reference a math task id, found {required!r}")
+
     if reg.assets is not None:
         known_assets = reg.assets | asset_ids
         for i, value in enumerate(unlocks.get("assets", [])):
@@ -276,7 +309,8 @@ def validate_references(data: dict[str, Any], opts: CompileOptions, diag: Diagno
                 diag.error(f"{base}.depends_on[{j}] references unknown task '{dep}'")
         if "target" in task and task["target"] not in index.target_ids:
             diag.error(f"{base}.target references unknown construction target '{task['target']}'")
-        if task["type"] == "construction" and "target" not in task:
+        block_count = isinstance(task.get("data"), dict) and "kind" in task["data"]
+        if task["type"] == "construction" and "target" not in task and not block_count:
             diag.warn(f"{base} is a construction task without a target")
         math = task.get("math")
         if task["type"] == "math" and math is None:

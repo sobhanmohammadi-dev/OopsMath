@@ -25,16 +25,18 @@ world:
 
 construction:
   allowed_blocks:
-    - {id: brick, min_count: 0, max_count: 20}
+    # max_count = most instances of the block that may be placed at once
+    - {id: block.wood_log, min_count: 0, max_count: 20}
   allowed_tools:
     - {id: hammer}
   starting_inventory:
+    blocks: {block.wood_log: 12}   # what the player owns at the start
     tools: {hammer: 1}
   targets:
     - id: wall_a
       type: wall
       region: {min: [0, 0, 0], max: [3, 2, 0]}
-      required_block: brick
+      required_block: block.wood_log
 
 economy:
   budget: 100
@@ -47,10 +49,20 @@ objectives:
         type: multiplication
         answer: {mode: exact, value: 12}
     - {id: t_build, type: construction, depends_on: [t_math], target: wall_a}
+    # Block-count objective (Compiler 1.1): place 12 logs AND solve t_math.
+    - id: t_logs
+      type: construction
+      data:
+        kind: place_block
+        block: block.wood_log
+        count: 12
+        title: stage.001_first_wall.objective.logs
+        requires_challenge: t_math
   completion:
     all:
       - task_completed: t_math
       - target_completed: wall_a
+      - task_completed: t_logs
 
 rewards:
   money: 100

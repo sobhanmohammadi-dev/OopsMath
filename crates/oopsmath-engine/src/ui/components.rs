@@ -1,19 +1,51 @@
 use bevy::prelude::*;
 
+use crate::blocks::BlockId;
+use crate::items::ItemRef;
+
 #[derive(Component)]
 pub struct GameplayHud;
 
-#[derive(Component)]
-pub struct MoneyText;
+/// Which piece of stage information a HUD text node displays.
+#[derive(Component, Clone, Copy, Debug, PartialEq, Eq)]
+pub enum HudText {
+    Title,
+    Description,
+    Selection,
+    Feedback,
+}
 
+/// The column that hosts the allowed-block rows of the gameplay HUD.
 #[derive(Component)]
-pub struct MaterialText;
+pub struct HudBlockList;
 
+/// Any row inside [`HudBlockList`] (despawned and rebuilt on change).
 #[derive(Component)]
-pub struct ToolText;
+pub struct HudBlockRow;
 
+/// The column that hosts the objective rows.
 #[derive(Component)]
-pub struct ObjectiveText;
+pub struct HudObjectiveList;
+
+/// A row inside [`HudObjectiveList`] (rebuilt when objectives change).
+#[derive(Component)]
+pub struct HudObjectiveRow;
+
+/// The column that hosts the inventory hotbar rows.
+#[derive(Component)]
+pub struct HudHotbarList;
+
+/// A selectable inventory row.
+#[derive(Component)]
+pub struct HudHotbarButton {
+    pub item: ItemRef,
+}
+
+/// A selectable allowed-block row.
+#[derive(Component)]
+pub struct HudBlockButton {
+    pub block: BlockId,
+}
 
 /// The root of the stage browser screen (also despawned on exit).
 #[derive(Component)]

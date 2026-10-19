@@ -5,6 +5,9 @@
 //! This module only *parses and resolves* rules; it does not change the stage
 //! schema, the compiler or the DAT format, and nothing enforces counts yet.
 
+use std::collections::HashMap;
+
+use bevy::prelude::Resource;
 use serde_json::Value;
 
 use super::definition::{BlockDefinition, BlockId, MAX_UNIT_PRICE};
@@ -109,4 +112,48 @@ pub fn parse_allowed_blocks(construction: &Value) -> Result<Vec<StageBlockRule>,
         rules.push(rule);
     }
     Ok(rules)
+}
+
+/// The active stage's authoritative placement permissions.
+///
+/// Semantics (no schema change; the existing `construction.allowed_blocks`
+/// entries are reused):
+/// * A block may be placed only if it has an entry. A stage with no entries
+///   (including legacy stages) permits **nothing**; absence never means
+///   "unrestricted".
+/// * `max_count` is the maximum number of placed *instances* of that block that
+///   may exist at once (not cells, not the starting inventory). Absent means
+///   no instance cap for that block; invalid values are a parse error.
+/// * A malformed list yields no permissions and a diagnostic in `error`.
+#[derive(Resource, Default, Debug, Clone, PartialEq, Eq)]
+pub struct StagePlacementRules {
+    rules: HashMap<BlockId, StageBlockRule>,
+    pub error: Option<String>,
+}
+
+impl StagePlacementRules {
+    pub fn from_construction(construction: &Value) -> Self {
+        match parse_allowed_blocks(construction) {
+            Ok(list) => Self {
+                rules: list.into_iter().map(|r| (r.block.clone(), r)).collect(),
+                error: None,
+            },
+            Err(err) => Self {
+                rules: HashMap::new(),
+                error: Some(err.to_string()),
+            },
+        }
+    }
+
+    pub fn is_allowed(&self, id: &BlockId) -> bool {
+        self.rules.contains_key(id)
+    }
+
+    pub fn max_placed(&self, id: &BlockId) -> Option<u32> {
+        self.rules.get(id).and_then(|r| r.max_count)
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.rules.is_empty()
+    }
 }

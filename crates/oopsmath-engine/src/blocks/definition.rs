@@ -184,6 +184,29 @@ impl AllowedRotations {
             Self::QuarterTurns => true,
         }
     }
+
+    /// Whether the player may rotate this block at all.
+    pub fn is_rotatable(self) -> bool {
+        self != Self::None
+    }
+
+    /// One quarter turn from `current`; a non-rotatable block stays at `Deg0`.
+    pub fn step(self, current: GridRotation) -> GridRotation {
+        match self {
+            Self::None => GridRotation::Deg0,
+            Self::QuarterTurns => current.next(),
+        }
+    }
+
+    /// The orientation actually used for a requested one: the request if this
+    /// block allows it, otherwise `Deg0`.
+    pub fn effective(self, requested: GridRotation) -> GridRotation {
+        if self.allows(requested) {
+            requested
+        } else {
+            GridRotation::Deg0
+        }
+    }
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]

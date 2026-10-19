@@ -31,7 +31,35 @@ impl Plugin for OopsMathUiPlugin {
                     .chain()
                     .run_if(in_state(AppState::StageBrowser)),
             )
-            .add_systems(OnEnter(AppState::InGame), hud::gameplay::spawn)
+            .init_resource::<hud::model::StageHud>()
+            .add_systems(
+                OnEnter(AppState::InGame),
+                (
+                    hud::gameplay::mark_stale,
+                    hud::gameplay::spawn,
+                    hud::shop::spawn_shop_button,
+                    hud::challenge::spawn_challenge_button,
+                ),
+            )
+            .add_systems(OnExit(AppState::InGame), hud::gameplay::clear)
+            .add_systems(
+                Update,
+                (
+                    hud::gameplay::sync_model,
+                    hud::gameplay::handle_block_clicks,
+                    hud::gameplay::handle_hotbar_clicks,
+                    hud::gameplay::refresh,
+                    hud::gameplay::update_feedback,
+                    hud::shop::handle_shop_input,
+                    hud::shop::refresh_shop_popup,
+                    hud::objectives::refresh_objectives,
+                    hud::challenge::handle_challenge_input,
+                    hud::challenge::sync_challenge_button,
+                    hud::challenge::refresh_challenge_popup,
+                )
+                    .chain()
+                    .run_if(in_state(AppState::InGame)),
+            )
             .add_systems(Update, common_button_interaction);
     }
 }

@@ -1,6 +1,6 @@
 # OopsMath Stage Compiler (OMSC)
 
-**DAT v1 · Stage Schema v1 · Compiler 1.0.0**
+**DAT v1 · Stage Schema v1 · Compiler 1.1.0**
 
 OopsMath Stage Compiler (**OMSC**) is the offline content compiler for **OopsMath**.
 
@@ -430,3 +430,52 @@ Layering (each module only imports from those above it): `constants → errors �
 # License
 
 This project is part of the OopsMath project.
+
+## Objectives and math challenges (Compiler 1.1)
+
+Compiler 1.1 adds two **optional, backward-compatible** fields to Stage Schema v1.
+`schema_version` stays `1`, the DAT v1 binary layout and the header's minimum runtime
+version are unchanged, and stages that do not use the fields validate and compile
+exactly as before.
+
+* `objectives.tasks[].math.prompt` (optional localization key): the prompt shown for a
+  math challenge. When absent, the runtime uses `learning.question`.
+* Block-count objectives: an `objectives.tasks[]` entry of `type: construction` whose
+  `data` object has a `kind`. `kind` must be `place_block` and then `block` (a block ID)
+  and `count` (integer >= 1) are required; `title` (localization key) and
+  `requires_challenge` (the id of a `type: math` task) are optional.
+
+```yaml
+objectives:
+  tasks:
+    - id: t_math
+      type: math
+      math: {type: multiplication, answer: {mode: exact, value: 12}}
+    - id: t_logs
+      type: construction
+      data: {kind: place_block, block: block.wood_log, count: 12,
+             title: stage.my_stage.objective.logs, requires_challenge: t_math}
+```
+
+Checks: the shape above (JSON Schema), that `block` is registered (with `--manifest`)
+and listed in `construction.allowed_blocks`, that `requires_challenge` names a math
+task, and that the `title` / `prompt` keys exist in the FTL files. Construction tasks
+whose `data` has no `kind` stay free-form. Math tasks keep the existing `answer`
+rules; the game supports `exact` (integer or decimal) and `tolerance` answers, other
+modes are skipped by the runtime.
+
+### Schema files
+
+`oopsmath_stage/schema.py` is the **source of truth** (it is what OMSC validates
+against). `stage.schema.yaml` is generated documentation; regenerate it after any
+schema change with `python -m oopsmath_stage.schema_export > stage.schema.yaml`. The
+self test "stage.schema.yaml matches the embedded schema" fails on drift.
+
+## Changelog
+
+* **1.1.0**: optional `math.prompt`; typed block-count objectives
+  (`data.kind: place_block`); localization checks for the new keys; no warning for
+  block-count construction tasks without a `target`; `stage.schema.yaml` regenerated
+  from the embedded schema (it had drifted from it); `schema_export` module and a drift
+  self test. DAT v1 and Stage Schema v1 unchanged.
+* **1.0.0**: initial release.

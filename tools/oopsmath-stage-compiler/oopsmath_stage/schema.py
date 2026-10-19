@@ -205,6 +205,7 @@ def _build_stage_schema() -> dict[str, Any]:
             "optional": boolean,
             "math": obj({
                 "type": ident, "generator": free_object, "expression": string,
+                "prompt": loc,
                 "answer": obj({
                     "mode": {"enum": ["exact", "tolerance", "expression",
                                       "multiple_choice", "custom"]},
@@ -221,6 +222,21 @@ def _build_stage_schema() -> dict[str, Any]:
         "scoring": obj({"enabled": boolean, "maximum": nn_num,
                         "criteria": ref("number_map")}),
     }, required=("tasks", "completion"))
+    # Block-count construction objectives (Compiler 1.1, additive): a construction
+    # task whose `data` has a `kind` must describe a `place_block` objective.
+    objectives["properties"]["tasks"]["items"].update({
+        "if": {"properties": {"type": {"const": "construction"},
+                              "data": {"required": ["kind"]}},
+               "required": ["type", "data"]},
+        "then": {"properties": {"data": {
+            "properties": {
+                "kind": {"const": "place_block"}, "block": ident,
+                "count": {"type": "integer", "minimum": 1}, "title": loc,
+                "requires_challenge": ident,
+            },
+            "required": ["kind", "block", "count"],
+        }}},
+    })
 
     events = arr(obj({
         "id": ident,

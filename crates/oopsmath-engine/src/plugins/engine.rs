@@ -7,9 +7,13 @@ use crate::{
         stages::{LoadedStage, StageCatalogResource, StageLoadFailure, StageSelection},
         states::AppState,
     },
-    blocks::{BlockAssetsPlugin, BlockPreviewPlugin, BlocksPlugin},
+    blocks::{BlockAssetsPlugin, BlockPlacementPlugin, BlockPreviewPlugin, BlocksPlugin},
+    challenges::ChallengesPlugin,
+    items::ItemsPlugin,
+    objectives::ObjectivesPlugin,
     scene::StageScenePlugin,
     stage::localization::StageLocale,
+    structure::StructurePlugin,
     ui::OopsMathUiPlugin,
 };
 
@@ -25,7 +29,14 @@ impl Plugin for OopsMathEnginePlugin {
             .init_resource::<StageLocale>()
             .add_plugins(OopsMathUiPlugin)
             .add_plugins((BlocksPlugin, BlockAssetsPlugin, BlockPreviewPlugin))
-            .add_plugins(StageScenePlugin)
+            .add_plugins((
+                StageScenePlugin,
+                BlockPlacementPlugin,
+                ItemsPlugin,
+                ChallengesPlugin,
+                ObjectivesPlugin,
+                StructurePlugin,
+            ))
             .add_systems(OnEnter(AppState::Boot), boot_system)
             .add_systems(OnEnter(AppState::LoadingStage), load_selected_stage);
     }

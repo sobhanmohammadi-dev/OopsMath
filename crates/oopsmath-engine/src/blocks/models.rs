@@ -34,14 +34,16 @@ fn wood_log() -> BlockDefinition {
         wood_log_id(),
         "Wood Log",
         BlockModel::glb("log.glb"),
-        BlockDimensions::new(UVec3::ONE, Vec3::ONE),
+        BlockDimensions::new(UVec3::new(1, 1, 2), Vec3::new(1.0, 1.0, 2.0)),
         BlockEconomyConfig::with_default_price(3),
     )
     .with_description("A solid wooden log for basic construction.")
-    .with_visuals(BlockVisualConfig::default().with_uniform_scale(0.5))
+    .with_visuals(BlockVisualConfig {
+        scale: Vec3::new(0.5, 0.5, 1.0),
+        ..Default::default()
+    })
     .with_physics(BlockPhysicsConfig {
-        // ~600 kg/m^3 softwood * 1 m^3. Informational; not simulated yet.
-        mass_kg: 600.0,
+        mass_kg: 1200.0,
         collision: CollisionPolicy::FootprintBox,
         tags: vec!["wood".into(), "structural".into()],
     })

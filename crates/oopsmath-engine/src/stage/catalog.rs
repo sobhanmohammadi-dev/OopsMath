@@ -25,11 +25,9 @@ use crate::stage::package::StagePackage;
 /// Environment variable overriding the runtime stage directory.
 pub const STAGES_DIR_ENV: &str = "OOPSMATH_STAGES_DIR";
 
-/// Directory name used by the workspace layout at the repository root.
+/// Name of the stages folder (next to the executable, or at the repository root
+/// during development).
 const STAGES_DIR_NAME: &str = "stages";
-
-/// Historical / documented alternative directory name.
-const LEVELS_DIR_NAME: &str = "levels";
 
 /// One discoverable stage, summarised for display.
 ///
@@ -167,7 +165,7 @@ impl StageCatalog {
             catalog.diagnostics.push(CatalogDiagnostic {
                 path: dir,
                 kind: CatalogDiagnosticKind::DirectoryMissing,
-                message: "stage directory does not exist".to_string(),
+                message: "stage directory does not exist; a packaged game needs a `stages` folder next to the executable (or set OOPSMATH_STAGES_DIR)".to_string(),
             });
             return catalog;
         }
@@ -263,45 +261,59 @@ fn entry_order(left: &StageCatalogEntry, right: &StageCatalogEntry) -> Ordering 
         .then_with(|| left.dat_path.cmp(&right.dat_path))
 }
 
-/// Resolves the runtime stage directory without trusting the current working
-/// directory alone.
+/// The runtime stage directory.
 ///
-/// Order: the `OOPSMATH_STAGES_DIR` override, then `stages/` and `levels/`
-/// relative to the workspace root (located from this crate's manifest
-/// directory), then `stages/` and `levels/` relative to the current working
-/// directory. If none exists, the workspace-root `stages/` path is returned so
-/// the resulting diagnostic is meaningful.
+/// A packaged game needs a `stages` folder **next to the executable**, exactly
+/// like `assets`. Resolution order:
+///
+/// 1. the `OOPSMATH_STAGES_DIR` override;
+/// 2. development runs: `<workspace>/stages`, found through the
+///    `CARGO_MANIFEST_DIR` that `cargo run` / `cargo test` set at runtime;
+/// 3. `stages/` next to the executable.
+///
+/// If none of 2 or 3 exists, the path next to the executable is returned so the
+/// resulting diagnostic tells the player where the folder is expected.
 pub fn default_stages_dir() -> PathBuf {
-    if let Some(override_dir) = std::env::var_os(STAGES_DIR_ENV).filter(|value| !value.is_empty()) {
-        return PathBuf::from(override_dir);
-    }
-    for candidate in stage_dir_candidates() {
-        if candidate.is_dir() {
-            return candidate;
-        }
-    }
-    workspace_root().join(STAGES_DIR_NAME)
+    resolve_stages_dir(
+        std::env::var_os(STAGES_DIR_ENV).filter(|value| !value.is_empty()),
+        std::env::var_os("CARGO_MANIFEST_DIR"),
+        executable_dir(),
+        &Path::is_dir,
+    )
 }
 
-/// Candidate directories, in priority order.
-fn stage_dir_candidates() -> Vec<PathBuf> {
-    let root = workspace_root();
-    vec![
-        root.join(STAGES_DIR_NAME),
-        root.join(LEVELS_DIR_NAME),
-        PathBuf::from(STAGES_DIR_NAME),
-        PathBuf::from(LEVELS_DIR_NAME),
-    ]
+/// `stages/` next to the executable: the required location of a packaged build.
+pub fn executable_stages_dir() -> PathBuf {
+    executable_dir().join(STAGES_DIR_NAME)
 }
 
-/// The workspace root, derived from this crate's manifest directory
-/// (`<root>/crates/oopsmath-engine`). This is a development-time hint; the
-/// `OOPSMATH_STAGES_DIR` override is the supported escape hatch for packaged
-/// builds.
-fn workspace_root() -> PathBuf {
-    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("..")
-        .join("..")
+/// Directory containing the running executable (the current directory in the
+/// unlikely case it cannot be determined).
+fn executable_dir() -> PathBuf {
+    std::env::current_exe()
+        .ok()
+        .and_then(|exe| exe.parent().map(Path::to_path_buf))
+        .unwrap_or_default()
+}
+
+/// Pure form of [`default_stages_dir`] so every case can be tested without
+/// touching the environment.
+pub(crate) fn resolve_stages_dir(
+    override_dir: Option<std::ffi::OsString>,
+    manifest_dir: Option<std::ffi::OsString>,
+    exe_dir: PathBuf,
+    is_dir: &dyn Fn(&Path) -> bool,
+) -> PathBuf {
+    if let Some(dir) = override_dir {
+        return PathBuf::from(dir);
+    }
+    // `<root>/crates/<crate>/../../stages`, the same trick `main.rs` uses for assets.
+    let development = manifest_dir
+        .map(|manifest| PathBuf::from(manifest).join("..").join("..").join(STAGES_DIR_NAME));
+    if let Some(dir) = development.filter(|dir| is_dir(dir.as_path())) {
+        return dir;
+    }
+    exe_dir.join(STAGES_DIR_NAME)
 }
 
 /// Direct `.dat` files in `dir`, sorted is left to the caller.

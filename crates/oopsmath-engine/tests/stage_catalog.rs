@@ -56,7 +56,9 @@ fn discovers_the_compiler_fixture_with_resolved_metadata() {
     // fixture ships no compiled `WRLD` section.
     assert_eq!(entry.world_size, Some([16, 8, 16]));
     assert_eq!(entry.environment_preset.as_deref(), Some("meadow"));
-    assert_eq!(entry.objective_task_count, Some(2));
+    // The fixture is compiled from `tools/oopsmath-stage-compiler/examples/001_first_wall`:
+    // the math task, the wall target and the block-count objective.
+    assert_eq!(entry.objective_task_count, Some(3));
 
     let en = StageLocale::from("en-US");
     assert_eq!(entry.translated_title(&en), Some("My first stage"));

@@ -117,3 +117,52 @@ fn unfinished_models_are_reported_as_asset_errors() {
         Err(BlockAssetError::Pending { .. })
     ));
 }
+
+#[test]
+fn stage_change_reset_clears_occupancy_target_and_feedback() {
+    use oopsmath_engine::blocks::interaction::reset_placement;
+    use oopsmath_engine::blocks::{PlacedWorld, PlacementFeedback, PlacementTarget};
+
+    let mut app = App::new();
+    app.add_plugins((MinimalPlugins, BlocksPlugin))
+        .init_resource::<PlacedWorld>()
+        .init_resource::<PlacementTarget>()
+        .init_resource::<PlacementFeedback>();
+
+    // Simulate leftovers from a previous stage.
+    let registry_ok = {
+        let registry = app.world().resource::<BlockRegistry>();
+        let grid = GridSpec::default();
+        let placed = PlacedBlock::new(
+            registry,
+            &grid,
+            wood_log_id(),
+            GridCoord::new(1, 0, 1),
+            GridRotation::Deg0,
+        )
+        .unwrap();
+        registry.require(&placed.block).unwrap().clone()
+    };
+    let entity = app.world_mut().spawn_empty().id();
+    let placed = PlacedBlock {
+        block: wood_log_id(),
+        cell: GridCoord::new(1, 0, 1),
+        rotation: GridRotation::Deg0,
+    };
+    app.world_mut()
+        .resource_mut::<PlacedWorld>()
+        .insert(&placed, &registry_ok, entity)
+        .unwrap();
+    app.world_mut().resource_mut::<PlacementFeedback>().0 = Some("old".into());
+    app.world_mut().resource_mut::<PlacementTarget>().cell = Some(GridCoord::new(1, 0, 1));
+
+    app.add_systems(Startup, reset_placement);
+    app.update();
+
+    assert!(app.world().resource::<PlacedWorld>().is_empty());
+    assert_eq!(
+        *app.world().resource::<PlacementTarget>(),
+        PlacementTarget::default()
+    );
+    assert_eq!(app.world().resource::<PlacementFeedback>().0, None);
+}

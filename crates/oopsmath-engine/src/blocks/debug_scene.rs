@@ -14,7 +14,7 @@ use bevy::ui::IsDefaultUiCamera;
 use super::assets::{BlockAssetState, BlockAssets};
 use super::camera::{OrbitCamera, orbit_camera_system};
 use super::definition::BlockId;
-use super::grid::{GridBounds, GridCoord, GridRotation, GridSpec, occupied_cells};
+use super::grid::{GridBounds, GridCoord, GridRotation, GridSpec, footprint_box, rotated_cells};
 use super::models::wood_log_id;
 use super::placement::{PlacedBlock, validate_placement};
 use super::registry::BlockRegistry;
@@ -162,7 +162,9 @@ fn setup_preview(
             perceptual_roughness: 1.0,
             ..default()
         })),
-        Transform::from_translation(grid.0.origin + Vec3::new(extent.x * 0.5, -0.003, extent.z * 0.5)),
+        Transform::from_translation(
+            grid.0.origin + Vec3::new(extent.x * 0.5, -0.003, extent.z * 0.5),
+        ),
         DespawnOnExit(AppState::BlockPreview),
     ));
 
@@ -359,16 +361,24 @@ fn draw_preview_grid(
     draw_grid(&mut gizmos, spec.origin, GRID_SIZE, spec.cell_size);
 
     let origin = spec.origin;
-    gizmos.line(origin, origin + Vec3::X * 2.0, Color::srgb(0.95, 0.25, 0.25));
-    gizmos.line(origin, origin + Vec3::Y * 2.0, Color::srgb(0.25, 0.95, 0.35));
+    gizmos.line(
+        origin,
+        origin + Vec3::X * 2.0,
+        Color::srgb(0.95, 0.25, 0.25),
+    );
+    gizmos.line(
+        origin,
+        origin + Vec3::Y * 2.0,
+        Color::srgb(0.25, 0.95, 0.35),
+    );
     gizmos.line(origin, origin + Vec3::Z * 2.0, Color::srgb(0.3, 0.5, 1.0));
 
     let footprint = registry
         .get(&preview.block)
-        .map(|d| preview.rotation.rotate_footprint(d.dimensions.footprint_cells))
-        .unwrap_or(UVec3::ONE);
-    let lo = spec.cell_min_corner(preview.cell);
-    let hi = lo + footprint.as_vec3() * spec.cell_size;
+        .map_or(UVec3::ONE, |d| d.dimensions.footprint_cells);
+    let (min, size) = footprint_box(preview.cell, footprint, preview.rotation);
+    let lo = spec.cell_min_corner(min);
+    let hi = lo + size.as_vec3() * spec.cell_size;
     draw_box(&mut gizmos, lo, hi, Color::srgb(1.0, 0.85, 0.2));
 }
 
@@ -392,9 +402,10 @@ fn update_status_text(
         Some(def) => (
             def.display_name.as_str(),
             def.economy.default_unit_price.to_string(),
-            occupied_cells(
+            rotated_cells(
                 preview.cell,
-                preview.rotation.rotate_footprint(def.dimensions.footprint_cells),
+                def.dimensions.footprint_cells,
+                preview.rotation,
             )
             .count(),
         ),

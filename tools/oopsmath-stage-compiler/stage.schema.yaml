@@ -1,1383 +1,724 @@
-$schema: "https://json-schema.org/draft/2020-12/schema"
-title: "OopsMath Stage Schema"
-description: "Schema v1 for OopsMath data-driven stages."
+# GENERATED from oopsmath_stage/schema.py (the source of truth).
+# Do not edit by hand. Regenerate: python -m oopsmath_stage.schema_export > stage.schema.yaml
+$schema: https://json-schema.org/draft/2020-12/schema
+title: OopsMath Stage Schema v1
 type: object
-additionalProperties: false
-
-required:
-  - schema_version
-  - stage
-  - learning
-  - world
-  - construction
-  - objectives
-  - rewards
-
+$defs:
+  id:
+    type: string
+    pattern: ^[A-Za-z0-9_][A-Za-z0-9_.\-]*$
+    maxLength: 128
+  loc_key:
+    type: string
+    pattern: ^[A-Za-z][A-Za-z0-9_.\-]*$
+    maxLength: 256
+  relpath:
+    type: string
+    minLength: 1
+    maxLength: 512
+  vec3_num:
+    type: array
+    items:
+      type: number
+    minItems: 3
+    maxItems: 3
+  vec3_int:
+    type: array
+    items:
+      type: integer
+    minItems: 3
+    maxItems: 3
+  vec3_size:
+    type: array
+    items:
+      type: integer
+      minimum: 1
+      maximum: 1000000
+    minItems: 3
+    maxItems: 3
+  region:
+    type: object
+    properties:
+      min: &id001
+        $ref: '#/$defs/vec3_int'
+      max: *id001
+    additionalProperties: false
+    required:
+    - min
+    - max
+  nonneg_number:
+    type: number
+    minimum: 0
+  nonneg_int:
+    type: integer
+    minimum: 0
+  pos_number:
+    type: number
+    exclusiveMinimum: 0
+  number_map:
+    type: object
+    additionalProperties:
+      type: number
+  count_map:
+    type: object
+    propertyNames: &id003
+      $ref: '#/$defs/id'
+    additionalProperties: &id010
+      $ref: '#/$defs/nonneg_int'
+  transform:
+    type: object
+    properties:
+      position: &id002
+        $ref: '#/$defs/vec3_num'
+      rotation: *id002
+      scale:
+        anyOf:
+        - *id002
+        - &id009
+          $ref: '#/$defs/pos_number'
+    additionalProperties: false
 properties:
-
   schema_version:
     type: integer
     const: 1
-
   stage:
     type: object
-    additionalProperties: false
-
-    required:
-      - id
-      - title
-      - description
-      - difficulty
-      - level
-
     properties:
-
-      id:
-        $ref: "#/$defs/id"
-
-      title:
-        $ref: "#/$defs/localization_key"
-
-      description:
-        $ref: "#/$defs/localization_key"
-
+      id: *id003
+      title: &id004
+        $ref: '#/$defs/loc_key'
+      description: *id004
       difficulty:
-        type: string
         enum:
-          - tutorial
-          - easy
-          - medium
-          - hard
-          - expert
-
+        - tutorial
+        - easy
+        - medium
+        - hard
+        - expert
       level:
         type: integer
         minimum: 1
-
       requirements:
         type: object
-        additionalProperties: false
-
         properties:
-
           player_level:
             type: integer
             minimum: 1
-
           stages:
             type: array
+            items: *id003
             uniqueItems: true
-            items:
-              $ref: "#/$defs/id"
-
+        additionalProperties: false
       tags:
         type: array
-        uniqueItems: true
-        items:
+        items: &id005
           type: string
-          minLength: 1
-
-      metadata:
+      metadata: &id006
         type: object
-        additionalProperties: true
-
-        properties:
-          author:
-            type: string
-
-          revision:
-            type: integer
-            minimum: 1
-
-          notes:
-            type: string
-
-
+    additionalProperties: false
+    required:
+    - id
+    - title
   story:
     type: object
-    additionalProperties: false
-
     properties:
-
       dialogue:
         type: array
-
         items:
           type: object
-          additionalProperties: false
-
-          required:
-            - id
-            - speaker
-            - text
-
           properties:
-
-            id:
-              $ref: "#/$defs/id"
-
-            speaker:
-              type: string
-              minLength: 1
-
-            text:
-              $ref: "#/$defs/localization_key"
-
-            condition:
-              $ref: "#/$defs/condition"
-
-
+            id: *id003
+            speaker: *id005
+            text: *id004
+            condition: *id006
+          additionalProperties: false
+          required:
+          - id
+          - speaker
+          - text
+    additionalProperties: false
   learning:
     type: object
-    additionalProperties: false
-
-    required:
-      - question
-      - curriculum
-
     properties:
-
-      question:
-        $ref: "#/$defs/localization_key"
-
+      question: *id004
       curriculum:
         type: object
-        additionalProperties: false
-
-        required:
-          - grade
-
         properties:
-
           grade:
             type: object
-            additionalProperties: false
-
-            required:
-              - min
-              - max
-
             properties:
-
               min:
                 type: integer
                 minimum: 7
                 maximum: 9
-
               max:
                 type: integer
                 minimum: 7
                 maximum: 9
-
+            additionalProperties: false
+            required:
+            - min
+            - max
           topics:
             type: array
+            items: *id003
+            minItems: 1
             uniqueItems: true
-
-            items:
-              type: string
-              minLength: 1
-
+        additionalProperties: false
+        required:
+        - grade
+        - topics
       lesson:
         type: object
-        additionalProperties: false
-
         properties:
-
-          markdown:
-            $ref: "#/$defs/relative_path"
-
+          markdown: &id007
+            $ref: '#/$defs/relpath'
+        additionalProperties: false
       tutorial_stage:
         type: object
-        additionalProperties: false
-
         properties:
-
-          enabled:
+          enabled: &id008
             type: boolean
-            default: false
-
-          stage_id:
-            $ref: "#/$defs/id"
-
+          stage_id: *id003
+        additionalProperties: false
       solution:
         type: object
-        additionalProperties: false
-
         properties:
-
-          explanation:
-            $ref: "#/$defs/localization_key"
-
-          markdown:
-            $ref: "#/$defs/relative_path"
-
+          explanation: *id004
+          markdown: *id007
           demonstration:
             type: object
-            additionalProperties: false
-
             properties:
-
-              enabled:
-                type: boolean
-                default: true
-
-              replay_tasks:
-                type: boolean
-                default: true
-
-              show_calculations:
-                type: boolean
-                default: true
-
-              show_construction:
-                type: boolean
-                default: true
-
-              simulate_physics:
-                type: boolean
-                default: false
-
+              enabled: *id008
+              replay_tasks: *id008
+              show_calculations: *id008
+              show_construction: *id008
+              simulate_physics: *id008
+            additionalProperties: false
+        additionalProperties: false
       hints:
         type: array
-
         items:
           type: object
-          additionalProperties: false
-
-          required:
-            - id
-            - text
-
           properties:
-
-            id:
-              $ref: "#/$defs/id"
-
-            text:
-              $ref: "#/$defs/localization_key"
-
-            markdown:
-              $ref: "#/$defs/relative_path"
-
-
+            id: *id003
+            text: *id004
+            markdown: *id007
+          additionalProperties: false
+          required:
+          - id
+          - text
+    additionalProperties: false
+    required:
+    - question
+    - curriculum
   player:
     type: object
-    additionalProperties: false
-
     properties:
-
       spawn:
-        $ref: "#/$defs/transform"
-
-      initial_state:
         type: object
-        additionalProperties: true
-
-
+        properties:
+          position: *id002
+          rotation: *id002
+        additionalProperties: false
+      initial_state: *id006
+    additionalProperties: false
   camera:
     type: object
-    additionalProperties: false
-
     properties:
-
       mode:
-        type: string
         enum:
-          - orthographic
-
-      position:
-        $ref: "#/$defs/vec3_number"
-
-      target:
-        $ref: "#/$defs/vec3_number"
-
-      zoom:
-        type: number
-        exclusiveMinimum: 0
-
-
+        - orthographic
+      position: *id002
+      target: *id002
+      zoom: *id009
+    additionalProperties: false
   world:
     type: object
-    additionalProperties: false
-
-    required:
-      - bounds
-      - environment
-
     properties:
-
       bounds:
         type: object
-        additionalProperties: false
-
-        required:
-          - size
-
         properties:
-
           size:
-            $ref: "#/$defs/vec3_integer"
-
-          origin:
-            $ref: "#/$defs/vec3_integer"
-
+            $ref: '#/$defs/vec3_size'
+          origin: *id001
+        additionalProperties: false
+        required:
+        - size
       environment:
         type: object
-        additionalProperties: false
-
-        required:
-          - preset
-
         properties:
-
-          preset:
-            type: string
-            minLength: 1
-
-          weather:
-            type: string
-
-          time_of_day:
-            type: string
-
+          preset: *id005
+          weather: *id005
+          time_of_day: *id005
           seed:
             type: integer
-
+        additionalProperties: false
       terrain:
         type: object
-        additionalProperties: false
-
         properties:
-
-          type:
-            type: string
-
-          preset:
-            type: string
-
+          type: *id005
+          preset: *id005
           height:
             type: number
-
+        additionalProperties: false
       source:
         type: object
-        additionalProperties: false
-
         properties:
-
-          voxel_file:
-            $ref: "#/$defs/relative_path"
-
+          voxel_file: *id007
+          palette:
+            type: object
+            propertyNames:
+              type: string
+              pattern: ^(?:[1-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$
+            additionalProperties: *id003
+          default_block: *id003
+          offset: *id001
+        additionalProperties: false
       initial_structure:
         type: object
-        additionalProperties: false
-
         properties:
-
           blocks:
             type: array
-
             items:
-              $ref: "#/$defs/initial_block"
-
-
+              type: object
+              properties:
+                id: *id003
+                block: *id003
+                position: *id001
+                rotation: *id001
+                state: *id006
+              additionalProperties: false
+              required:
+              - id
+              - block
+              - position
+        additionalProperties: false
+    additionalProperties: false
+    required:
+    - bounds
   assets:
     type: object
-    additionalProperties: false
-
     properties:
-
       custom:
         type: array
-
         items:
           type: object
-          additionalProperties: false
-
-          required:
-            - id
-            - file
-            - type
-
           properties:
-
-            id:
-              $ref: "#/$defs/id"
-
-            file:
-              $ref: "#/$defs/relative_path"
-
+            id: *id003
+            file: *id007
             type:
-              type: string
               enum:
-                - environment
-                - prop
-                - construction_piece
-                - structure
-                - machinery
-                - interactive
-
+              - environment
+              - prop
+              - construction_piece
+              - structure
+              - machinery
+              - interactive
             transform:
-              $ref: "#/$defs/transform"
-
+              $ref: '#/$defs/transform'
             behavior:
               type: object
-              additionalProperties: true
-
               properties:
-
-                placeable:
-                  type: boolean
-
-                removable:
-                  type: boolean
-
-                mass_kg:
-                  type: number
-                  minimum: 0
-
-                structural_role:
-                  type: string
-
-                collider:
-                  type: string
-
-                snap_profile:
-                  type: string
-
-
+                placeable: *id008
+                removable: *id008
+                mass_kg: &id011
+                  $ref: '#/$defs/nonneg_number'
+                structural_role: *id005
+                collider: *id005
+                snap_profile: *id005
+              additionalProperties: false
+          additionalProperties: false
+          required:
+          - id
+          - file
+          - type
+    additionalProperties: false
   construction:
     type: object
-    additionalProperties: false
-
-    required:
-      - allowed_blocks
-      - allowed_tools
-
     properties:
-
       allowed_blocks:
         type: array
-        uniqueItems: true
-
         items:
           type: object
-          additionalProperties: false
-
-          required:
-            - id
-
           properties:
-
-            id:
-              $ref: "#/$defs/id"
-
-            max_count:
-              type: integer
-              minimum: 0
-
-            min_count:
-              type: integer
-              minimum: 0
-
+            id: *id003
+            min_count: *id010
+            max_count: *id010
+          additionalProperties: false
+          required:
+          - id
       allowed_tools:
         type: array
-        uniqueItems: true
-
         items:
           type: object
-          additionalProperties: false
-
-          required:
-            - id
-
           properties:
-
-            id:
-              $ref: "#/$defs/id"
-
-            max_durability:
-              type: number
-              minimum: 0
-
+            id: *id003
+            max_durability: *id011
+          additionalProperties: false
+          required:
+          - id
       starting_inventory:
         type: object
-        additionalProperties: false
-
         properties:
-
           blocks:
-            type: object
-            additionalProperties:
-              type: integer
-              minimum: 0
-
+            $ref: '#/$defs/count_map'
           tools:
-            type: object
-            additionalProperties:
-              type: integer
-              minimum: 0
-
+            $ref: '#/$defs/count_map'
+        additionalProperties: false
       targets:
         type: array
-
         items:
-          $ref: "#/$defs/construction_target"
-
+          type: object
+          properties:
+            id: *id003
+            type:
+              enum:
+              - block_group
+              - wall
+              - floor
+              - roof
+              - room
+              - house
+              - bridge
+              - building
+              - custom
+            region: &id012
+              $ref: '#/$defs/region'
+            required_block: *id003
+            dimensions:
+              type: object
+              properties:
+                width: *id009
+                height: *id009
+                depth: *id009
+                tolerance: *id011
+              additionalProperties: false
+            required_roles:
+              type: array
+              items: *id005
+            constraints: *id006
+          additionalProperties: false
+          required:
+          - id
+          - type
       constraints:
         type: object
-        additionalProperties: false
-
         properties:
-
-          max_total_blocks:
-            type: integer
-            minimum: 0
-
-          max_height:
-            type: integer
-            minimum: 0
-
-          max_depth_below_ground:
-            type: integer
-            minimum: 0
-
+          max_total_blocks: *id010
+          max_height: *id010
+          max_depth_below_ground: *id010
           allowed_regions:
             type: array
-
-            items:
-              $ref: "#/$defs/region"
-
+            items: *id012
           forbidden_regions:
             type: array
-
-            items:
-              $ref: "#/$defs/region"
-
+            items: *id012
           foundation:
             type: object
-            additionalProperties: false
-
             properties:
-
-              required:
-                type: boolean
-
-              max_depth:
-                type: integer
-                minimum: 0
-
+              required: *id008
+              max_depth: *id010
               allowed_roles:
                 type: array
-                items:
-                  type: string
-
+                items: *id005
+            additionalProperties: false
           structural_roles:
             type: object
-            additionalProperties: false
-
             properties:
-
               required:
                 type: array
-                uniqueItems: true
-                items:
-                  type: string
-
-              min_support_count:
-                type: integer
-                minimum: 0
-
-              max_support_count:
-                type: integer
-                minimum: 0
-
-              require_path_to_ground:
-                type: boolean
-
+                items: *id005
+              min_support_count: *id010
+              max_support_count: *id010
+              require_path_to_ground: *id008
+            additionalProperties: false
           overhang:
             type: object
-            additionalProperties: false
-
             properties:
-
-              allowed:
-                type: boolean
-
-              max_length:
-                type: number
-                minimum: 0
-
+              allowed: *id008
+              max_length: *id011
+            additionalProperties: false
           placement:
             type: object
-            additionalProperties: false
-
             properties:
-
-              require_support:
-                type: boolean
-
-              allow_floating:
-                type: boolean
-
-              snap_to_grid:
-                type: boolean
-
-              rotation_allowed:
-                type: boolean
-
+              require_support: *id008
+              allow_floating: *id008
+              snap_to_grid: *id008
+              rotation_allowed: *id008
+            additionalProperties: false
           material_limits:
             type: object
+            propertyNames: *id003
             additionalProperties:
               type: object
-              additionalProperties: false
-
               properties:
-
-                min:
-                  type: integer
-                  minimum: 0
-
-                max:
-                  type: integer
-                  minimum: 0
-
+                min: *id010
+                max: *id010
+              additionalProperties: false
+        additionalProperties: false
       validation:
         type: object
-        additionalProperties: false
-
         properties:
-
-          dimensions:
-            type: boolean
-
-          target_geometry:
-            type: boolean
-
-          material_limits:
-            type: boolean
-
-          support_graph:
-            type: boolean
-
-          architecture:
-            type: boolean
-
-          block_roles:
-            type: boolean
-
-
+          dimensions: *id008
+          target_geometry: *id008
+          material_limits: *id008
+          support_graph: *id008
+          architecture: *id008
+          block_roles: *id008
+        additionalProperties: false
+    additionalProperties: false
   economy:
     type: object
-    additionalProperties: false
-
-    required:
-      - budget
-
     properties:
-
-      budget:
-        type: number
-        minimum: 0
-
+      budget: *id011
       rules:
         type: object
-        additionalProperties: false
-
         properties:
-
-          allow_overdraft:
-            type: boolean
-
+          allow_overdraft: *id008
           waste_percentage:
             type: number
             minimum: 0
             maximum: 100
-
-          must_finish_within_budget:
-            type: boolean
-
+          must_finish_within_budget: *id008
+        additionalProperties: false
       multipliers:
-        type: object
-        additionalProperties:
-          type: number
-          minimum: 0
-
-
+        $ref: '#/$defs/number_map'
+    additionalProperties: false
+    required:
+    - budget
   physics:
     type: object
-    additionalProperties: false
-
     properties:
-
-      enabled:
-        type: boolean
-
-      gravity:
-        type: number
-        exclusiveMinimum: 0
-
+      enabled: *id008
+      gravity: *id009
       structural:
         type: object
-        additionalProperties: false
-
         properties:
-
-          stability_required:
-            type: boolean
-
-          collapse_enabled:
-            type: boolean
-
-          ground_support_required:
-            type: boolean
-
-          max_displacement:
-            type: number
-            minimum: 0
-
-          max_rotation:
-            type: number
-            minimum: 0
-
+          stability_required: *id008
+          collapse_enabled: *id008
+          ground_support_required: *id008
+          max_displacement: *id011
+          max_rotation: *id011
+        additionalProperties: false
       tests:
         type: array
-
         items:
           type: object
-          additionalProperties: false
-
-          required:
-            - id
-            - type
-
           properties:
-
-            id:
-              $ref: "#/$defs/id"
-
+            id: *id003
             type:
-              type: string
               enum:
-                - static_load
-                - moving_load
-                - earthquake
-                - wind
-                - impact
-
-            duration_seconds:
-              type: number
-              minimum: 0
-
+              - static_load
+              - moving_load
+              - earthquake
+              - wind
+              - impact
+            duration_seconds: *id011
             load:
-              $ref: "#/$defs/load_case"
-
-            environment:
               type: object
-              additionalProperties: true
-
-            acceptance:
-              type: object
-              additionalProperties: true
-
-
+              properties:
+                mass_kg: *id011
+                force_n: *id011
+                target:
+                  type: object
+                  properties:
+                    type:
+                      enum:
+                      - point
+                      - surface
+                      - region
+                      - structure
+                      - body
+                    id: *id003
+                    position: *id002
+                    region: *id012
+                  additionalProperties: false
+                distribution:
+                  enum:
+                  - point
+                  - uniform
+                  - moving_point
+                  - uniform_surface
+                direction: *id002
+              additionalProperties: false
+            environment: *id006
+            acceptance: *id006
+          additionalProperties: false
+          required:
+          - id
+          - type
+    additionalProperties: false
+    required:
+    - enabled
   objectives:
     type: object
-    additionalProperties: false
-
-    required:
-      - tasks
-      - completion
-      - failure
-
     properties:
-
       tasks:
         type: array
-
         items:
-          $ref: "#/$defs/task"
-
-      completion:
-        $ref: "#/$defs/condition"
-
-      failure:
-        $ref: "#/$defs/condition"
-
+          type: object
+          properties:
+            id: *id003
+            type:
+              enum:
+              - math
+              - construction
+              - purchase
+              - inspection
+              - dialogue
+              - custom
+            depends_on:
+              type: array
+              items: *id003
+            optional: *id008
+            math:
+              type: object
+              properties:
+                type: *id003
+                generator: *id006
+                expression: *id005
+                prompt: *id004
+                answer:
+                  type: object
+                  properties:
+                    mode:
+                      enum:
+                      - exact
+                      - tolerance
+                      - expression
+                      - multiple_choice
+                      - custom
+                    value: {}
+                    tolerance: *id011
+                    expression: *id005
+                  additionalProperties: false
+                  required:
+                  - mode
+              additionalProperties: false
+              required:
+              - type
+            target: *id003
+            data: *id006
+          additionalProperties: false
+          required:
+          - id
+          - type
+          if:
+            properties:
+              type:
+                const: construction
+              data:
+                required:
+                - kind
+            required:
+            - type
+            - data
+          then:
+            properties:
+              data:
+                properties:
+                  kind:
+                    const: place_block
+                  block: *id003
+                  count:
+                    type: integer
+                    minimum: 1
+                  title: *id004
+                  requires_challenge: *id003
+                required:
+                - kind
+                - block
+                - count
+        minItems: 1
+      completion: *id006
+      failure: *id006
       checkpoints:
         type: array
-
         items:
           type: object
-          additionalProperties: false
-
-          required:
-            - id
-
           properties:
-
-            id:
-              $ref: "#/$defs/id"
-
-            after_task:
-              $ref: "#/$defs/id"
-
-            autosave:
-              type: boolean
-
-      time_limit_seconds:
-        type: number
-        minimum: 0
-
+            id: *id003
+            after_task: *id003
+            autosave: *id008
+          additionalProperties: false
+          required:
+          - id
+      time_limit_seconds: *id011
       scoring:
         type: object
-        additionalProperties: false
-
         properties:
-
-          enabled:
-            type: boolean
-
-          maximum:
-            type: number
-            minimum: 0
-
+          enabled: *id008
+          maximum: *id011
           criteria:
-            type: object
-            additionalProperties:
-              type: number
-              minimum: 0
-
-
+            $ref: '#/$defs/number_map'
+        additionalProperties: false
+    additionalProperties: false
+    required:
+    - tasks
+    - completion
   events:
     type: array
-
     items:
       type: object
-      additionalProperties: false
-
-      required:
-        - id
-        - trigger
-        - actions
-
       properties:
-
-        id:
-          $ref: "#/$defs/id"
-
+        id: *id003
         trigger:
           type: object
-          additionalProperties: true
-
-          required:
-            - type
-
           properties:
-
             type:
               type: string
-
-            condition:
-              $ref: "#/$defs/condition"
-
+              minLength: 1
+            condition: *id006
+          additionalProperties: false
+          required:
+          - type
         actions:
           type: array
-
-          items:
-            type: object
-            additionalProperties: true
-
-            required:
-              - type
-
-            properties:
-
-              type:
-                type: string
-
-
+          items: *id006
+      additionalProperties: false
+      required:
+      - id
+      - trigger
+      - actions
   rewards:
     type: object
-    additionalProperties: false
-
     properties:
-
-      money:
-        type: number
-        minimum: 0
-
-      xp:
-        type: integer
-        minimum: 0
-
+      money: *id011
+      xp: *id010
       unlocks:
         type: object
-        additionalProperties: false
-
         properties:
-
-          blocks:
+          blocks: &id013
             type: array
-            uniqueItems: true
-            items:
-              $ref: "#/$defs/id"
-
-          tools:
-            type: array
-            uniqueItems: true
-            items:
-              $ref: "#/$defs/id"
-
-          stages:
-            type: array
-            uniqueItems: true
-            items:
-              $ref: "#/$defs/id"
-
-          assets:
-            type: array
-            uniqueItems: true
-            items:
-              $ref: "#/$defs/id"
-
-
+            items: *id003
+          tools: *id013
+          stages: *id013
+          assets: *id013
+        additionalProperties: false
+    additionalProperties: false
   audio:
     type: object
-    additionalProperties: false
-
     properties:
-
-      music:
-        type:
-          - string
-          - "null"
-
-      ambience:
-        type:
-          - string
-          - "null"
-
+      music: *id003
+      ambience: *id003
       sounds:
         type: object
-        additionalProperties:
-          type: string
-
-
+        additionalProperties: *id003
+    additionalProperties: false
   localization:
     type: object
-    additionalProperties: false
-
-    description: "Optional stage-local FTL bundle. Semantic compiler validation decides whether it is required."
-
     properties:
-
-      ftl:
-        $ref: "#/$defs/relative_path"
-
-      namespace:
-        type: string
-        minLength: 1
-
-
-  extensions:
-    type: object
-    additionalProperties: true
-
-
-$defs:
-
-  id:
-    type: string
-    pattern: "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$"
-
-  localization_key:
-    type: string
-    pattern: "^[a-zA-Z0-9._-]+$"
-
-  relative_path:
-    type: string
-    pattern: "^(?!/)(?!.*\\.\\.).+$"
-
-  vec3_integer:
-    type: array
-    prefixItems:
-      - type: integer
-      - type: integer
-      - type: integer
-    minItems: 3
-    maxItems: 3
-
-  vec3_number:
-    type: array
-    prefixItems:
-      - type: number
-      - type: number
-      - type: number
-    minItems: 3
-    maxItems: 3
-
-  transform:
-    type: object
+      ftl: *id007
+      namespace: *id004
     additionalProperties: false
-
-    properties:
-
-      position:
-        $ref: "#/$defs/vec3_number"
-
-      rotation:
-        $ref: "#/$defs/vec3_number"
-
-      scale:
-        $ref: "#/$defs/vec3_number"
-
-
-  region:
-    type: object
-    additionalProperties: false
-
-    required:
-      - min
-      - max
-
-    properties:
-
-      min:
-        $ref: "#/$defs/vec3_integer"
-
-      max:
-        $ref: "#/$defs/vec3_integer"
-
-
-  initial_block:
-    type: object
-    additionalProperties: false
-
-    required:
-      - id
-      - block
-      - position
-
-    properties:
-
-      id:
-        $ref: "#/$defs/id"
-
-      block:
-        $ref: "#/$defs/id"
-
-      position:
-        $ref: "#/$defs/vec3_integer"
-
-      rotation:
-        $ref: "#/$defs/vec3_integer"
-
-      state:
-        type: object
-        additionalProperties: true
-
-
-  construction_target:
-    type: object
-    additionalProperties: false
-
-    required:
-      - id
-      - type
-
-    properties:
-
-      id:
-        $ref: "#/$defs/id"
-
-      type:
-        type: string
-        enum:
-          - block_group
-          - wall
-          - floor
-          - roof
-          - room
-          - house
-          - bridge
-          - building
-          - custom
-
-      region:
-        $ref: "#/$defs/region"
-
-      required_block:
-        $ref: "#/$defs/id"
-
-      dimensions:
-        type: object
-        additionalProperties: false
-
-        properties:
-
-          width:
-            type: number
-            minimum: 0
-
-          height:
-            type: number
-            minimum: 0
-
-          depth:
-            type: number
-            minimum: 0
-
-          tolerance:
-            type: number
-            minimum: 0
-
-      required_roles:
-        type: array
-        uniqueItems: true
-
-        items:
-          type: string
-
-      constraints:
-        type: object
-        additionalProperties: true
-
-
-  task:
-    type: object
-    additionalProperties: false
-
-    required:
-      - id
-      - type
-
-    properties:
-
-      id:
-        $ref: "#/$defs/id"
-
-      type:
-        type: string
-        enum:
-          - math
-          - construction
-          - purchase
-          - inspection
-          - dialogue
-          - custom
-
-      depends_on:
-        type: array
-        uniqueItems: true
-        items:
-          $ref: "#/$defs/id"
-
-      optional:
-        type: boolean
-
-      math:
-        type: object
-        additionalProperties: true
-
-        properties:
-
-          type:
-            type: string
-
-          generator:
-            type: object
-            additionalProperties: true
-
-          answer:
-            type: object
-            additionalProperties: false
-
-            required:
-              - mode
-
-            properties:
-
-              mode:
-                type: string
-                enum:
-                  - exact
-                  - tolerance
-                  - expression
-                  - multiple_choice
-                  - custom
-
-              value: {}
-
-              tolerance:
-                type: number
-                minimum: 0
-
-              expression:
-                type: string
-
-      target:
-        $ref: "#/$defs/id"
-
-      data:
-        type: object
-        additionalProperties: true
-
-
-  load_case:
-    type: object
-    additionalProperties: false
-
-    properties:
-
-      mass_kg:
-        type: number
-        minimum: 0
-
-      force_n:
-        type: number
-        minimum: 0
-
-      target:
-        type: object
-        additionalProperties: false
-
-        required:
-          - type
-
-        properties:
-
-          type:
-            type: string
-            enum:
-              - point
-              - surface
-              - region
-              - structure
-              - body
-
-          id:
-            $ref: "#/$defs/id"
-
-          position:
-            $ref: "#/$defs/vec3_number"
-
-          region:
-            $ref: "#/$defs/region"
-
-      distribution:
-        type: string
-        enum:
-          - point
-          - uniform
-          - moving_point
-          - uniform_surface
-
-      direction:
-        $ref: "#/$defs/vec3_number"
-
-
-  condition:
-    oneOf:
-
-      - type: object
-        additionalProperties: false
-        required:
-          - all
-
-        properties:
-          all:
-            type: array
-            minItems: 1
-            items:
-              $ref: "#/$defs/condition"
-
-      - type: object
-        additionalProperties: false
-        required:
-          - any
-
-        properties:
-          any:
-            type: array
-            minItems: 1
-            items:
-              $ref: "#/$defs/condition"
-
-      - type: object
-        additionalProperties: false
-        required:
-          - not
-
-        properties:
-          not:
-            $ref: "#/$defs/condition"
-
-      - type: object
-        additionalProperties: false
-        required:
-          - task_completed
-
-        properties:
-          task_completed:
-            $ref: "#/$defs/id"
-
-      - type: object
-        additionalProperties: false
-        required:
-          - target_completed
-
-        properties:
-          target_completed:
-            $ref: "#/$defs/id"
-
-      - type: object
-        additionalProperties: false
-        required:
-          - structure_stable
-
-        properties:
-          structure_stable:
-            type: boolean
-
-      - type: object
-        additionalProperties: false
-        required:
-          - physics_test_passed
-
-        properties:
-          physics_test_passed:
-            $ref: "#/$defs/id"
-
-      - type: object
-        additionalProperties: false
-        required:
-          - compare
-
-        properties:
-
-          compare:
-            type: object
-            additionalProperties: false
-
-            required:
-              - metric
-              - operator
-              - value
-
-            properties:
-
-              metric:
-                type: string
-                minLength: 1
-
-              operator:
-                type: string
-                enum:
-                  - "=="
-                  - "!="
-                  - ">"
-                  - ">="
-                  - "<"
-                  - "<="
-
-              value: {}
+  extensions: *id006
+required:
+- schema_version
+- stage
+- learning
+- world
+- construction
+- objectives
+- rewards
+additionalProperties: false

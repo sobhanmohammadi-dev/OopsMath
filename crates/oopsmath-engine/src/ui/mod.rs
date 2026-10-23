@@ -39,6 +39,7 @@ impl Plugin for OopsMathUiPlugin {
                     hud::gameplay::spawn,
                     hud::shop::spawn_shop_button,
                     hud::challenge::spawn_challenge_button,
+                    hud::blueprint::spawn_blueprint_button,
                 ),
             )
             .add_systems(OnExit(AppState::InGame), hud::gameplay::clear)
@@ -56,10 +57,14 @@ impl Plugin for OopsMathUiPlugin {
                     hud::challenge::handle_challenge_input,
                     hud::challenge::sync_challenge_button,
                     hud::challenge::refresh_challenge_popup,
+                    hud::blueprint::handle_blueprint_input,
+                    hud::blueprint::sync_blueprint_button,
+                    hud::blueprint::refresh_blueprint_popup,
                 )
                     .chain()
                     .run_if(in_state(AppState::InGame)),
             )
+            .add_plugins(hud::session::SessionHudPlugin)
             .add_systems(Update, common_button_interaction);
     }
 }

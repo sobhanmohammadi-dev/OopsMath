@@ -402,6 +402,35 @@ properties:
           required:
           - id
           - type
+      blueprints:
+        type: array
+        items:
+          type: object
+          properties:
+            id: *id003
+            title: *id004
+            blocks:
+              type: array
+              items:
+                type: object
+                properties:
+                  block: *id003
+                  position: *id001
+                  rotation:
+                    enum:
+                    - 0
+                    - 90
+                    - 180
+                    - 270
+                additionalProperties: false
+                required:
+                - block
+                - position
+              minItems: 1
+          additionalProperties: false
+          required:
+          - id
+          - blocks
       constraints:
         type: object
         properties:

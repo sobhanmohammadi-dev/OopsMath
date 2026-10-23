@@ -1,6 +1,6 @@
 # OopsMath Stage Compiler (OMSC)
 
-**DAT v1 · Stage Schema v1 · Compiler 1.1.0**
+**DAT v1 · Stage Schema v1 · Compiler 1.2.0**
 
 OopsMath Stage Compiler (**OMSC**) is the offline content compiler for **OopsMath**.
 
@@ -471,7 +471,33 @@ against). `stage.schema.yaml` is generated documentation; regenerate it after an
 schema change with `python -m oopsmath_stage.schema_export > stage.schema.yaml`. The
 self test "stage.schema.yaml matches the embedded schema" fails on drift.
 
+## Blueprints (Compiler 1.2)
+
+Optional `construction.blueprints` (additive; Stage Schema v1 and DAT v1 unchanged,
+older stages validate and compile as before):
+
+```yaml
+construction:
+  blueprints:
+    - id: bp_wall_a                              # unique among blueprints
+      title: stage.my_stage.blueprint.wall       # optional localization key
+      blocks:                                    # at least one
+        - {block: block.wood_log, position: [0, 0, 0]}
+        - {block: block.wood_log, position: [1, 0, 0], rotation: 90}
+```
+
+`position` is the block's anchor cell (grid cell relative to the world origin, as when
+placing it); `rotation` is the yaw in degrees (0, 90, 180 or 270, default 0). The
+compiler checks the shape, that blocks are registered (with `--manifest`) and listed in
+`construction.allowed_blocks`, that positions are inside the world, that no two planned
+blocks share an anchor cell and that the `title` key exists. Footprint overlaps and
+rotation rules need block dimensions, so the game validates those when the stage loads
+(`docs/blocks/BLUEPRINTS.md`).
+
 ## Changelog
+
+* **1.2.0**: optional `construction.blueprints` (schema, validation, localization check),
+  example blueprint.
 
 * **1.1.0**: optional `math.prompt`; typed block-count objectives
   (`data.kind: place_block`); localization checks for the new keys; no warning for

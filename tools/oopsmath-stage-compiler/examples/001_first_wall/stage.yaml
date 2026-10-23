@@ -27,6 +27,20 @@ construction:
   allowed_blocks:
     # max_count = most instances of the block that may be placed at once
     - {id: block.wood_log, min_count: 0, max_count: 20}
+  # A plan the player can inspect and follow (Compiler 1.2). `position` is the block's
+  # anchor cell relative to the world origin; `rotation` is optional (0, 90, 180, 270).
+  blueprints:
+    - id: bp_wall_a
+      title: stage.001_first_wall.blueprint.wall
+      blocks:
+        - {block: block.wood_log, position: [0, 0, 0]}
+        - {block: block.wood_log, position: [1, 0, 0]}
+        - {block: block.wood_log, position: [2, 0, 0]}
+        - {block: block.wood_log, position: [3, 0, 0]}
+        - {block: block.wood_log, position: [0, 1, 0]}
+        - {block: block.wood_log, position: [1, 1, 0]}
+        - {block: block.wood_log, position: [2, 1, 0]}
+        - {block: block.wood_log, position: [3, 1, 0], rotation: 0}
   allowed_tools:
     - {id: hammer}
   starting_inventory:

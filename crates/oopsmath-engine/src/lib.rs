@@ -1,5 +1,6 @@
 pub mod app;
 pub mod blocks;
+pub mod blueprint;
 pub mod challenges;
 pub mod core;
 pub mod items;

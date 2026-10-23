@@ -158,6 +158,16 @@ def _build_stage_schema() -> dict[str, Any]:
             "required_roles": arr(string),
             "constraints": free_object,
         }, required=("id", "type"))),
+        # Construction plans the player can inspect and follow (Compiler 1.2, additive).
+        # `position` is a grid cell relative to the world origin (the anchor cell of the
+        # block, as when placing it); `rotation` is the yaw in degrees.
+        "blueprints": arr(obj({
+            "id": ident, "title": loc,
+            "blocks": arr(obj({
+                "block": ident, "position": vec3i,
+                "rotation": {"enum": [0, 90, 180, 270]},
+            }, required=("block", "position")), minItems=1),
+        }, required=("id", "blocks"))),
         "constraints": constraints,
         "validation": obj({k: boolean for k in (
             "dimensions", "target_geometry", "material_limits",

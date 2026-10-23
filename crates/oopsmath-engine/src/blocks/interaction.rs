@@ -28,8 +28,10 @@ use super::rendering::spawn_block;
 use super::selection::SelectedBlock;
 use super::stage_rules::StagePlacementRules;
 use super::targeting::ray_pick_occupied;
+use crate::app::session::SessionUi;
 use crate::app::stages::LoadedStage;
 use crate::app::states::AppState;
+use crate::blueprint::BlueprintMode;
 use crate::challenges::ChallengePanel;
 use crate::items::inventory::Inventory;
 use crate::items::shop::ShopState;
@@ -124,7 +126,9 @@ impl Plugin for BlockPlacementPlugin {
                         in_state(AppState::InGame)
                             .and_then(resource_exists::<StageScene>)
                             .and_then(|shop: Res<ShopState>| !shop.open)
-                            .and_then(|panel: Res<ChallengePanel>| !panel.open),
+                            .and_then(|panel: Res<ChallengePanel>| !panel.open)
+                            .and_then(|plan: Res<BlueprintMode>| !plan.panel_open)
+                            .and_then(|session: Res<SessionUi>| !session.blocks_world()),
                     ),
             );
     }

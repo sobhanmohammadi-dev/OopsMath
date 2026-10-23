@@ -8,6 +8,7 @@ use crate::{
         states::AppState,
     },
     blocks::{BlockAssetsPlugin, BlockPlacementPlugin, BlockPreviewPlugin, BlocksPlugin},
+    blueprint::BlueprintPlugin,
     challenges::ChallengesPlugin,
     items::ItemsPlugin,
     objectives::ObjectivesPlugin,
@@ -36,6 +37,7 @@ impl Plugin for OopsMathEnginePlugin {
                 ChallengesPlugin,
                 ObjectivesPlugin,
                 StructurePlugin,
+                BlueprintPlugin,
             ))
             .add_systems(OnEnter(AppState::Boot), boot_system)
             .add_systems(OnEnter(AppState::LoadingStage), load_selected_stage);

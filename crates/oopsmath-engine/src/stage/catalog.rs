@@ -308,8 +308,12 @@ pub(crate) fn resolve_stages_dir(
         return PathBuf::from(dir);
     }
     // `<root>/crates/<crate>/../../stages`, the same trick `main.rs` uses for assets.
-    let development = manifest_dir
-        .map(|manifest| PathBuf::from(manifest).join("..").join("..").join(STAGES_DIR_NAME));
+    let development = manifest_dir.map(|manifest| {
+        PathBuf::from(manifest)
+            .join("..")
+            .join("..")
+            .join(STAGES_DIR_NAME)
+    });
     if let Some(dir) = development.filter(|dir| is_dir(dir.as_path())) {
         return dir;
     }

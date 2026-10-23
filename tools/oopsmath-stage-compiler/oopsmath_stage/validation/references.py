@@ -191,6 +191,25 @@ def validate_references(data: dict[str, Any], opts: CompileOptions, diag: Diagno
         else:
             seen_positions[pos] = i
 
+    # --- construction blueprints (Compiler 1.2) -------------------------------
+    blueprints = construction.get("blueprints", [])
+    _unique_ids(blueprints, "construction.blueprints", "blueprint", diag)
+    for i, blueprint in enumerate(blueprints):
+        used: dict[tuple[int, ...], int] = {}
+        for j, planned in enumerate(blueprint["blocks"]):
+            base = f"construction.blueprints[{i}].blocks[{j}]"
+            _check_registered("block", reg.blocks, planned["block"], f"{base}.block", diag)
+            if allowed_blocks and planned["block"] not in allowed_block_ids:
+                diag.error(f"{base}.block '{planned['block']}' is not listed in construction.allowed_blocks")
+            pos = tuple(planned["position"])
+            if any(not 0 <= pos[a] < size[a] for a in range(3)):
+                diag.error(f"{base}.position {list(pos)} is outside the world bounds")
+            if pos in used:
+                diag.error(f"{base}.position {list(pos)} is already used by blocks[{used[pos]}] "
+                           "(planned blocks must not overlap)")
+            else:
+                used[pos] = j
+
     # --- construction --------------------------------------------------------
     for i, entry in enumerate(allowed_blocks):
         if entry.get("min_count", 0) > entry.get("max_count", entry.get("min_count", 0)):

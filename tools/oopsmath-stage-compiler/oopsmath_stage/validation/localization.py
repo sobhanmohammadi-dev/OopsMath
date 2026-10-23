@@ -66,6 +66,9 @@ def collect_localization_refs(data: dict[str, Any]) -> list[tuple[str, str]]:
     for i, line in enumerate(data.get("story", {}).get("dialogue", [])):
         refs.append((f"story.dialogue[{i}].text", line["text"]))
     refs.append(("learning.question", learning["question"]))
+    for i, blueprint in enumerate(data.get("construction", {}).get("blueprints", [])):
+        if "title" in blueprint:
+            refs.append((f"construction.blueprints[{i}].title", blueprint["title"]))
     for i, task in enumerate(data.get("objectives", {}).get("tasks", [])):
         math, info = task.get("math"), task.get("data")
         if isinstance(math, dict) and isinstance(math.get("prompt"), str):

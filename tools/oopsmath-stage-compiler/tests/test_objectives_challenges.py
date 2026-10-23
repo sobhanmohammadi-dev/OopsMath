@@ -107,3 +107,46 @@ def test_other_construction_data_is_left_alone(tmp_path):
             {"id": "t_free", "type": "construction", "target": "wall_a", "data": {"anything": [1, 2]}})
     assert _errors(tmp_path, custom) == []
 
+
+
+# ----------------------------------------------------------- blueprints (1.2)
+
+def _blueprint(data):
+    return data["construction"]["blueprints"][0]
+
+
+def test_example_blueprint_is_valid_and_survives_the_dat(tmp_path):
+    result = validate_stage(_stage(tmp_path), CompileOptions())
+    assert result.diag.errors == [] and result.diag.warnings == []
+    parsed = parse_dat(compile_stage(result.source))
+    stag = next(s for s in parsed.sections if s.type == "STAG")
+    stage = msgpack.unpackb(stag.raw, raw=False)
+    blueprint = stage["construction"]["blueprints"][0]
+    assert blueprint["id"] == "bp_wall_a" and len(blueprint["blocks"]) == 8
+    assert blueprint["blocks"][0] == {"block": "block.wood_log", "position": [0, 0, 0]}
+
+
+def test_stages_without_blueprints_still_validate(tmp_path):
+    assert _errors(tmp_path, lambda d: d["construction"].pop("blueprints")) == []
+
+
+@pytest.mark.parametrize("change", [
+    lambda b: b["blocks"][0].update(rotation=45),                   # not a quarter turn
+    lambda b: b["blocks"][0].update(position=[0, 0]),                # not a cell
+    lambda b: b["blocks"][0].update(position=[99, 0, 0]),            # outside the world
+    lambda b: b["blocks"][0].update(position=[-1, 0, 0]),
+    lambda b: b["blocks"][1].update(position=[0, 0, 0]),            # same anchor cell twice
+    lambda b: b["blocks"][0].pop("block"),
+    lambda b: b.update(blocks=[]),                                   # empty plan
+    lambda b: b.update(title="stage.001_first_wall.missing"),        # unknown translation key
+    lambda b: b["blocks"][0].update(block="block.stone"),            # not allowed in the stage
+    lambda b: b.pop("id"),
+])
+def test_invalid_blueprints_are_rejected(tmp_path, change):
+    assert _errors(tmp_path, lambda d: change(_blueprint(d))) != []
+
+
+def test_duplicate_blueprint_ids_are_rejected(tmp_path):
+    def dup(d):
+        d["construction"]["blueprints"].append(copy.deepcopy(_blueprint(d)))
+    assert any("bp_wall_a" in e for e in _errors(tmp_path, dup))

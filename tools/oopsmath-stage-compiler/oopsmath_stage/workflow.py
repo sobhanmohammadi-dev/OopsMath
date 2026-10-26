@@ -40,11 +40,13 @@ class BuildOutcome:
 
 
 def make_options(*, manifest: Optional[str] = None, base_locales: Optional[str] = None,
-                 strict: bool = False, debug: bool = False) -> CompileOptions:
+                 strict: bool = False, debug: bool = False, i18n: Optional[str] = None,
+                 no_i18n: bool = False) -> CompileOptions:
     return CompileOptions(
         manifest=load_manifest(Path(manifest)) if manifest else None,
         base_keys=load_base_locales(Path(base_locales)) if base_locales else None,
-        strict=strict, debug=debug)
+        strict=strict, debug=debug,
+        i18n_dir=Path(i18n) if i18n else None, bake_i18n=not no_i18n)
 
 
 def resolve_output(output: Optional[Path], stage_id: str, *, as_dir: bool = False) -> Path:

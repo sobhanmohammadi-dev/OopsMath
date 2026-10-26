@@ -15,65 +15,34 @@
 //! `AppState::StageBrowser`; `OnExit(InGame)` cleanup does the rest.
 
 use bevy::prelude::*;
-use bevy::ui::GlobalZIndex;
 
 use crate::app::session::{SessionAction, SessionOverlay, SessionUi};
 use crate::app::states::AppState;
 use crate::blueprint::BlueprintMode;
 use crate::challenges::ChallengePanel;
+use crate::i18n::{FontRole, LocalizedText};
 use crate::items::shop::ShopState;
 use crate::objectives::ObjectiveTracker;
+use crate::ui::style::{ButtonKind, dialog_button, font, modal_overlay, modal_panel, text};
 use crate::ui::theme::UiTheme;
 
 use super::{blueprint, challenge, shop};
 
-/// Controls shown in the help panel. Every line was checked against the
-/// input code (see `docs/blocks/SESSION.md`).
+/// Message ids of the controls shown in the help panel: (name, description).
+/// Every line was checked against the input code (see `docs/blocks/SESSION.md`);
+/// the texts are in `assets/i18n/<lang>/core.ftl`.
 pub const CONTROLS: &[(&str, &str)] = &[
-    (
-        "Choose what to use",
-        "Click a block in BLOCKS (top right) or an item in INVENTORY (bottom right).",
-    ),
-    (
-        "Place a block",
-        "Left click on the ground or on the face of a placed block. A ghost shows where it will go.",
-    ),
-    (
-        "Rotate a block",
-        "R turns the selected block a quarter turn (only blocks that can rotate).",
-    ),
-    (
-        "Remove a block",
-        "Select the Hammer in INVENTORY, then left click a placed block. You get the block back.",
-    ),
-    (
-        "Camera",
-        "Hold the right mouse button and drag to orbit, the middle button to pan, the wheel to zoom.",
-    ),
-    (
-        "Shop",
-        "Shop button (bottom left): buy blocks with your coins.",
-    ),
-    (
-        "Math Challenge",
-        "Math Challenge button (bottom left, if the stage has one): type the answer, Enter or Submit.",
-    ),
-    (
-        "Plan",
-        "Plan button (bottom left, if the stage has one): shows what a blueprint needs. Nothing is built for you.",
-    ),
-    (
-        "Objectives",
-        "The stage panel (top left) lists what you must do. Finish them all to complete the stage.",
-    ),
-    (
-        "Stability",
-        "Blocks must touch the ground or another block. If their support is removed they fall.",
-    ),
-    (
-        "Menu and windows",
-        "Esc closes an open window; otherwise it opens this menu. Back to Stages leaves the stage.",
-    ),
+    ("help-select-name", "help-select-text"),
+    ("help-place-name", "help-place-text"),
+    ("help-rotate-name", "help-rotate-text"),
+    ("help-remove-name", "help-remove-text"),
+    ("help-camera-name", "help-camera-text"),
+    ("help-shop-name", "help-shop-text"),
+    ("help-math-name", "help-math-text"),
+    ("help-plan-name", "help-plan-text"),
+    ("help-objectives-name", "help-objectives-text"),
+    ("help-stability-name", "help-stability-text"),
+    ("help-menu-name", "help-menu-text"),
 ];
 
 #[derive(Component)]
@@ -82,13 +51,6 @@ pub struct SessionMenuButton;
 pub struct SessionOverlayRoot;
 #[derive(Component)]
 pub struct SessionActionButton(pub SessionAction);
-
-fn font(size: f32) -> TextFont {
-    TextFont {
-        font_size: FontSize::Px(size),
-        ..default()
-    }
-}
 
 pub struct SessionHudPlugin;
 
@@ -137,8 +99,10 @@ pub fn spawn_menu_button(mut commands: Commands, theme: Res<UiTheme>) {
             ..default()
         },
         BackgroundColor(theme.button),
-        Text::new("Menu (Esc)"),
-        font(18.0),
+        Text::new(""),
+        LocalizedText::new("hud-menu"),
+        FontRole::Button,
+        font(text::BUTTON),
         TextColor(theme.text),
         DespawnOnExit(AppState::InGame),
     ));
@@ -206,20 +170,24 @@ pub fn detect_completion(
     }
 }
 
-fn button(parent: &mut ChildSpawnerCommands, theme: &UiTheme, label: &str, action: SessionAction) {
-    parent.spawn((
-        Button,
-        SessionActionButton(action),
-        Node {
-            padding: UiRect::axes(px(14), px(10)),
-            justify_content: JustifyContent::Center,
-            ..default()
-        },
-        BackgroundColor(theme.button),
-        Text::new(label),
-        font(18.0),
-        TextColor(theme.text),
-    ));
+fn button(
+    parent: &mut ChildSpawnerCommands,
+    theme: &UiTheme,
+    key: &str,
+    kind: ButtonKind,
+    action: SessionAction,
+) {
+    dialog_button(parent, theme, key, kind, SessionActionButton(action));
+}
+
+/// A text that follows the language.
+fn label(key: &str, size: f32, color: Color) -> impl Bundle {
+    (
+        Text::new(""),
+        LocalizedText::new(key),
+        font(size),
+        TextColor(color),
+    )
 }
 
 /// Rebuilds the overlay when the session changed (rare), never per frame.
@@ -245,79 +213,105 @@ pub fn refresh_session_overlay(
         420.0
     };
     commands
-        .spawn((
-            SessionOverlayRoot,
-            Node {
-                position_type: PositionType::Absolute,
-                width: percent(100),
-                height: percent(100),
-                align_items: AlignItems::Center,
-                justify_content: JustifyContent::Center,
-                ..default()
-            },
-            BackgroundColor(Color::srgba(0.0, 0.0, 0.0, 0.6)),
-            Interaction::default(),
-            GlobalZIndex(110),
-            DespawnOnExit(AppState::InGame),
-        ))
+        .spawn((SessionOverlayRoot, modal_overlay(&theme)))
         .with_children(|root| {
-            root.spawn((
-                Node {
-                    width: px(width),
-                    padding: UiRect::all(px(18)),
-                    flex_direction: FlexDirection::Column,
-                    row_gap: px(10),
-                    ..default()
-                },
-                BackgroundColor(theme.panel),
-                Interaction::default(),
-            ))
-            .with_children(|panel| match overlay {
-                SessionOverlay::Menu => {
-                    panel.spawn((Text::new("MENU"), font(26.0), TextColor(theme.text)));
-                    button(panel, &theme, "Resume", SessionAction::Resume);
-                    button(panel, &theme, "Controls", SessionAction::ShowControls);
-                    button(panel, &theme, "Restart Stage", SessionAction::Restart);
-                    button(panel, &theme, "Back to Stages", SessionAction::BackToStages);
-                    panel.spawn((
-                        Text::new(
-                            "Restart and Back to Stages discard your progress in this stage.",
-                        ),
-                        font(14.0),
-                        TextColor(theme.secondary_text),
-                    ));
-                }
-                SessionOverlay::Help => {
-                    panel.spawn((Text::new("CONTROLS"), font(26.0), TextColor(theme.text)));
-                    for (name, text) in CONTROLS {
-                        panel
-                            .spawn(Node {
-                                flex_direction: FlexDirection::Column,
-                                ..default()
-                            })
-                            .with_children(|row| {
-                                row.spawn((Text::new(*name), font(16.0), TextColor(theme.accent)));
-                                row.spawn((Text::new(*text), font(15.0), TextColor(theme.text)));
-                            });
+            root.spawn(modal_panel(&theme, width))
+                .with_children(|panel| match overlay {
+                    SessionOverlay::Menu => {
+                        panel.spawn((
+                            label("session-menu-title", text::TITLE, theme.text),
+                            FontRole::Title,
+                        ));
+                        button(
+                            panel,
+                            &theme,
+                            "session-resume",
+                            ButtonKind::Primary,
+                            SessionAction::Resume,
+                        );
+                        button(
+                            panel,
+                            &theme,
+                            "session-controls",
+                            ButtonKind::Secondary,
+                            SessionAction::ShowControls,
+                        );
+                        button(
+                            panel,
+                            &theme,
+                            "session-restart",
+                            ButtonKind::Secondary,
+                            SessionAction::Restart,
+                        );
+                        button(
+                            panel,
+                            &theme,
+                            "session-back-to-stages",
+                            ButtonKind::Secondary,
+                            SessionAction::BackToStages,
+                        );
+                        panel.spawn(label(
+                            "session-discard-warning",
+                            text::HELPER,
+                            theme.secondary_text,
+                        ));
                     }
-                    button(panel, &theme, "Back", SessionAction::BackToMenu);
-                }
-                SessionOverlay::Complete => {
-                    panel.spawn((
-                        Text::new("STAGE COMPLETE!"),
-                        font(28.0),
-                        TextColor(theme.accent),
-                    ));
-                    panel.spawn((
-                        Text::new("You finished every objective of this stage."),
-                        font(17.0),
-                        TextColor(theme.text),
-                    ));
-                    button(panel, &theme, "Replay Stage", SessionAction::Restart);
-                    button(panel, &theme, "Back to Stages", SessionAction::BackToStages);
-                    button(panel, &theme, "Keep Building", SessionAction::KeepBuilding);
-                }
-                SessionOverlay::None => {}
-            });
+                    SessionOverlay::Help => {
+                        panel.spawn((
+                            label("session-controls-title", text::TITLE, theme.text),
+                            FontRole::Title,
+                        ));
+                        for (name, description) in CONTROLS {
+                            panel
+                                .spawn(Node {
+                                    flex_direction: FlexDirection::Column,
+                                    ..default()
+                                })
+                                .with_children(|row| {
+                                    row.spawn((
+                                        label(name, text::BODY, theme.accent),
+                                        FontRole::Heading,
+                                    ));
+                                    row.spawn(label(description, text::BODY - 1.0, theme.text));
+                                });
+                        }
+                        button(
+                            panel,
+                            &theme,
+                            "session-back",
+                            ButtonKind::Primary,
+                            SessionAction::BackToMenu,
+                        );
+                    }
+                    SessionOverlay::Complete => {
+                        panel.spawn((
+                            label("session-complete-title", text::TITLE + 2.0, theme.success),
+                            FontRole::Title,
+                        ));
+                        panel.spawn(label("session-complete-body", text::BODY, theme.text));
+                        button(
+                            panel,
+                            &theme,
+                            "session-replay",
+                            ButtonKind::Primary,
+                            SessionAction::Restart,
+                        );
+                        button(
+                            panel,
+                            &theme,
+                            "session-back-to-stages",
+                            ButtonKind::Secondary,
+                            SessionAction::BackToStages,
+                        );
+                        button(
+                            panel,
+                            &theme,
+                            "session-keep-building",
+                            ButtonKind::Secondary,
+                            SessionAction::KeepBuilding,
+                        );
+                    }
+                    SessionOverlay::None => {}
+                });
         });
 }

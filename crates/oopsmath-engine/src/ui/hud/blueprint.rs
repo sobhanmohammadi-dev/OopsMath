@@ -203,7 +203,7 @@ pub fn refresh_blueprint_popup(
                 justify_content: JustifyContent::Center,
                 ..default()
             },
-            BackgroundColor(Color::srgba(0.0, 0.0, 0.0, 0.6)),
+            BackgroundColor(theme.overlay),
             Interaction::default(),
             GlobalZIndex(100),
             DespawnOnExit(AppState::InGame),

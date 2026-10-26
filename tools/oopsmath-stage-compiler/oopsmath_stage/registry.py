@@ -29,6 +29,12 @@ class CompileOptions:
     strict: bool = False
     debug: bool = False
     known_stage_ids: Optional[frozenset[str]] = None
+    #: Language packs (``assets/i18n``) whose ``<lang>/levels/<stage id>.ftl``
+    #: translations are baked into the stage. ``None`` = look for
+    #: ``assets/i18n`` in the stage's parent folders.
+    i18n_dir: Optional[Path] = None
+    #: ``False`` (``--no-i18n``) builds the stage from its own sources only.
+    bake_i18n: bool = True
 
 
 def _registry_ids(value: Any, name: str) -> frozenset[str]:

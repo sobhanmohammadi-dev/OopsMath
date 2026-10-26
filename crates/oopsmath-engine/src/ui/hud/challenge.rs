@@ -17,6 +17,7 @@ use bevy::ui::GlobalZIndex;
 use crate::app::states::AppState;
 use crate::challenges::{ChallengePanel, ChallengeTracker, StageChallenges};
 use crate::items::shop::ShopState;
+use crate::ui::style::PrimaryButton;
 use crate::ui::theme::UiTheme;
 
 #[derive(Component)]
@@ -190,7 +191,7 @@ pub fn refresh_challenge_popup(
                 justify_content: JustifyContent::Center,
                 ..default()
             },
-            BackgroundColor(Color::srgba(0.0, 0.0, 0.0, 0.6)),
+            BackgroundColor(theme.overlay),
             // Blocks the HUD and world behind the popup.
             Interaction::default(),
             GlobalZIndex(100),
@@ -252,7 +253,12 @@ pub fn refresh_challenge_popup(
                             font(22.0),
                             TextColor(theme.accent),
                         ));
-                        small_button(box_, &theme, "Submit", ChallengeSubmitButton);
+                        small_button(
+                            box_,
+                            &theme,
+                            "Submit",
+                            (ChallengeSubmitButton, PrimaryButton),
+                        );
                     }
                     if let Some(feedback) = &panel.feedback {
                         box_.spawn((

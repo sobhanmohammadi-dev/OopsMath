@@ -51,6 +51,11 @@ class SourceDataError(ValueError):
 class Diagnostics:
     errors: list[str] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
+    #: Informational messages (never fail a build, even with --strict).
+    notes: list[str] = field(default_factory=list)
+
+    def note(self, message: str) -> None:
+        self.notes.append(message)
 
     def error(self, message: str) -> None:
         self.errors.append(message)

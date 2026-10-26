@@ -6,7 +6,7 @@ import enum
 import re
 import struct
 
-COMPILER_VERSION = "1.2.0"
+COMPILER_VERSION = "1.3.0"
 
 EXIT_OK = 0
 EXIT_VALIDATION = 2
@@ -82,6 +82,8 @@ SECTION_HEADER_FLAG = {
 
 ID_PATTERN = r"^[A-Za-z0-9_][A-Za-z0-9_.\-]*$"
 LOC_KEY_PATTERN = r"^[A-Za-z][A-Za-z0-9_.\-]*$"
+# The language every stage is authored in; other languages come from language packs.
+SOURCE_LOCALE = "en-US"
 LOCALE_RE = re.compile(r"^[A-Za-z]{2,3}(?:[_-][A-Za-z0-9]+)*$")
 PALETTE_KEY_PATTERN = r"^(?:[1-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
 

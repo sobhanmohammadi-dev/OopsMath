@@ -33,6 +33,7 @@
 //! a broken byte can never panic the game.
 
 use std::collections::BTreeMap;
+use std::sync::RwLock;
 
 use bevy::prelude::Resource;
 
@@ -99,6 +100,28 @@ impl FluentMessages {
             .iter()
             .map(|(key, value)| (key.as_str(), value.as_str()))
     }
+
+    /// Adds every message of `other`; on a clash `other` wins.
+    pub fn merge(&mut self, other: &FluentMessages) {
+        for (key, value) in &other.messages {
+            self.messages.insert(key.clone(), value.clone());
+        }
+    }
+}
+
+/// Level (stage) translations that live outside the stage packages, in the
+/// language packs (`assets/i18n/<lang>/levels/<stage id>.ftl`), keyed by
+/// locale. Installed once at startup by the localization plugin and merged into
+/// every [`StageMessages`], so the stage browser, HUD, objectives and
+/// blueprints all see them without further changes. Stage keys are namespaced
+/// by stage id (`stage.<id>.title`), so one table can serve every stage.
+static LEVEL_OVERLAY: RwLock<BTreeMap<String, FluentMessages>> = RwLock::new(BTreeMap::new());
+
+/// Replaces the installed level translations.
+pub fn install_level_overlay(overlay: BTreeMap<String, FluentMessages>) {
+    if let Ok(mut installed) = LEVEL_OVERLAY.write() {
+        *installed = overlay;
+    }
 }
 
 /// All localized messages of one stage, grouped by locale.
@@ -113,6 +136,16 @@ impl StageMessages {
     /// When the loader reports the same locale twice (which DAT v1 forbids),
     /// the last entry wins.
     pub fn from_localizations(localizations: &[Localization]) -> Self {
+        let mut messages = Self::from_packages(localizations);
+        if let Ok(overlay) = LEVEL_OVERLAY.read() {
+            messages.apply_overlay(&overlay);
+        }
+        messages
+    }
+
+    /// Like [`Self::from_localizations`] but without the installed level
+    /// translations.
+    pub fn from_packages(localizations: &[Localization]) -> Self {
         let mut by_locale = BTreeMap::new();
         for localization in localizations {
             by_locale.insert(
@@ -121,6 +154,17 @@ impl StageMessages {
             );
         }
         Self { by_locale }
+    }
+
+    /// Merges external translations over the packaged ones (a locale the
+    /// package lacks is added; a message the package has is overridden).
+    pub fn apply_overlay(&mut self, overlay: &BTreeMap<String, FluentMessages>) {
+        for (locale, messages) in overlay {
+            self.by_locale
+                .entry(locale.clone())
+                .or_default()
+                .merge(messages);
+        }
     }
 
     /// The locales present, sorted.
@@ -219,5 +263,60 @@ impl StageLocale {
     /// no translation exists.
     pub fn resolve<'a>(&self, messages: &'a StageMessages, key: &'a str) -> &'a str {
         messages.resolve_or(key, &self.locale, &self.fallback)
+    }
+}
+
+#[cfg(test)]
+mod overlay_tests {
+    use super::*;
+
+    fn loc(locale: &str, text: &str) -> Localization {
+        Localization {
+            locale: locale.to_string(),
+            raw: text.as_bytes().to_vec(),
+        }
+    }
+
+    #[test]
+    fn external_level_translations_override_and_extend_the_package() {
+        let mut messages = StageMessages::from_packages(&[
+            loc("en-US", "stage.s.title = Wall\nstage.s.description = Build"),
+            loc("fa", "stage.s.title = old"),
+        ]);
+        let mut fa = FluentMessages::default();
+        fa.merge(&FluentMessages::parse(b"stage.s.title = new"));
+        let de = FluentMessages::parse(b"stage.s.title = Mauer");
+        let mut overlay = BTreeMap::new();
+        overlay.insert("fa".to_string(), fa);
+        overlay.insert("de".to_string(), de);
+        messages.apply_overlay(&overlay);
+        assert_eq!(
+            messages.resolve("stage.s.title", "fa", "en-US"),
+            Some("new")
+        );
+        assert_eq!(
+            messages.resolve("stage.s.title", "de", "en-US"),
+            Some("Mauer")
+        );
+        // Missing in the language: the English fallback is used.
+        assert_eq!(
+            messages.resolve("stage.s.description", "fa", "en-US"),
+            Some("Build")
+        );
+        assert_eq!(
+            messages.resolve("stage.s.description", "de", "en-US"),
+            Some("Build")
+        );
+    }
+
+    #[test]
+    fn merging_never_removes_messages() {
+        let mut a = FluentMessages::parse(b"x = 1\ny = 2");
+        a.merge(&FluentMessages::parse(b"y = 3\nz = 4"));
+        assert_eq!(
+            (a.get("x"), a.get("y"), a.get("z")),
+            (Some("1"), Some("3"), Some("4"))
+        );
+        assert_eq!(a.len(), 3);
     }
 }

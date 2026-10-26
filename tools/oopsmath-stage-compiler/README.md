@@ -505,3 +505,14 @@ rotation rules need block dimensions, so the game validates those when the stage
   from the embedded schema (it had drifted from it); `schema_export` module and a drift
   self test. DAT v1 and Stage Schema v1 unchanged.
 * **1.0.0**: initial release.
+
+<!-- i18n:begin -->
+## Localization
+
+Stages are authored in English (`localization/en-US.ftl`). Translations are managed by
+`tools/oopsmath-i18n` (`omsi`) and **baked into the stage at build time** from
+`assets/i18n/<lang>/levels/<stage id>.ftl` (`--i18n DIR` to choose another folder,
+`--no-i18n` to build from the stage's own files only). See
+[docs/LOCALIZATION.md](docs/LOCALIZATION.md) for who owns what and how to migrate a
+translation that lives in a stage source.
+<!-- i18n:end -->

@@ -1,0 +1,914 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: OopsMath\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: fa\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-OopsMath-Scope: core\n"
+"X-OopsMath-Source: assets/i18n/en-US/core.ftl\n"
+
+#: assets/i18n/en-US/core.ftl:9
+msgctxt "menu-title"
+msgid "OOPSMATH"
+msgstr "OOPSMATH"
+
+#: assets/i18n/en-US/core.ftl:10
+msgctxt "menu-play"
+msgid "PLAY"
+msgstr "شروع بازی"
+
+#. The button that cycles through the installed languages. $name is the native
+#. name of the current language.
+#: assets/i18n/en-US/core.ftl:13
+msgctxt "menu-language"
+msgid "Language: { $name }"
+msgstr "زبان: { $name }"
+
+#: assets/i18n/en-US/core.ftl:17
+msgctxt "browser-title"
+msgid "SELECT A STAGE"
+msgstr "انتخاب مرحله"
+
+#: assets/i18n/en-US/core.ftl:18
+msgctxt "browser-scanning"
+msgid "Scanning..."
+msgstr "در حال جستجو..."
+
+#: assets/i18n/en-US/core.ftl:19
+msgctxt "browser-select-hint"
+msgid "Select a stage to see its details."
+msgstr "یک مرحله را انتخاب کنید تا جزئیات آن را ببینید."
+
+#: assets/i18n/en-US/core.ftl:23
+msgctxt "hud-blocks"
+msgid "BLOCKS"
+msgstr "بلوک‌ها"
+
+#: assets/i18n/en-US/core.ftl:24
+msgctxt "hud-inventory"
+msgid "INVENTORY"
+msgstr "انبار"
+
+#: assets/i18n/en-US/core.ftl:25
+msgctxt "hud-objectives"
+msgid "OBJECTIVES"
+msgstr "هدف‌ها"
+
+#: assets/i18n/en-US/core.ftl:26
+msgctxt "hud-objectives-complete"
+msgid "All objectives complete!"
+msgstr "همهٔ هدف‌ها کامل شدند!"
+
+#: assets/i18n/en-US/core.ftl:27
+msgctxt "hud-shop"
+msgid "Shop"
+msgstr "فروشگاه"
+
+#: assets/i18n/en-US/core.ftl:28
+msgctxt "hud-math"
+msgid "Math Challenge"
+msgstr "چالش ریاضی"
+
+#: assets/i18n/en-US/core.ftl:29
+msgctxt "hud-plan"
+msgid "Plan"
+msgstr "نقشه"
+
+#: assets/i18n/en-US/core.ftl:30
+msgctxt "hud-menu"
+msgid "Menu (Esc)"
+msgstr "منو (Esc)"
+
+#: assets/i18n/en-US/core.ftl:34
+msgctxt "popup-shop-title"
+msgid "SHOP"
+msgstr "فروشگاه"
+
+#: assets/i18n/en-US/core.ftl:35
+msgctxt "popup-math-title"
+msgid "MATH CHALLENGE"
+msgstr "چالش ریاضی"
+
+#: assets/i18n/en-US/core.ftl:36
+msgctxt "popup-plan-title"
+msgid "CONSTRUCTION PLAN"
+msgstr "نقشهٔ ساخت"
+
+#: assets/i18n/en-US/core.ftl:37
+msgctxt "popup-close"
+msgid "Close"
+msgstr "بستن"
+
+#: assets/i18n/en-US/core.ftl:38
+msgctxt "popup-submit"
+msgid "Submit"
+msgstr "ثبت پاسخ"
+
+#: assets/i18n/en-US/core.ftl:39
+msgctxt "popup-solved"
+msgid "Solved!"
+msgstr "حل شد!"
+
+#: assets/i18n/en-US/core.ftl:40
+msgctxt "popup-quantity"
+msgid "Quantity:"
+msgstr "تعداد:"
+
+#: assets/i18n/en-US/core.ftl:41
+msgctxt "popup-no-blocks"
+msgid "No blocks are for sale in this stage."
+msgstr "در این مرحله بلوکی برای فروش وجود ندارد."
+
+#: assets/i18n/en-US/core.ftl:42
+msgctxt "popup-not-enough-money"
+msgid "Not enough money"
+msgstr "پول کافی نیست"
+
+#: assets/i18n/en-US/core.ftl:46
+msgctxt "session-menu-title"
+msgid "MENU"
+msgstr "منو"
+
+#: assets/i18n/en-US/core.ftl:47
+msgctxt "session-resume"
+msgid "Resume"
+msgstr "ادامه"
+
+#: assets/i18n/en-US/core.ftl:48
+msgctxt "session-controls"
+msgid "Controls"
+msgstr "کنترل‌ها"
+
+#: assets/i18n/en-US/core.ftl:49
+msgctxt "session-restart"
+msgid "Restart Stage"
+msgstr "شروع دوباره مرحله"
+
+#: assets/i18n/en-US/core.ftl:50
+msgctxt "session-back-to-stages"
+msgid "Back to Stages"
+msgstr "بازگشت به مرحله‌ها"
+
+#: assets/i18n/en-US/core.ftl:51
+msgctxt "session-discard-warning"
+msgid "Restart and Back to Stages discard your progress in this stage."
+msgstr "شروع دوباره و بازگشت به مرحله‌ها پیشرفت شما در این مرحله را از بین می‌برد."
+
+#: assets/i18n/en-US/core.ftl:52
+msgctxt "session-controls-title"
+msgid "CONTROLS"
+msgstr "کنترل‌ها"
+
+#: assets/i18n/en-US/core.ftl:53
+msgctxt "session-back"
+msgid "Back"
+msgstr "بازگشت"
+
+#: assets/i18n/en-US/core.ftl:54
+msgctxt "session-complete-title"
+msgid "STAGE COMPLETE!"
+msgstr "مرحله تمام شد!"
+
+#: assets/i18n/en-US/core.ftl:55
+msgctxt "session-complete-body"
+msgid "You finished every objective of this stage."
+msgstr "همهٔ هدف‌های این مرحله را انجام دادید."
+
+#: assets/i18n/en-US/core.ftl:56
+msgctxt "session-replay"
+msgid "Replay Stage"
+msgstr "بازی دوباره مرحله"
+
+#: assets/i18n/en-US/core.ftl:57
+msgctxt "session-keep-building"
+msgid "Keep Building"
+msgstr "ادامهٔ ساخت"
+
+#: assets/i18n/en-US/core.ftl:61
+msgctxt "help-select-name"
+msgid "Choose what to use"
+msgstr "انتخاب ابزار"
+
+#: assets/i18n/en-US/core.ftl:62
+msgctxt "help-select-text"
+msgid "Click a block in BLOCKS (top right) or an item in INVENTORY (bottom right)."
+msgstr "روی یک بلوک در «بلوک‌ها» (بالا سمت راست) یا یک مورد در «انبار» (پایین سمت راست) کلیک کنید."
+
+#: assets/i18n/en-US/core.ftl:63
+msgctxt "help-place-name"
+msgid "Place a block"
+msgstr "گذاشتن بلوک"
+
+#: assets/i18n/en-US/core.ftl:64
+msgctxt "help-place-text"
+msgid "Left click on the ground or on the face of a placed block. A ghost shows where it will go."
+msgstr "با کلیک چپ روی زمین یا روی یک وجه بلوک چیده‌شده. یک سایهٔ شفاف نشان می‌دهد بلوک کجا قرار می‌گیرد."
+
+#: assets/i18n/en-US/core.ftl:65
+msgctxt "help-rotate-name"
+msgid "Rotate a block"
+msgstr "چرخاندن بلوک"
+
+#: assets/i18n/en-US/core.ftl:66
+msgctxt "help-rotate-text"
+msgid "R turns the selected block a quarter turn (only blocks that can rotate)."
+msgstr "کلید R بلوک انتخاب‌شده را یک‌چهارم دور می‌چرخاند (فقط بلوک‌هایی که چرخش‌پذیرند)."
+
+#: assets/i18n/en-US/core.ftl:67
+msgctxt "help-remove-name"
+msgid "Remove a block"
+msgstr "برداشتن بلوک"
+
+#: assets/i18n/en-US/core.ftl:68
+msgctxt "help-remove-text"
+msgid "Select the Hammer in INVENTORY, then left click a placed block. You get the block back."
+msgstr "چکش را در «انبار» انتخاب کنید و با کلیک چپ روی بلوک بزنید. بلوک به شما برمی‌گردد."
+
+#: assets/i18n/en-US/core.ftl:69
+msgctxt "help-camera-name"
+msgid "Camera"
+msgstr "دوربین"
+
+#: assets/i18n/en-US/core.ftl:70
+msgctxt "help-camera-text"
+msgid "Hold the right mouse button and drag to orbit, the middle button to pan, the wheel to zoom."
+msgstr "دکمهٔ راست ماوس را نگه دارید و بکشید تا بچرخد، دکمهٔ وسط برای جابه‌جایی، چرخ ماوس برای نزدیک و دور کردن."
+
+#: assets/i18n/en-US/core.ftl:71
+msgctxt "help-shop-name"
+msgid "Shop"
+msgstr "فروشگاه"
+
+#: assets/i18n/en-US/core.ftl:72
+msgctxt "help-shop-text"
+msgid "Shop button (bottom left): buy blocks with your coins."
+msgstr "دکمهٔ فروشگاه (پایین سمت چپ): با سکه‌هایتان بلوک بخرید."
+
+#: assets/i18n/en-US/core.ftl:73
+msgctxt "help-math-name"
+msgid "Math Challenge"
+msgstr "چالش ریاضی"
+
+#: assets/i18n/en-US/core.ftl:74
+msgctxt "help-math-text"
+msgid "Math Challenge button (bottom left, if the stage has one): type the answer, Enter or Submit."
+msgstr "دکمهٔ چالش ریاضی (پایین سمت چپ، اگر مرحله داشته باشد): پاسخ را بنویسید و Enter یا «ثبت پاسخ» را بزنید."
+
+#: assets/i18n/en-US/core.ftl:75
+msgctxt "help-plan-name"
+msgid "Plan"
+msgstr "نقشه"
+
+#: assets/i18n/en-US/core.ftl:76
+msgctxt "help-plan-text"
+msgid "Plan button (bottom left, if the stage has one): shows what a blueprint needs. Nothing is built for you."
+msgstr "دکمهٔ نقشه (پایین سمت چپ، اگر مرحله داشته باشد): نشان می‌دهد نقشه چه چیزهایی لازم دارد. چیزی خودکار ساخته نمی‌شود."
+
+#: assets/i18n/en-US/core.ftl:77
+msgctxt "help-objectives-name"
+msgid "Objectives"
+msgstr "هدف‌ها"
+
+#: assets/i18n/en-US/core.ftl:78
+msgctxt "help-objectives-text"
+msgid "The stage panel (top left) lists what you must do. Finish them all to complete the stage."
+msgstr "پنل مرحله (بالا سمت چپ) کارهای لازم را فهرست می‌کند. همه را انجام دهید تا مرحله تمام شود."
+
+#: assets/i18n/en-US/core.ftl:79
+msgctxt "help-stability-name"
+msgid "Stability"
+msgstr "پایداری"
+
+#: assets/i18n/en-US/core.ftl:80
+msgctxt "help-stability-text"
+msgid "Blocks must touch the ground or another block. If their support is removed they fall."
+msgstr "بلوک‌ها باید به زمین یا بلوک دیگری بچسبند. اگر تکیه‌گاهشان برداشته شود، می‌افتند."
+
+#: assets/i18n/en-US/core.ftl:81
+msgctxt "help-menu-name"
+msgid "Menu and windows"
+msgstr "منو و پنجره‌ها"
+
+#: assets/i18n/en-US/core.ftl:82
+msgctxt "help-menu-text"
+msgid "Esc closes an open window; otherwise it opens this menu. Back to Stages leaves the stage."
+msgstr "کلید Esc پنجرهٔ باز را می‌بندد؛ وگرنه این منو را باز می‌کند. «بازگشت به مرحله‌ها» از مرحله بیرون می‌رود."
+
+#: assets/i18n/en-US/core.ftl:86
+msgctxt "block-wood_log"
+msgid "Wood Log"
+msgstr "کنده چوب"
+
+#: assets/i18n/en-US/core.ftl:87
+msgctxt "tool-hammer"
+msgid "Hammer"
+msgstr "چکش"
+
+#. What kind of item a hotbar row is.
+#: assets/i18n/en-US/core.ftl:89
+msgctxt "kind-block"
+msgid "Block"
+msgstr "بلوک"
+
+#: assets/i18n/en-US/core.ftl:90
+msgctxt "kind-tool"
+msgid "Tool"
+msgstr "ابزار"
+
+#: assets/i18n/en-US/core.ftl:96
+msgctxt "hud-no-stage"
+msgid "No stage is loaded"
+msgstr "هیچ مرحله‌ای بارگذاری نشده است"
+
+#: assets/i18n/en-US/core.ftl:97
+msgctxt "hud-rotation"
+msgid "Rotation: { $degrees } deg (R)"
+msgstr "چرخش: { $degrees } درجه (R)"
+
+#: assets/i18n/en-US/core.ftl:98
+msgctxt "hud-stage-data-unavailable"
+msgid "Stage data is unavailable."
+msgstr "داده‌های مرحله در دسترس نیست."
+
+#: assets/i18n/en-US/core.ftl:99
+msgctxt "hud-starting-invalid"
+msgid "Starting resources are invalid: { $error }"
+msgstr "منابع اولیه نامعتبرند: { $error }"
+
+#: assets/i18n/en-US/core.ftl:100
+msgctxt "hud-rules-invalid"
+msgid "Block rules are invalid: { $error }"
+msgstr "قوانین بلوک نامعتبرند: { $error }"
+
+#: assets/i18n/en-US/core.ftl:101
+msgctxt "hud-inventory-empty"
+msgid "Inventory is empty."
+msgstr "انبار خالی است."
+
+#: assets/i18n/en-US/core.ftl:102
+msgctxt "hud-none-in-inventory"
+msgid "You have no { $name } in your inventory."
+msgstr "در انبار خود { $name } ندارید."
+
+#: assets/i18n/en-US/core.ftl:103
+msgctxt "hud-selected"
+msgid "Selected: { $name }"
+msgstr "انتخاب‌شده: { $name }"
+
+#: assets/i18n/en-US/core.ftl:104
+msgctxt "hud-selected-none"
+msgid "Selected: none"
+msgstr "انتخاب‌شده: هیچ‌کدام"
+
+#: assets/i18n/en-US/core.ftl:105
+msgctxt "hud-selected-item"
+msgid "Selected: { $name } ({ $kind })"
+msgstr "انتخاب‌شده: { $name } ({ $kind })"
+
+#: assets/i18n/en-US/core.ftl:106
+msgctxt "hud-no-selectable-blocks"
+msgid "This stage has no selectable blocks."
+msgstr "این مرحله بلوک قابل انتخابی ندارد."
+
+#: assets/i18n/en-US/core.ftl:107
+msgctxt "hud-none-registered"
+msgid "None of this stage's blocks are registered, so none can be selected."
+msgstr "هیچ‌یک از بلوک‌های این مرحله ثبت نشده‌اند، پس هیچ‌کدام قابل انتخاب نیست."
+
+#: assets/i18n/en-US/core.ftl:108
+msgctxt "hud-block-list-invalid"
+msgid "The stage's block list is invalid: { $error }"
+msgstr "فهرست بلوک‌های مرحله نامعتبر است: { $error }"
+
+#: assets/i18n/en-US/core.ftl:109
+msgctxt "hud-tool-list-invalid"
+msgid "The stage's tool list is invalid: { $error }"
+msgstr "فهرست ابزارهای مرحله نامعتبر است: { $error }"
+
+#. A block in the BLOCKS list.
+#: assets/i18n/en-US/core.ftl:111
+msgctxt "hud-block-row"
+msgid "{ $name } - { $price } coins"
+msgstr "{ $name } - { $price } سکه"
+
+#: assets/i18n/en-US/core.ftl:112
+msgctxt "hud-block-row-max"
+msgid "{ $name } - { $price } coins (max { $max })"
+msgstr "{ $name } - { $price } سکه (حداکثر { $max })"
+
+#: assets/i18n/en-US/core.ftl:113
+msgctxt "hud-block-row-min"
+msgid "{ $name } - { $price } coins (min { $min })"
+msgstr "{ $name } - { $price } سکه (حداقل { $min })"
+
+#: assets/i18n/en-US/core.ftl:114
+msgctxt "hud-block-row-minmax"
+msgid "{ $name } - { $price } coins (min { $min }, max { $max })"
+msgstr "{ $name } - { $price } سکه (حداقل { $min }، حداکثر { $max })"
+
+#. A row of the INVENTORY list.
+#: assets/i18n/en-US/core.ftl:116
+msgctxt "hotbar-row"
+msgid "[{ $kind }] { $name } x{ $quantity }"
+msgstr "[{ $kind }] { $name } ×{ $quantity }"
+
+#: assets/i18n/en-US/core.ftl:117
+msgctxt "hotbar-unavailable"
+msgid "[{ $kind }] { $id } x{ $quantity } - unavailable: { $reason }"
+msgstr "[{ $kind }] { $id } ×{ $quantity } - در دسترس نیست: { $reason }"
+
+#: assets/i18n/en-US/core.ftl:118
+msgctxt "hotbar-not-allowed"
+msgid "not allowed in this stage"
+msgstr "در این مرحله مجاز نیست"
+
+#: assets/i18n/en-US/core.ftl:119
+msgctxt "hotbar-not-registered-block"
+msgid "not a registered block"
+msgstr "بلوک ثبت‌شده‌ای نیست"
+
+#: assets/i18n/en-US/core.ftl:120
+msgctxt "hotbar-not-registered-tool"
+msgid "not a registered tool"
+msgstr "ابزار ثبت‌شده‌ای نیست"
+
+#: assets/i18n/en-US/core.ftl:121
+msgctxt "hud-in-inventory"
+msgid "In inventory: { $owned }"
+msgstr "در انبار: { $owned }"
+
+#: assets/i18n/en-US/core.ftl:122
+msgctxt "hud-placed"
+msgid "Placed: { $placed }"
+msgstr "گذاشته‌شده: { $placed }"
+
+#: assets/i18n/en-US/core.ftl:123
+msgctxt "hud-placed-max"
+msgid "Placed: { $placed } / { $max }"
+msgstr "گذاشته‌شده: { $placed } از { $max }"
+
+#. $mark is the next message when there is something to add.
+#: assets/i18n/en-US/core.ftl:128
+msgctxt "objective-line"
+msgid "{ $title }: { $progress } / { $required }{ $mark }"
+msgstr "{ $title }: { $progress } از { $required } { $mark }"
+
+#: assets/i18n/en-US/core.ftl:129
+msgctxt "objective-done"
+msgid "(done)"
+msgstr "(انجام شد)"
+
+#: assets/i18n/en-US/core.ftl:130
+msgctxt "objective-awaiting"
+msgid "- solve the math challenge to finish"
+msgstr "- برای پایان، چالش ریاضی را حل کنید"
+
+#: assets/i18n/en-US/core.ftl:131
+msgctxt "objectives-invalid"
+msgid "Objectives are invalid: { $error }"
+msgstr "هدف‌ها نامعتبرند: { $error }"
+
+#: assets/i18n/en-US/core.ftl:135
+msgctxt "challenge-counter"
+msgid "Challenge { $index } / { $count }"
+msgstr "چالش { $index } از { $count }"
+
+#. The underscore is the text cursor; keep it at the end.
+#: assets/i18n/en-US/core.ftl:137
+msgctxt "challenge-answer"
+msgid "Answer: { $input }_"
+msgstr "پاسخ: { $input }_"
+
+#: assets/i18n/en-US/core.ftl:138
+msgctxt "challenge-already-solved"
+msgid "Already solved."
+msgstr "قبلاً حل شده است."
+
+#: assets/i18n/en-US/core.ftl:139
+msgctxt "challenge-incorrect"
+msgid "Not correct. Try again."
+msgstr "درست نیست. دوباره تلاش کنید."
+
+#: assets/i18n/en-US/core.ftl:140
+msgctxt "challenge-unavailable"
+msgid "This challenge is no longer available."
+msgstr "این چالش دیگر در دسترس نیست."
+
+#: assets/i18n/en-US/core.ftl:144
+msgctxt "shop-money"
+msgid "Money: { $amount } coins"
+msgstr "پول: { $amount } سکه"
+
+#: assets/i18n/en-US/core.ftl:145
+msgctxt "shop-product"
+msgid "{ $name } - { $price } coins each (you own { $owned })"
+msgstr "{ $name } - هر کدام { $price } سکه (شما { $owned } دارید)"
+
+#: assets/i18n/en-US/core.ftl:146
+msgctxt "shop-buy"
+msgid "Buy { $quantity } for { $total } coins"
+msgstr "خرید { $quantity } تا با { $total } سکه"
+
+#: assets/i18n/en-US/core.ftl:147
+msgctxt "shop-too-expensive"
+msgid "Too expensive"
+msgstr "خیلی گران است"
+
+#: assets/i18n/en-US/core.ftl:148
+msgctxt "shop-bought"
+msgid "Bought { $quantity } x { $name } for { $total } coins."
+msgstr "{ $quantity } × { $name } با { $total } سکه خریداری شد."
+
+#: assets/i18n/en-US/core.ftl:149
+msgctxt "err-quantity"
+msgid "Quantity must be at least 1."
+msgstr "تعداد باید دست‌کم 1 باشد."
+
+#: assets/i18n/en-US/core.ftl:150
+msgctxt "err-not-registered"
+msgid "'{ $id }' is not a registered block."
+msgstr "«{ $id }» بلوک ثبت‌شده‌ای نیست."
+
+#: assets/i18n/en-US/core.ftl:151
+msgctxt "err-not-sold"
+msgid "'{ $id }' is not sold in this stage."
+msgstr "«{ $id }» در این مرحله فروخته نمی‌شود."
+
+#: assets/i18n/en-US/core.ftl:152
+msgctxt "err-no-price"
+msgid "'{ $id }' has no valid price and cannot be bought."
+msgstr "«{ $id }» قیمت معتبر ندارد و خریدنی نیست."
+
+#: assets/i18n/en-US/core.ftl:153
+msgctxt "err-total-too-large"
+msgid "The total price is too large."
+msgstr "قیمت کل بسیار زیاد است."
+
+#: assets/i18n/en-US/core.ftl:154
+msgctxt "err-not-enough-money"
+msgid "Not enough money: you need { $needed } coins but have { $balance }."
+msgstr "پول کافی نیست: به { $needed } سکه نیاز دارید ولی { $balance } دارید."
+
+#: assets/i18n/en-US/core.ftl:155
+msgctxt "err-inventory-full"
+msgid "Your inventory cannot hold that many."
+msgstr "انبار شما گنجایش این تعداد را ندارد."
+
+#: assets/i18n/en-US/core.ftl:159
+msgctxt "err-no-selection"
+msgid "No block is selected."
+msgstr "هیچ بلوکی انتخاب نشده است."
+
+#: assets/i18n/en-US/core.ftl:160
+msgctxt "err-not-allowed"
+msgid "'{ $id }' is not allowed in this stage."
+msgstr "«{ $id }» در این مرحله مجاز نیست."
+
+#: assets/i18n/en-US/core.ftl:161
+msgctxt "err-block-unregistered"
+msgid "Block '{ $id }' is not registered."
+msgstr "بلوک «{ $id }» ثبت نشده است."
+
+#: assets/i18n/en-US/core.ftl:162
+msgctxt "err-outside"
+msgid "That position is outside the build area."
+msgstr "آن جایگاه بیرون از محدودهٔ ساخت است."
+
+#: assets/i18n/en-US/core.ftl:163
+msgctxt "err-occupied"
+msgid "That space is already occupied."
+msgstr "آن فضا قبلاً پر شده است."
+
+#: assets/i18n/en-US/core.ftl:164
+msgctxt "err-no-support"
+msgid "No support: build on the ground or against another block."
+msgstr "تکیه‌گاه ندارد: روی زمین یا کنار بلوک دیگری بسازید."
+
+#: assets/i18n/en-US/core.ftl:165
+msgctxt "err-none-left"
+msgid "You have no '{ $id }' left in your inventory."
+msgstr "«{ $id }» در انبارتان باقی نمانده است."
+
+#: assets/i18n/en-US/core.ftl:166
+msgctxt "err-limit"
+msgid "Placement limit reached: this stage allows at most { $max } of '{ $block }'."
+msgstr "به حد مجاز رسیدید: این مرحله حداکثر { $max } عدد از «{ $block }» را اجازه می‌دهد."
+
+#: assets/i18n/en-US/core.ftl:167
+msgctxt "err-invalid-placement"
+msgid "Invalid placement: { $reason }"
+msgstr "جایگذاری نامعتبر: { $reason }"
+
+#: assets/i18n/en-US/core.ftl:168
+msgctxt "place-could-not"
+msgid "Could not place { $name }: { $error }"
+msgstr "{ $name } گذاشته نشد: { $error }"
+
+#: assets/i18n/en-US/core.ftl:169
+msgctxt "place-success"
+msgid "Placed { $name } at ({ $x }, { $y }, { $z })"
+msgstr "{ $name } در ({ $x }، { $y }، { $z }) گذاشته شد"
+
+#: assets/i18n/en-US/core.ftl:170
+msgctxt "remove-none"
+msgid "There is no placed block to remove."
+msgstr "بلوکی برای برداشتن وجود ندارد."
+
+#: assets/i18n/en-US/core.ftl:171
+msgctxt "remove-cannot-return"
+msgid "The block could not be returned to your inventory."
+msgstr "بلوک به انبار برنگشت."
+
+#: assets/i18n/en-US/core.ftl:172
+msgctxt "remove-success"
+msgid "Removed { $name }; 1 returned to your inventory."
+msgstr "{ $name } برداشته شد؛ 1 عدد به انبار برگشت."
+
+#: assets/i18n/en-US/core.ftl:173
+msgctxt "collapse"
+msgid "The structure collapsed: { $count } block(s) fell."
+msgstr "سازه فرو ریخت: { $count } بلوک افتاد."
+
+#: assets/i18n/en-US/core.ftl:177
+msgctxt "plan-button"
+msgid "Plan: { $built } / { $total } built"
+msgstr "نقشه: { $built } از { $total } ساخته شد"
+
+#: assets/i18n/en-US/core.ftl:178
+msgctxt "plan-counter"
+msgid "Plan { $index } / { $count }"
+msgstr "نقشه { $index } از { $count }"
+
+#: assets/i18n/en-US/core.ftl:179
+msgctxt "plan-none"
+msgid "This stage has no blueprints."
+msgstr "این مرحله نقشه‌ای ندارد."
+
+#: assets/i18n/en-US/core.ftl:180
+msgctxt "plan-invalid"
+msgid "This stage's blueprints are invalid: { $error }"
+msgstr "نقشه‌های این مرحله نامعتبرند: { $error }"
+
+#: assets/i18n/en-US/core.ftl:181
+msgctxt "plan-size"
+msgid "Size: { $width } wide x { $height } high x { $depth } deep (cells)    Blocks: { $blocks }    Built: { $built } / { $total }"
+msgstr "اندازه: { $width } عرض × { $height } ارتفاع × { $depth } عمق (خانه)    بلوک‌ها: { $blocks }    ساخته‌شده: { $built } از { $total }"
+
+#: assets/i18n/en-US/core.ftl:182
+msgctxt "plan-materials"
+msgid "Materials"
+msgstr "مصالح"
+
+#: assets/i18n/en-US/core.ftl:183
+msgctxt "plan-line"
+msgid "{ $name }: need { $required }, have { $available }{ $short } ({ $price })"
+msgstr "{ $name }: نیاز { $required }، دارید { $available }{ $short } ({ $price })"
+
+#: assets/i18n/en-US/core.ftl:184
+msgctxt "plan-more-needed"
+msgid ", { $count } more needed"
+msgstr "، { $count } تای دیگر لازم است"
+
+#: assets/i18n/en-US/core.ftl:185
+msgctxt "plan-price-each"
+msgid "{ $unit } coins each = { $cost } coins"
+msgstr "هر کدام { $unit } سکه = { $cost } سکه"
+
+#: assets/i18n/en-US/core.ftl:186
+msgctxt "plan-price-each-large"
+msgid "{ $unit } coins each (total too large)"
+msgstr "هر کدام { $unit } سکه (جمع کل بسیار زیاد)"
+
+#: assets/i18n/en-US/core.ftl:187
+msgctxt "plan-no-price"
+msgid "no price"
+msgstr "بدون قیمت"
+
+#: assets/i18n/en-US/core.ftl:188
+msgctxt "plan-estimated"
+msgid "Estimated cost for everything: { $total } coins"
+msgstr "هزینهٔ تخمینی برای همه: { $total } سکه"
+
+#: assets/i18n/en-US/core.ftl:189
+msgctxt "plan-estimated-unavailable"
+msgid "Estimated cost: unavailable"
+msgstr "هزینهٔ تخمینی: در دسترس نیست"
+
+#: assets/i18n/en-US/core.ftl:190
+msgctxt "plan-still-to-buy"
+msgid "Still to buy (what you do not own yet): { $missing } coins"
+msgstr "هنوز باید خرید (آنچه ندارید): { $missing } سکه"
+
+#: assets/i18n/en-US/core.ftl:191
+msgctxt "plan-cannot-build"
+msgid "Cannot build: { $issue }"
+msgstr "قابل ساخت نیست: { $issue }"
+
+#: assets/i18n/en-US/core.ftl:192
+msgctxt "plan-note"
+msgid "Note: { $issue }"
+msgstr "نکته: { $issue }"
+
+#: assets/i18n/en-US/core.ftl:193
+msgctxt "plan-issue-limit"
+msgid "The plan needs { $required } of '{ $block }' but this stage allows at most { $max }."
+msgstr "نقشه به { $required } عدد از «{ $block }» نیاز دارد ولی این مرحله حداکثر { $max } را اجازه می‌دهد."
+
+#: assets/i18n/en-US/core.ftl:194
+msgctxt "plan-issue-no-price"
+msgid "'{ $id }' has no valid price, so the cost cannot be estimated."
+msgstr "«{ $id }» قیمت معتبر ندارد، پس هزینه را نمی‌توان تخمین زد."
+
+#: assets/i18n/en-US/core.ftl:195
+msgctxt "plan-issue-too-large"
+msgid "The estimated cost is too large to calculate."
+msgstr "هزینهٔ تخمینی برای محاسبه بسیار زیاد است."
+
+#: assets/i18n/en-US/core.ftl:196
+msgctxt "plan-footer"
+msgid "Nothing is charged or placed by this plan; you build it block by block."
+msgstr "این نقشه چیزی نمی‌خرد و نمی‌گذارد؛ شما آن را بلوک به بلوک می‌سازید."
+
+#: assets/i18n/en-US/core.ftl:197
+msgctxt "plan-stop-guide"
+msgid "Stop guide"
+msgstr "توقف راهنما"
+
+#: assets/i18n/en-US/core.ftl:198
+msgctxt "plan-start-guide"
+msgid "Start building (show guide)"
+msgstr "شروع ساخت (نمایش راهنما)"
+
+#: assets/i18n/en-US/core.ftl:199
+msgctxt "plan-cannot-be-built"
+msgid "This plan cannot be built in this stage."
+msgstr "این نقشه در این مرحله قابل ساخت نیست."
+
+#: assets/i18n/en-US/core.ftl:203
+msgctxt "browser-back"
+msgid "BACK"
+msgstr "بازگشت"
+
+#: assets/i18n/en-US/core.ftl:204
+msgctxt "browser-rescan"
+msgid "RESCAN"
+msgstr "اسکن دوباره"
+
+#: assets/i18n/en-US/core.ftl:205
+msgctxt "browser-play-stage"
+msgid "PLAY STAGE"
+msgstr "شروع مرحله"
+
+#: assets/i18n/en-US/core.ftl:206
+msgctxt "browser-pick-first"
+msgid "Select a stage before pressing Play Stage."
+msgstr "پیش از زدن «شروع مرحله» یک مرحله انتخاب کنید."
+
+#: assets/i18n/en-US/core.ftl:207
+msgctxt "browser-no-stage"
+msgid "No stage is selected."
+msgstr "هیچ مرحله‌ای انتخاب نشده است."
+
+#: assets/i18n/en-US/core.ftl:208
+msgctxt "browser-load-failed"
+msgid "Failed to load '{ $path }': { $error }"
+msgstr "بارگذاری «{ $path }» ناموفق بود: { $error }"
+
+#: assets/i18n/en-US/core.ftl:209
+msgctxt "browser-count"
+msgid "{ $count } stage(s) found in { $dir }"
+msgstr "{ $count } مرحله در { $dir } پیدا شد"
+
+#: assets/i18n/en-US/core.ftl:210
+msgctxt "browser-level"
+msgid "Level { $level }"
+msgstr "سطح { $level }"
+
+#: assets/i18n/en-US/core.ftl:211
+msgctxt "browser-grade"
+msgid "Grade { $min }"
+msgstr "پایهٔ { $min }"
+
+#: assets/i18n/en-US/core.ftl:212
+msgctxt "browser-grades"
+msgid "Grades { $min }-{ $max }"
+msgstr "پایه‌های { $min } تا { $max }"
+
+#: assets/i18n/en-US/core.ftl:213
+msgctxt "browser-grade-plus"
+msgid "Grade { $min }+"
+msgstr "پایهٔ { $min } به بالا"
+
+#: assets/i18n/en-US/core.ftl:214
+msgctxt "browser-up-to-grade"
+msgid "Up to grade { $max }"
+msgstr "تا پایهٔ { $max }"
+
+#: assets/i18n/en-US/core.ftl:215
+msgctxt "detail-overview"
+msgid "OVERVIEW"
+msgstr "کلیات"
+
+#: assets/i18n/en-US/core.ftl:216
+msgctxt "detail-learning"
+msgid "LEARNING"
+msgstr "یادگیری"
+
+#: assets/i18n/en-US/core.ftl:217
+msgctxt "detail-environment"
+msgid "ENVIRONMENT"
+msgstr "محیط"
+
+#: assets/i18n/en-US/core.ftl:218
+msgctxt "detail-rewards"
+msgid "REWARDS"
+msgstr "پاداش‌ها"
+
+#. The labels of the details panel ('Label: value').
+#: assets/i18n/en-US/core.ftl:220
+msgctxt "label-id"
+msgid "ID"
+msgstr "شناسه"
+
+#: assets/i18n/en-US/core.ftl:221
+msgctxt "label-level"
+msgid "Level"
+msgstr "سطح"
+
+#: assets/i18n/en-US/core.ftl:222
+msgctxt "label-difficulty"
+msgid "Difficulty"
+msgstr "دشواری"
+
+#: assets/i18n/en-US/core.ftl:223
+msgctxt "label-grades"
+msgid "Grades"
+msgstr "پایه‌ها"
+
+#: assets/i18n/en-US/core.ftl:224
+msgctxt "label-topics"
+msgid "Topics"
+msgstr "موضوع‌ها"
+
+#: assets/i18n/en-US/core.ftl:225
+msgctxt "label-locales"
+msgid "Locales"
+msgstr "زبان‌ها"
+
+#: assets/i18n/en-US/core.ftl:226
+msgctxt "label-question"
+msgid "Question"
+msgstr "پرسش"
+
+#: assets/i18n/en-US/core.ftl:227
+msgctxt "label-preset"
+msgid "Preset"
+msgstr "پیش‌تنظیم"
+
+#: assets/i18n/en-US/core.ftl:228
+msgctxt "label-world-size"
+msgid "World size"
+msgstr "اندازهٔ دنیا"
+
+#: assets/i18n/en-US/core.ftl:229
+msgctxt "label-world-origin"
+msgid "World origin"
+msgstr "مبدأ دنیا"
+
+#: assets/i18n/en-US/core.ftl:230
+msgctxt "label-tasks"
+msgid "Tasks"
+msgstr "وظیفه‌ها"
+
+#: assets/i18n/en-US/core.ftl:231
+msgctxt "label-money"
+msgid "Money"
+msgstr "پول"
+
+#: assets/i18n/en-US/core.ftl:232
+msgctxt "label-xp"
+msgid "XP"
+msgstr "XP"
+
+#: assets/i18n/en-US/core.ftl:236
+msgctxt "challenge-correct"
+msgid "Correct! Challenge solved."
+msgstr "درست است! چالش حل شد."
+
+#: assets/i18n/en-US/core.ftl:237
+msgctxt "answer-empty"
+msgid "Type an answer first."
+msgstr "ابتدا یک پاسخ بنویسید."
+
+#: assets/i18n/en-US/core.ftl:238
+msgctxt "answer-malformed"
+msgid "Enter a number, for example 12 or 3.5."
+msgstr "یک عدد وارد کنید، برای نمونه 12 یا 3.5."
+
+#: assets/i18n/en-US/core.ftl:239
+msgctxt "answer-out-of-range"
+msgid "That number is out of range."
+msgstr "این عدد خارج از محدوده است."

@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 
+use crate::i18n::I18nPlugin;
 use crate::{
     app::{
         boot::boot_system,
@@ -28,6 +29,7 @@ impl Plugin for OopsMathEnginePlugin {
             .init_resource::<StageLoadFailure>()
             .init_resource::<LoadedStage>()
             .init_resource::<StageLocale>()
+            .add_plugins(I18nPlugin)
             .add_plugins(OopsMathUiPlugin)
             .add_plugins((BlocksPlugin, BlockAssetsPlugin, BlockPreviewPlugin))
             .add_plugins((

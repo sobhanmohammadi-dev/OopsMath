@@ -15,6 +15,9 @@ class LocaleFile:
     rel_path: str
     raw: bytes
     keys: frozenset[str]
+    #: "stage" (authored in the stage source), "pack" (baked from a language
+    #: pack in assets/i18n) or "stage+pack" (both; the pack wins per key).
+    origin: str = "stage"
 
 
 @dataclass(frozen=True)

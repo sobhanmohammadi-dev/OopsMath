@@ -2,13 +2,21 @@
 //!
 //! On entering [`AppState::InGame`] this reads the [`LoadedStage`] and spawns a
 //! 3D camera (orbit/pan/zoom, same controls as the block preview), lights, a
-//! ground plane and sky colour from `world.environment.preset`, a floor grid
-//! over `world.bounds`, and an outline for every `construction.targets` region.
+//! ground and sky colour from `world.environment.preset`, a floor grid over
+//! `world.bounds`, and an outline for every `construction.targets` region.
+//!
+//! Environment (visual only, never part of the grid, occupancy or placement):
+//! the build area keeps its own ground pad exactly over the stage bounds, and a
+//! slightly darker meadow plane around it follows the camera target so panning
+//! never reaches an edge. Linear distance fog in the sky colour starts beyond
+//! the farthest supported zoom, so the grid and blocks are never fogged at
+//! normal use, and fades the far ground into the sky (see [`EnvironmentRig`]).
 //!
 //! Everything is despawned on exit. The gameplay HUD is untouched and keeps
 //! rendering on top via the new camera. Voxel terrain (`WRLD`) and block
 //! placement by the player are not rendered yet.
 
+use bevy::light::NotShadowCaster;
 use bevy::prelude::*;
 use bevy::ui::IsDefaultUiCamera;
 use serde_json::Value;
@@ -22,6 +30,13 @@ use crate::stage::package::StageDefinition;
 
 /// Used when the stage declares no bounds (matches the stage template).
 const DEFAULT_SIZE: UVec3 = UVec3::new(16, 8, 16);
+
+/// Fog never reaches past this distance: the default camera far plane is 1000.
+const MAX_FOG_END: f32 = 900.0;
+
+/// Vertical offset of the outer meadow below the build-area pad (visual only;
+/// keeps the two flat planes from z-fighting).
+const OUTER_GROUND_DROP: f32 = 0.02;
 
 /// Geometry of the stage world, kept while in game for gizmo drawing.
 #[derive(Resource, Debug, Clone, PartialEq)]
@@ -57,7 +72,7 @@ impl Plugin for StageScenePlugin {
             })
             .add_systems(
                 Update,
-                (orbit_camera_system, draw_stage_gizmos)
+                (orbit_camera_system, follow_outer_ground, draw_stage_gizmos)
                     .run_if(in_state(AppState::InGame).and_then(resource_exists::<StageScene>)),
             );
     }
@@ -114,12 +129,77 @@ pub fn stage_scene_from(def: &StageDefinition) -> StageScene {
     }
 }
 
-/// (sky colour, ground colour) for an environment preset.
-fn palette(preset: &str) -> (Color, Color) {
+/// Colours of an environment preset.
+#[derive(Debug, Clone, Copy, PartialEq)]
+struct Palette {
+    sky: Color,
+    /// The build area (stage bounds).
+    ground: Color,
+    /// The meadow around it: a little darker so the build area reads clearly.
+    outer_ground: Color,
+}
+
+/// Colours for an environment preset. Unknown presets get a deliberate dark
+/// neutral scene.
+fn palette(preset: &str) -> Palette {
     match preset {
-        "meadow" => (Color::srgb(0.53, 0.74, 0.92), Color::srgb(0.30, 0.52, 0.25)),
-        _ => (Color::srgb(0.10, 0.11, 0.13), Color::srgb(0.18, 0.20, 0.22)),
+        "meadow" => Palette {
+            sky: Color::srgb(0.53, 0.74, 0.92),
+            ground: Color::srgb(0.30, 0.52, 0.25),
+            outer_ground: Color::srgb(0.25, 0.45, 0.22),
+        },
+        _ => Palette {
+            sky: Color::srgb(0.10, 0.11, 0.13),
+            ground: Color::srgb(0.18, 0.20, 0.22),
+            outer_ground: Color::srgb(0.15, 0.17, 0.19),
+        },
     }
+}
+
+/// Distances that make the environment independent of how far the player zooms
+/// or pans. All of them follow from the camera limits and the stage size, not
+/// from a fixed multiplier.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct EnvironmentRig {
+    /// Fog is fully transparent up to here.
+    pub fog_start: f32,
+    /// Fog is fully opaque from here on.
+    pub fog_end: f32,
+    /// Half the side of the outer ground square, centred under the camera target.
+    pub ground_half: f32,
+}
+
+impl EnvironmentRig {
+    /// * `fog_start`: the farthest supported zoom plus the stage diagonal, so
+    ///   with the camera target near the stage nothing of the stage is fogged.
+    /// * `fog_end`: one more zoom range further, capped below the far plane.
+    /// * `ground_half`: the camera is at most `max_distance` from its target and
+    ///   the ground follows the target, so any point of the ground edge is at
+    ///   least `ground_half - max_distance` from the camera. That must reach
+    ///   `fog_end`, where the fog colour already equals the sky.
+    pub fn new(size: Vec3, max_distance: f32) -> Self {
+        let diagonal = size.length();
+        let fog_end = (max_distance + diagonal + max_distance).min(MAX_FOG_END);
+        let fog_start = (max_distance + diagonal).min(fog_end * 0.75);
+        let ground_half = fog_end + max_distance;
+        Self {
+            fog_start,
+            fog_end,
+            ground_half,
+        }
+    }
+}
+
+/// Centre of the outer ground for a camera target: it follows on x/z, stays at
+/// its fixed height.
+fn outer_ground_translation(target: Vec3, ground_y: f32) -> Vec3 {
+    Vec3::new(target.x, ground_y, target.z)
+}
+
+/// The meadow around the build area (see [`EnvironmentRig`]).
+#[derive(Component)]
+struct OuterGround {
+    y: f32,
 }
 
 fn build_stage_scene(
@@ -140,7 +220,7 @@ fn build_stage_scene(
         .and_then(|e| e.get("preset"))
         .and_then(Value::as_str)
         .unwrap_or("");
-    let (sky, ground) = palette(preset);
+    let colors = palette(preset);
     info!(
         "Building stage environment '{}' ({}x{}x{} cells, preset '{preset}')",
         package.meta.stage_id, scene.size.x, scene.size.y, scene.size.z
@@ -153,15 +233,27 @@ fn build_stage_scene(
     orbit.min_distance = 2.0;
     orbit.max_distance = extent.max_element() * 6.0;
     orbit.clamp();
+    let rig = EnvironmentRig::new(extent, orbit.max_distance);
     commands.spawn((
         Camera3d::default(),
         Camera {
             order: 1,
-            clear_color: ClearColorConfig::Custom(sky),
+            clear_color: ClearColorConfig::Custom(colors.sky),
             ..default()
         },
+        // A soft sky-tinted fill keeps shaded block faces readable.
         AmbientLight {
-            brightness: 400.0,
+            color: Color::srgb(0.80, 0.88, 1.0),
+            brightness: 450.0,
+            ..default()
+        },
+        // Same colour as the sky, so the far ground fades into the horizon.
+        DistanceFog {
+            color: colors.sky,
+            falloff: FogFalloff::Linear {
+                start: rig.fog_start,
+                end: rig.fog_end,
+            },
             ..default()
         },
         IsDefaultUiCamera,
@@ -170,8 +262,10 @@ fn build_stage_scene(
         DespawnOnExit(AppState::InGame),
     ));
 
+    // A warm sun.
     commands.spawn((
         DirectionalLight {
+            color: Color::srgb(1.0, 0.95, 0.86),
             illuminance: 10_000.0,
             shadow_maps_enabled: true,
             ..default()
@@ -181,18 +275,63 @@ fn build_stage_scene(
         DespawnOnExit(AppState::InGame),
     ));
 
+    // The build area: exactly the stage bounds, as before.
     commands.spawn((
         Mesh3d(meshes.add(Plane3d::default().mesh().size(extent.x, extent.z))),
         MeshMaterial3d(materials.add(StandardMaterial {
-            base_color: ground,
+            base_color: colors.ground,
             perceptual_roughness: 1.0,
             ..default()
         })),
         Transform::from_translation(center - Vec3::Y * 0.003),
+        NotShadowCaster,
+        DespawnOnExit(AppState::InGame),
+    ));
+
+    // The meadow around it. A flat plane, no collision, no shadow casting.
+    let outer_y = -0.003 - OUTER_GROUND_DROP;
+    commands.spawn((
+        OuterGround { y: outer_y },
+        Mesh3d(
+            meshes.add(
+                Plane3d::default()
+                    .mesh()
+                    .size(rig.ground_half * 2.0, rig.ground_half * 2.0),
+            ),
+        ),
+        MeshMaterial3d(materials.add(StandardMaterial {
+            base_color: colors.outer_ground,
+            perceptual_roughness: 1.0,
+            ..default()
+        })),
+        Transform::from_translation(outer_ground_translation(orbit_target(center), outer_y)),
+        NotShadowCaster,
         DespawnOnExit(AppState::InGame),
     ));
 
     commands.insert_resource(scene);
+}
+
+/// The camera target the orbit camera starts at.
+fn orbit_target(center: Vec3) -> Vec3 {
+    center + Vec3::Y
+}
+
+/// Keeps the outer meadow under the camera target so panning never reaches its
+/// edge. Visual only.
+fn follow_outer_ground(
+    camera: Query<&OrbitCamera>,
+    mut ground: Query<(&OuterGround, &mut Transform)>,
+) {
+    let Ok(orbit) = camera.single() else {
+        return;
+    };
+    for (outer, mut transform) in &mut ground {
+        let wanted = outer_ground_translation(orbit.target, outer.y);
+        if transform.translation != wanted {
+            transform.translation = wanted;
+        }
+    }
 }
 
 fn draw_stage_gizmos(mut gizmos: Gizmos, scene: Res<StageScene>) {
@@ -226,6 +365,48 @@ mod tests {
         ));
         assert_eq!(s.size, UVec3::new(16, 8, 16));
         assert_eq!(s.targets, vec![(Vec3::ZERO, Vec3::new(4.0, 3.0, 1.0))]);
+    }
+
+    #[test]
+    fn the_rig_covers_every_supported_camera_position() {
+        // 16 x 8 x 16 stage, default camera: max distance 6 * 16.
+        let size = Vec3::new(16.0, 8.0, 16.0);
+        let max_distance = 96.0;
+        let rig = EnvironmentRig::new(size, max_distance);
+        assert!(
+            rig.fog_start >= max_distance + size.length() - 1e-3,
+            "the stage is never fogged at the farthest zoom"
+        );
+        assert!(rig.fog_end > rig.fog_start);
+        // The ground follows the target and the camera is at most max_distance
+        // from it, so the nearest ground edge is >= fog_end from the camera.
+        assert!(rig.ground_half - max_distance >= rig.fog_end - 1e-3);
+        assert!(rig.fog_end <= MAX_FOG_END);
+    }
+
+    #[test]
+    fn huge_stages_stay_inside_the_far_plane() {
+        let rig = EnvironmentRig::new(Vec3::splat(256.0), 256.0 * 6.0);
+        assert!(rig.fog_end <= MAX_FOG_END);
+        assert!(rig.fog_start < rig.fog_end);
+        assert!(rig.fog_start > 0.0);
+    }
+
+    #[test]
+    fn the_outer_ground_follows_the_target_at_a_fixed_height() {
+        let p = outer_ground_translation(Vec3::new(5.0, 9.0, -3.0), -0.023);
+        assert_eq!(p, Vec3::new(5.0, -0.023, -3.0));
+    }
+
+    #[test]
+    fn presets_have_deliberate_palettes() {
+        let meadow = palette("meadow");
+        assert_eq!(meadow.sky, Color::srgb(0.53, 0.74, 0.92));
+        assert_eq!(meadow.ground, Color::srgb(0.30, 0.52, 0.25));
+        assert_ne!(meadow.outer_ground, meadow.ground);
+        let fallback = palette("something_else");
+        assert_ne!(fallback, meadow);
+        assert_ne!(fallback.outer_ground, fallback.ground);
     }
 
     #[test]

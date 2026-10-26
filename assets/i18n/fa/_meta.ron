@@ -1,0 +1,26 @@
+#![enable(implicit_some)]
+// Persian (Farsi). Right-to-left.
+//
+// Fonts: put Vazirmatn (SIL Open Font License, https://github.com/rastikerdar/vazirmatn)
+// in assets/fonts/ as Vazirmatn-Regular.ttf and Vazirmatn-Bold.ttf. Without them the
+// game uses its built-in font, which has no Persian letters.
+(
+    format: 1,
+    code: "fa",
+    name: "Persian",
+    native_name: "فارسی",
+    direction: Rtl,
+    fallback: "en-US",
+    version: "1.0.0",
+    authors: ["OopsMath"],
+    fonts: (
+        // Font ids: "font." + file name without extension, lower case, letters and digits only.
+        default: "font.vazirmatnregular",
+        title: "font.vazirmatnbold",
+        heading: "font.vazirmatnbold",
+        contexts: {
+            // A named context a text can opt into with the FontContext component.
+            // "hud-numbers": "font.vazirmatnregular",
+        },
+    ),
+)

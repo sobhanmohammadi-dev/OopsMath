@@ -2,6 +2,7 @@ pub mod common;
 pub mod components;
 pub mod hud;
 pub mod menu;
+pub mod style;
 pub mod theme;
 
 use bevy::prelude::*;
@@ -65,6 +66,7 @@ impl Plugin for OopsMathUiPlugin {
                     .run_if(in_state(AppState::InGame)),
             )
             .add_plugins(hud::session::SessionHudPlugin)
+            .add_plugins(style::StylePlugin)
             .add_systems(Update, common_button_interaction);
     }
 }

@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use bevy::window::{Window, WindowPlugin};
 use oopsmath_engine::OopsMathEnginePlugin;
 
 /// Asset directory, relative to Bevy's base path.
@@ -18,10 +19,20 @@ fn asset_dir() -> String {
 
 fn main() {
     App::new()
-        .add_plugins(DefaultPlugins.set(AssetPlugin {
-            file_path: asset_dir(),
-            ..default()
-        }))
+        .add_plugins(
+            DefaultPlugins
+                .set(AssetPlugin {
+                    file_path: asset_dir(),
+                    ..default()
+                })
+                .set(WindowPlugin {
+                    primary_window: Some(Window {
+                        title: "OopsMath".into(),
+                        ..default()
+                    }),
+                    ..default()
+                }),
+        )
         .add_plugins(OopsMathEnginePlugin)
         .run();
 }

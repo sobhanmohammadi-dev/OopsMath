@@ -17,6 +17,7 @@ use crate::blocks::{BlockId, BlockRegistry};
 use crate::items::economy::Wallet;
 use crate::items::inventory::Inventory;
 use crate::items::shop::{ShopState, catalog, purchase};
+use crate::ui::style::PrimaryButton;
 use crate::ui::theme::UiTheme;
 
 #[derive(Component)]
@@ -186,7 +187,7 @@ pub fn refresh_shop_popup(
                 justify_content: JustifyContent::Center,
                 ..default()
             },
-            BackgroundColor(Color::srgba(0.0, 0.0, 0.0, 0.6)),
+            BackgroundColor(theme.overlay),
             // Blocks the HUD and world behind the popup.
             Interaction::default(),
             GlobalZIndex(100),
@@ -288,9 +289,12 @@ pub fn refresh_shop_popup(
                                     card,
                                     &theme,
                                     label,
-                                    ShopBuyButton {
-                                        block: product.id.clone(),
-                                    },
+                                    (
+                                        ShopBuyButton {
+                                            block: product.id.clone(),
+                                        },
+                                        PrimaryButton,
+                                    ),
                                 );
                                 if !affordable {
                                     card.spawn((

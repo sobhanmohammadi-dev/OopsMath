@@ -1,0 +1,914 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: OopsMath\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-OopsMath-Scope: core\n"
+"X-OopsMath-Source: assets/i18n/en-US/core.ftl\n"
+
+#: assets/i18n/en-US/core.ftl:9
+msgctxt "menu-title"
+msgid "OOPSMATH"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:10
+msgctxt "menu-play"
+msgid "PLAY"
+msgstr ""
+
+#. The button that cycles through the installed languages. $name is the native
+#. name of the current language.
+#: assets/i18n/en-US/core.ftl:13
+msgctxt "menu-language"
+msgid "Language: { $name }"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:17
+msgctxt "browser-title"
+msgid "SELECT A STAGE"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:18
+msgctxt "browser-scanning"
+msgid "Scanning..."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:19
+msgctxt "browser-select-hint"
+msgid "Select a stage to see its details."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:23
+msgctxt "hud-blocks"
+msgid "BLOCKS"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:24
+msgctxt "hud-inventory"
+msgid "INVENTORY"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:25
+msgctxt "hud-objectives"
+msgid "OBJECTIVES"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:26
+msgctxt "hud-objectives-complete"
+msgid "All objectives complete!"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:27
+msgctxt "hud-shop"
+msgid "Shop"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:28
+msgctxt "hud-math"
+msgid "Math Challenge"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:29
+msgctxt "hud-plan"
+msgid "Plan"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:30
+msgctxt "hud-menu"
+msgid "Menu (Esc)"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:34
+msgctxt "popup-shop-title"
+msgid "SHOP"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:35
+msgctxt "popup-math-title"
+msgid "MATH CHALLENGE"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:36
+msgctxt "popup-plan-title"
+msgid "CONSTRUCTION PLAN"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:37
+msgctxt "popup-close"
+msgid "Close"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:38
+msgctxt "popup-submit"
+msgid "Submit"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:39
+msgctxt "popup-solved"
+msgid "Solved!"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:40
+msgctxt "popup-quantity"
+msgid "Quantity:"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:41
+msgctxt "popup-no-blocks"
+msgid "No blocks are for sale in this stage."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:42
+msgctxt "popup-not-enough-money"
+msgid "Not enough money"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:46
+msgctxt "session-menu-title"
+msgid "MENU"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:47
+msgctxt "session-resume"
+msgid "Resume"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:48
+msgctxt "session-controls"
+msgid "Controls"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:49
+msgctxt "session-restart"
+msgid "Restart Stage"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:50
+msgctxt "session-back-to-stages"
+msgid "Back to Stages"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:51
+msgctxt "session-discard-warning"
+msgid "Restart and Back to Stages discard your progress in this stage."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:52
+msgctxt "session-controls-title"
+msgid "CONTROLS"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:53
+msgctxt "session-back"
+msgid "Back"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:54
+msgctxt "session-complete-title"
+msgid "STAGE COMPLETE!"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:55
+msgctxt "session-complete-body"
+msgid "You finished every objective of this stage."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:56
+msgctxt "session-replay"
+msgid "Replay Stage"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:57
+msgctxt "session-keep-building"
+msgid "Keep Building"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:61
+msgctxt "help-select-name"
+msgid "Choose what to use"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:62
+msgctxt "help-select-text"
+msgid "Click a block in BLOCKS (top right) or an item in INVENTORY (bottom right)."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:63
+msgctxt "help-place-name"
+msgid "Place a block"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:64
+msgctxt "help-place-text"
+msgid "Left click on the ground or on the face of a placed block. A ghost shows where it will go."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:65
+msgctxt "help-rotate-name"
+msgid "Rotate a block"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:66
+msgctxt "help-rotate-text"
+msgid "R turns the selected block a quarter turn (only blocks that can rotate)."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:67
+msgctxt "help-remove-name"
+msgid "Remove a block"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:68
+msgctxt "help-remove-text"
+msgid "Select the Hammer in INVENTORY, then left click a placed block. You get the block back."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:69
+msgctxt "help-camera-name"
+msgid "Camera"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:70
+msgctxt "help-camera-text"
+msgid "Hold the right mouse button and drag to orbit, the middle button to pan, the wheel to zoom."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:71
+msgctxt "help-shop-name"
+msgid "Shop"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:72
+msgctxt "help-shop-text"
+msgid "Shop button (bottom left): buy blocks with your coins."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:73
+msgctxt "help-math-name"
+msgid "Math Challenge"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:74
+msgctxt "help-math-text"
+msgid "Math Challenge button (bottom left, if the stage has one): type the answer, Enter or Submit."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:75
+msgctxt "help-plan-name"
+msgid "Plan"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:76
+msgctxt "help-plan-text"
+msgid "Plan button (bottom left, if the stage has one): shows what a blueprint needs. Nothing is built for you."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:77
+msgctxt "help-objectives-name"
+msgid "Objectives"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:78
+msgctxt "help-objectives-text"
+msgid "The stage panel (top left) lists what you must do. Finish them all to complete the stage."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:79
+msgctxt "help-stability-name"
+msgid "Stability"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:80
+msgctxt "help-stability-text"
+msgid "Blocks must touch the ground or another block. If their support is removed they fall."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:81
+msgctxt "help-menu-name"
+msgid "Menu and windows"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:82
+msgctxt "help-menu-text"
+msgid "Esc closes an open window; otherwise it opens this menu. Back to Stages leaves the stage."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:86
+msgctxt "block-wood_log"
+msgid "Wood Log"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:87
+msgctxt "tool-hammer"
+msgid "Hammer"
+msgstr ""
+
+#. What kind of item a hotbar row is.
+#: assets/i18n/en-US/core.ftl:89
+msgctxt "kind-block"
+msgid "Block"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:90
+msgctxt "kind-tool"
+msgid "Tool"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:96
+msgctxt "hud-no-stage"
+msgid "No stage is loaded"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:97
+msgctxt "hud-rotation"
+msgid "Rotation: { $degrees } deg (R)"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:98
+msgctxt "hud-stage-data-unavailable"
+msgid "Stage data is unavailable."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:99
+msgctxt "hud-starting-invalid"
+msgid "Starting resources are invalid: { $error }"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:100
+msgctxt "hud-rules-invalid"
+msgid "Block rules are invalid: { $error }"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:101
+msgctxt "hud-inventory-empty"
+msgid "Inventory is empty."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:102
+msgctxt "hud-none-in-inventory"
+msgid "You have no { $name } in your inventory."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:103
+msgctxt "hud-selected"
+msgid "Selected: { $name }"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:104
+msgctxt "hud-selected-none"
+msgid "Selected: none"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:105
+msgctxt "hud-selected-item"
+msgid "Selected: { $name } ({ $kind })"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:106
+msgctxt "hud-no-selectable-blocks"
+msgid "This stage has no selectable blocks."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:107
+msgctxt "hud-none-registered"
+msgid "None of this stage's blocks are registered, so none can be selected."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:108
+msgctxt "hud-block-list-invalid"
+msgid "The stage's block list is invalid: { $error }"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:109
+msgctxt "hud-tool-list-invalid"
+msgid "The stage's tool list is invalid: { $error }"
+msgstr ""
+
+#. A block in the BLOCKS list.
+#: assets/i18n/en-US/core.ftl:111
+msgctxt "hud-block-row"
+msgid "{ $name } - { $price } coins"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:112
+msgctxt "hud-block-row-max"
+msgid "{ $name } - { $price } coins (max { $max })"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:113
+msgctxt "hud-block-row-min"
+msgid "{ $name } - { $price } coins (min { $min })"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:114
+msgctxt "hud-block-row-minmax"
+msgid "{ $name } - { $price } coins (min { $min }, max { $max })"
+msgstr ""
+
+#. A row of the INVENTORY list.
+#: assets/i18n/en-US/core.ftl:116
+msgctxt "hotbar-row"
+msgid "[{ $kind }] { $name } x{ $quantity }"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:117
+msgctxt "hotbar-unavailable"
+msgid "[{ $kind }] { $id } x{ $quantity } - unavailable: { $reason }"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:118
+msgctxt "hotbar-not-allowed"
+msgid "not allowed in this stage"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:119
+msgctxt "hotbar-not-registered-block"
+msgid "not a registered block"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:120
+msgctxt "hotbar-not-registered-tool"
+msgid "not a registered tool"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:121
+msgctxt "hud-in-inventory"
+msgid "In inventory: { $owned }"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:122
+msgctxt "hud-placed"
+msgid "Placed: { $placed }"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:123
+msgctxt "hud-placed-max"
+msgid "Placed: { $placed } / { $max }"
+msgstr ""
+
+#. $mark is the next message when there is something to add.
+#: assets/i18n/en-US/core.ftl:128
+msgctxt "objective-line"
+msgid "{ $title }: { $progress } / { $required }{ $mark }"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:129
+msgctxt "objective-done"
+msgid "(done)"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:130
+msgctxt "objective-awaiting"
+msgid "- solve the math challenge to finish"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:131
+msgctxt "objectives-invalid"
+msgid "Objectives are invalid: { $error }"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:135
+msgctxt "challenge-counter"
+msgid "Challenge { $index } / { $count }"
+msgstr ""
+
+#. The underscore is the text cursor; keep it at the end.
+#: assets/i18n/en-US/core.ftl:137
+msgctxt "challenge-answer"
+msgid "Answer: { $input }_"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:138
+msgctxt "challenge-already-solved"
+msgid "Already solved."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:139
+msgctxt "challenge-incorrect"
+msgid "Not correct. Try again."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:140
+msgctxt "challenge-unavailable"
+msgid "This challenge is no longer available."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:144
+msgctxt "shop-money"
+msgid "Money: { $amount } coins"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:145
+msgctxt "shop-product"
+msgid "{ $name } - { $price } coins each (you own { $owned })"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:146
+msgctxt "shop-buy"
+msgid "Buy { $quantity } for { $total } coins"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:147
+msgctxt "shop-too-expensive"
+msgid "Too expensive"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:148
+msgctxt "shop-bought"
+msgid "Bought { $quantity } x { $name } for { $total } coins."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:149
+msgctxt "err-quantity"
+msgid "Quantity must be at least 1."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:150
+msgctxt "err-not-registered"
+msgid "'{ $id }' is not a registered block."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:151
+msgctxt "err-not-sold"
+msgid "'{ $id }' is not sold in this stage."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:152
+msgctxt "err-no-price"
+msgid "'{ $id }' has no valid price and cannot be bought."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:153
+msgctxt "err-total-too-large"
+msgid "The total price is too large."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:154
+msgctxt "err-not-enough-money"
+msgid "Not enough money: you need { $needed } coins but have { $balance }."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:155
+msgctxt "err-inventory-full"
+msgid "Your inventory cannot hold that many."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:159
+msgctxt "err-no-selection"
+msgid "No block is selected."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:160
+msgctxt "err-not-allowed"
+msgid "'{ $id }' is not allowed in this stage."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:161
+msgctxt "err-block-unregistered"
+msgid "Block '{ $id }' is not registered."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:162
+msgctxt "err-outside"
+msgid "That position is outside the build area."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:163
+msgctxt "err-occupied"
+msgid "That space is already occupied."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:164
+msgctxt "err-no-support"
+msgid "No support: build on the ground or against another block."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:165
+msgctxt "err-none-left"
+msgid "You have no '{ $id }' left in your inventory."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:166
+msgctxt "err-limit"
+msgid "Placement limit reached: this stage allows at most { $max } of '{ $block }'."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:167
+msgctxt "err-invalid-placement"
+msgid "Invalid placement: { $reason }"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:168
+msgctxt "place-could-not"
+msgid "Could not place { $name }: { $error }"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:169
+msgctxt "place-success"
+msgid "Placed { $name } at ({ $x }, { $y }, { $z })"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:170
+msgctxt "remove-none"
+msgid "There is no placed block to remove."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:171
+msgctxt "remove-cannot-return"
+msgid "The block could not be returned to your inventory."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:172
+msgctxt "remove-success"
+msgid "Removed { $name }; 1 returned to your inventory."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:173
+msgctxt "collapse"
+msgid "The structure collapsed: { $count } block(s) fell."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:177
+msgctxt "plan-button"
+msgid "Plan: { $built } / { $total } built"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:178
+msgctxt "plan-counter"
+msgid "Plan { $index } / { $count }"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:179
+msgctxt "plan-none"
+msgid "This stage has no blueprints."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:180
+msgctxt "plan-invalid"
+msgid "This stage's blueprints are invalid: { $error }"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:181
+msgctxt "plan-size"
+msgid "Size: { $width } wide x { $height } high x { $depth } deep (cells)    Blocks: { $blocks }    Built: { $built } / { $total }"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:182
+msgctxt "plan-materials"
+msgid "Materials"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:183
+msgctxt "plan-line"
+msgid "{ $name }: need { $required }, have { $available }{ $short } ({ $price })"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:184
+msgctxt "plan-more-needed"
+msgid ", { $count } more needed"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:185
+msgctxt "plan-price-each"
+msgid "{ $unit } coins each = { $cost } coins"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:186
+msgctxt "plan-price-each-large"
+msgid "{ $unit } coins each (total too large)"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:187
+msgctxt "plan-no-price"
+msgid "no price"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:188
+msgctxt "plan-estimated"
+msgid "Estimated cost for everything: { $total } coins"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:189
+msgctxt "plan-estimated-unavailable"
+msgid "Estimated cost: unavailable"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:190
+msgctxt "plan-still-to-buy"
+msgid "Still to buy (what you do not own yet): { $missing } coins"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:191
+msgctxt "plan-cannot-build"
+msgid "Cannot build: { $issue }"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:192
+msgctxt "plan-note"
+msgid "Note: { $issue }"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:193
+msgctxt "plan-issue-limit"
+msgid "The plan needs { $required } of '{ $block }' but this stage allows at most { $max }."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:194
+msgctxt "plan-issue-no-price"
+msgid "'{ $id }' has no valid price, so the cost cannot be estimated."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:195
+msgctxt "plan-issue-too-large"
+msgid "The estimated cost is too large to calculate."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:196
+msgctxt "plan-footer"
+msgid "Nothing is charged or placed by this plan; you build it block by block."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:197
+msgctxt "plan-stop-guide"
+msgid "Stop guide"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:198
+msgctxt "plan-start-guide"
+msgid "Start building (show guide)"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:199
+msgctxt "plan-cannot-be-built"
+msgid "This plan cannot be built in this stage."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:203
+msgctxt "browser-back"
+msgid "BACK"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:204
+msgctxt "browser-rescan"
+msgid "RESCAN"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:205
+msgctxt "browser-play-stage"
+msgid "PLAY STAGE"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:206
+msgctxt "browser-pick-first"
+msgid "Select a stage before pressing Play Stage."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:207
+msgctxt "browser-no-stage"
+msgid "No stage is selected."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:208
+msgctxt "browser-load-failed"
+msgid "Failed to load '{ $path }': { $error }"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:209
+msgctxt "browser-count"
+msgid "{ $count } stage(s) found in { $dir }"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:210
+msgctxt "browser-level"
+msgid "Level { $level }"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:211
+msgctxt "browser-grade"
+msgid "Grade { $min }"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:212
+msgctxt "browser-grades"
+msgid "Grades { $min }-{ $max }"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:213
+msgctxt "browser-grade-plus"
+msgid "Grade { $min }+"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:214
+msgctxt "browser-up-to-grade"
+msgid "Up to grade { $max }"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:215
+msgctxt "detail-overview"
+msgid "OVERVIEW"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:216
+msgctxt "detail-learning"
+msgid "LEARNING"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:217
+msgctxt "detail-environment"
+msgid "ENVIRONMENT"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:218
+msgctxt "detail-rewards"
+msgid "REWARDS"
+msgstr ""
+
+#. The labels of the details panel ('Label: value').
+#: assets/i18n/en-US/core.ftl:220
+msgctxt "label-id"
+msgid "ID"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:221
+msgctxt "label-level"
+msgid "Level"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:222
+msgctxt "label-difficulty"
+msgid "Difficulty"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:223
+msgctxt "label-grades"
+msgid "Grades"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:224
+msgctxt "label-topics"
+msgid "Topics"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:225
+msgctxt "label-locales"
+msgid "Locales"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:226
+msgctxt "label-question"
+msgid "Question"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:227
+msgctxt "label-preset"
+msgid "Preset"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:228
+msgctxt "label-world-size"
+msgid "World size"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:229
+msgctxt "label-world-origin"
+msgid "World origin"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:230
+msgctxt "label-tasks"
+msgid "Tasks"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:231
+msgctxt "label-money"
+msgid "Money"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:232
+msgctxt "label-xp"
+msgid "XP"
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:236
+msgctxt "challenge-correct"
+msgid "Correct! Challenge solved."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:237
+msgctxt "answer-empty"
+msgid "Type an answer first."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:238
+msgctxt "answer-malformed"
+msgid "Enter a number, for example 12 or 3.5."
+msgstr ""
+
+#: assets/i18n/en-US/core.ftl:239
+msgctxt "answer-out-of-range"
+msgid "That number is out of range."
+msgstr ""

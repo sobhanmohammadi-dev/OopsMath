@@ -5,7 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from ..constants import LOCALE_RE, MAX_TEXT_FILE_BYTES
+from ..constants import LOCALE_RE, MAX_TEXT_FILE_BYTES, SOURCE_LOCALE
 from ..errors import Diagnostics, SourceDataError, UnsafePathError
 from ..ftl import parse_ftl
 from ..model import LocaleFile
@@ -56,6 +56,87 @@ def discover_locale_files(stage_dir: Path, data: dict[str, Any],
         seen[locale] = rel
         found.append((locale, child, rel))
     return sorted(found, key=lambda item: item[0])
+
+
+def find_i18n_dir(stage_dir: Path, opts: CompileOptions, diag: Diagnostics) -> Path | None:
+    """The language-pack folder to bake from, or None.
+
+    An explicit ``--i18n`` folder must exist. Otherwise ``assets/i18n`` is looked
+    for in the stage folder's parents (a stage inside the game repository finds
+    the repository's packs automatically)."""
+    if not opts.bake_i18n:
+        return None
+    if opts.i18n_dir is not None:
+        if opts.i18n_dir.is_dir():
+            return opts.i18n_dir
+        diag.error(f"--i18n: '{opts.i18n_dir}' is not a directory")
+        return None
+    here = stage_dir.resolve()
+    for parent in [here, *here.parents][:8]:
+        candidate = parent / "assets" / "i18n"
+        if candidate.is_dir():
+            return candidate
+    return None
+
+
+def bake_language_packs(stage_dir: Path, data: dict[str, Any], opts: CompileOptions,
+                        source_locales: list[LocaleFile], diag: Diagnostics) -> list[LocaleFile]:
+    """Merges ``<i18n>/<lang>/levels/<stage id>.ftl`` into the stage's locales.
+
+    The stage's own files hold the source language (en-US); translations live
+    in the language packs (``tools/oopsmath-i18n``). Baking makes the compiled
+    stage self-contained. A pack wins over a translation of the same key left in
+    the stage source. Translations are *partial by design*: a key a language
+    lacks is shown in English by the game, so it is not reported as missing."""
+    root = find_i18n_dir(stage_dir, opts, diag)
+    if root is None:
+        return source_locales
+    stage_id = data["stage"]["id"]
+    english = next((loc for loc in source_locales if loc.locale == SOURCE_LOCALE), None)
+    by_locale = {loc.locale: loc for loc in source_locales}
+    baked: list[str] = []
+    for lang_dir in sorted((p for p in root.iterdir() if p.is_dir()), key=lambda p: p.name):
+        lang = lang_dir.name
+        path = lang_dir / "levels" / f"{stage_id}.ftl"
+        if lang == SOURCE_LOCALE or not LOCALE_RE.match(lang) or not path.is_file():
+            continue
+        rel = f"i18n/{lang}/levels/{stage_id}.ftl"
+        try:
+            raw = read_limited(path, MAX_TEXT_FILE_BYTES)
+            text = raw.decode("utf-8")
+        except UnicodeDecodeError:
+            diag.error(f"{rel}: not valid UTF-8")
+            continue
+        except (OSError, SourceDataError) as exc:
+            diag.error(f"{rel}: cannot be read: {exc}")
+            continue
+        keys = parse_ftl(text, rel, diag)
+        if english is not None:
+            unknown = sorted(keys - english.keys)
+            if unknown:
+                diag.warn(f"{rel}: {len(unknown)} key(s) are not in the English source and are "
+                          f"ignored by the game's stage (first: '{unknown[0]}')")
+        namespace = data.get("localization", {}).get("namespace")
+        if namespace:
+            outside = [k for k in sorted(keys) if not (k == namespace or k.startswith(namespace + "."))]
+            if outside:
+                diag.warn(f"{rel}: key '{outside[0]}' is outside the declared namespace '{namespace}'")
+        existing = by_locale.get(lang)
+        if existing is None:
+            by_locale[lang] = LocaleFile(lang, rel, raw, keys, origin="pack")
+        else:
+            merged = existing.raw.rstrip(b"\n") + b"\n" + raw
+            by_locale[lang] = LocaleFile(lang, f"{existing.rel_path} + {rel}", merged,
+                                         existing.keys | keys, origin="stage+pack")
+            diag.note(f"{lang}: the stage source also holds {lang} strings; the language pack "
+                      f"wins per key. Move them with `omsi import-ftl` and delete the stage file.")
+        total = len(english.keys) if english else len(keys)
+        done = len(keys & english.keys) if english else len(keys)
+        baked.append(f"{lang} ({done}/{total})")
+    if baked:
+        diag.note("baked language-pack translations: " + ", ".join(baked)
+                  + f" from {root}")
+    return sorted(by_locale.values(), key=lambda loc: loc.locale)
 
 
 def collect_localization_refs(data: dict[str, Any]) -> list[tuple[str, str]]:
@@ -127,4 +208,4 @@ def load_and_validate_localization(stage_dir: Path, data: dict[str, Any], opts: 
                 diag.warn(f"{loc.rel_path}: stage-local key '{key}' shadows a base game key")
             if namespace and not (key == namespace or key.startswith(namespace + ".")):
                 diag.warn(f"{loc.rel_path}: key '{key}' is outside the declared namespace '{namespace}'")
-    return locales
+    return bake_language_packs(stage_dir, data, opts, locales, diag)

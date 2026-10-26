@@ -14,6 +14,7 @@ pub mod definition;
 pub mod error;
 pub mod grid;
 pub mod interaction;
+pub mod look;
 pub mod models;
 pub mod occupancy;
 pub mod placement;

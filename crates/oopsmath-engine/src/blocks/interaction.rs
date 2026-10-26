@@ -19,6 +19,7 @@ use super::debug_scene::draw_box;
 use super::definition::BlockId;
 use super::grid::GridCoord;
 use super::grid::{GridRotation, GridSpec, footprint_box};
+use super::look::{BlockLookPlugin, GhostVisual};
 use super::occupancy::{
     PlacedWorld, PlacementRejection, commit_placement, evaluate_commit, remove_block,
 };
@@ -97,6 +98,7 @@ pub struct BlockPlacementPlugin;
 
 impl Plugin for BlockPlacementPlugin {
     fn build(&self, app: &mut App) {
+        app.add_plugins(BlockLookPlugin);
         app.init_resource::<PlacedWorld>()
             .init_resource::<PlacementTarget>()
             .init_resource::<PlacementFeedback>()
@@ -322,6 +324,7 @@ fn sync_preview(
         commands.spawn((
             Name::new("Placement Preview"),
             PlacementPreview { block: id.clone() },
+            GhostVisual,
             WorldAssetRoot(handle.clone()),
             transform,
             visibility,

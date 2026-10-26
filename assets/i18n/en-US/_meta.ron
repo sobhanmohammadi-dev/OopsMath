@@ -1,0 +1,15 @@
+#![enable(implicit_some)]
+// Language metadata for OopsMath. English is the source language: every other
+// language falls back to it for anything it has not translated.
+(
+    format: 1,
+    code: "en-US",
+    name: "English",
+    native_name: "English",
+    direction: Ltr,
+    version: "1.0.0",
+    authors: ["OopsMath"],
+    fonts: (
+        // No fonts listed: the built-in UI font is used.
+    ),
+)

@@ -1,0 +1,6 @@
+{
+  "001_first_wall": {
+    "dir": "tools/oopsmath-stage-compiler/examples/001_first_wall",
+    "ftl": "localization"
+  }
+}

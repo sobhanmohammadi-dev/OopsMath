@@ -74,6 +74,8 @@ def _print_diagnostics(o: _Out, result: ValidationResult, *, show_passed: bool =
     if show_passed:
         for line in result.passed:
             o.say(o.out.ok(line))
+    for note in result.diag.notes:
+        o.say(o.out.dim(f"note: {note}"))
     for warning in result.diag.warnings:
         print(o.err.warn(warning), file=sys.stderr)
     for error in result.diag.errors:
@@ -90,14 +92,14 @@ def _summary_line(o: _Out, ok: bool, errors: int, warnings: int) -> str:
 def _result_json(stage_dir: Path, result: ValidationResult) -> dict[str, Any]:
     return {"stage_dir": str(stage_dir), "stage_id": result.stage_id, "ok": result.diag.ok,
             "passed": result.passed, "errors": result.diag.errors,
-            "warnings": result.diag.warnings}
+            "warnings": result.diag.warnings, "notes": result.diag.notes}
 
 
 # ------------------------------------------------------------------------- commands
 
 def cmd_validate(args: argparse.Namespace) -> int:
     o = _Out(args)
-    opts = make_options(manifest=args.manifest, base_locales=args.base_locales, strict=args.strict)
+    opts = make_options(manifest=args.manifest, base_locales=args.base_locales, i18n=getattr(args, "i18n", None), no_i18n=getattr(args, "no_i18n", False), strict=args.strict)
     root = Path(args.stage_dir)
     dirs = [root] if (root / "stage.yaml").is_file() else (discover_stage_dirs(root) if root.is_dir() else [])
     dirs = dirs or [root]
@@ -140,6 +142,7 @@ def _report_build(o: _Out, outcome: BuildOutcome) -> int:
 def cmd_build(args: argparse.Namespace) -> int:
     o = _Out(args)
     opts = make_options(manifest=args.manifest, base_locales=args.base_locales,
+                        i18n=getattr(args, "i18n", None), no_i18n=getattr(args, "no_i18n", False),
                         strict=args.strict, debug=args.debug)
     outcome = build_one(Path(args.stage_dir), Path(args.output) if args.output else None, opts)
     return _report_build(o, outcome)
@@ -148,6 +151,7 @@ def cmd_build(args: argparse.Namespace) -> int:
 def cmd_build_all(args: argparse.Namespace) -> int:
     o = _Out(args)
     opts = make_options(manifest=args.manifest, base_locales=args.base_locales,
+                        i18n=getattr(args, "i18n", None), no_i18n=getattr(args, "no_i18n", False),
                         strict=args.strict, debug=args.debug)
     root = Path(args.root)
     if root.is_dir() and not discover_stage_dirs(root):
@@ -261,7 +265,7 @@ def cmd_tui(args: argparse.Namespace) -> int:
         print("ERROR: the TUI needs the 'textual' package.\n"
               "Install with: pip install textual", file=sys.stderr)
         return EXIT_IO
-    opts = make_options(manifest=args.manifest, base_locales=args.base_locales, strict=args.strict)
+    opts = make_options(manifest=args.manifest, base_locales=args.base_locales, i18n=getattr(args, "i18n", None), no_i18n=getattr(args, "no_i18n", False), strict=args.strict)
     return run_tui(Path(args.root), opts, Path(args.output_dir))
 
 
@@ -279,6 +283,11 @@ def build_cli() -> argparse.ArgumentParser:
         p.add_argument("--manifest", metavar="FILE", help="built-in registry (JSON or YAML)")
         p.add_argument("--base-locales", metavar="DIR", help="directory of global game FTL files")
         p.add_argument("--strict", action="store_true", help="treat warnings as errors")
+        p.add_argument("--i18n", metavar="DIR",
+                       help="language packs to bake into the stage (default: assets/i18n found "
+                            "in a parent folder of the stage)")
+        p.add_argument("--no-i18n", action="store_true",
+                       help="do not bake language-pack translations; use only the stage's own files")
 
     p = sub.add_parser("validate", help="validate a stage (or every stage under a directory)")
     p.add_argument("stage_dir")

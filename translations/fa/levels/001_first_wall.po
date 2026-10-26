@@ -1,0 +1,37 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: OopsMath\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: fa\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-OopsMath-Scope: level:001_first_wall\n"
+"X-OopsMath-Source: tools/oopsmath-stage-compiler/examples/001_first_wall/localization/en-US.ftl\n"
+
+#. Strings for stage 001_first_wall
+#: tools/oopsmath-stage-compiler/examples/001_first_wall/localization/en-US.ftl:2
+msgctxt "stage.001_first_wall.title"
+msgid "My first stage"
+msgstr "مرحله اول"
+
+#: tools/oopsmath-stage-compiler/examples/001_first_wall/localization/en-US.ftl:3
+msgctxt "stage.001_first_wall.description"
+msgid "Build a wall."
+msgstr "یک دیوار بساز."
+
+#: tools/oopsmath-stage-compiler/examples/001_first_wall/localization/en-US.ftl:4
+msgctxt "stage.001_first_wall.question"
+msgid "How many bricks do we need?"
+msgstr "چند آجر لازم است؟"
+
+#: tools/oopsmath-stage-compiler/examples/001_first_wall/localization/en-US.ftl:5
+msgctxt "stage.001_first_wall.objective.logs"
+msgid "Place the logs"
+msgstr "چوب‌ها را بچین"
+
+#: tools/oopsmath-stage-compiler/examples/001_first_wall/localization/en-US.ftl:6
+msgctxt "stage.001_first_wall.blueprint.wall"
+msgid "Wall of logs"
+msgstr "دیوار چوبی"

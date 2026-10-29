@@ -11,6 +11,7 @@ use bevy::ui::GlobalZIndex;
 use crate::app::states::AppState;
 use crate::blocks::PlacementFeedback;
 use crate::i18n::{FontRole, LocalizedText};
+use crate::ui::components::HudText;
 
 use super::theme::UiTheme;
 
@@ -186,6 +187,89 @@ fn expire_feedback(
     }
 }
 
+/// How a feedback message should look. The message itself carries no severity,
+/// so it is classified from its (English) wording; the wording is stable because
+/// it is also what the translation templates match (see `docs/i18n/README.md`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum FeedbackTone {
+    Info,
+    Success,
+    Warning,
+    Error,
+}
+
+const SUCCESS_PREFIXES: &[&str] = &["Placed ", "Removed ", "Bought ", "Correct"];
+const WARNING_PREFIXES: &[&str] = &["The structure collapsed"];
+const ERROR_PREFIXES: &[&str] = &[
+    "Could not",
+    "Cannot",
+    "You have no",
+    "Not enough",
+    "No block",
+    "No support",
+    "There is no",
+    "That ",
+    "Invalid",
+    "Placement limit",
+    "Quantity must",
+    "The block could not",
+    "Too expensive",
+    "Your inventory cannot",
+];
+
+/// Classifies a feedback message by its wording.
+pub fn feedback_tone(message: &str) -> FeedbackTone {
+    let starts = |prefixes: &[&str]| prefixes.iter().any(|p| message.starts_with(p));
+    if starts(ERROR_PREFIXES) {
+        FeedbackTone::Error
+    } else if starts(WARNING_PREFIXES) {
+        FeedbackTone::Warning
+    } else if starts(SUCCESS_PREFIXES) {
+        FeedbackTone::Success
+    } else {
+        FeedbackTone::Info
+    }
+}
+
+impl FeedbackTone {
+    pub fn color(self, theme: &UiTheme) -> Color {
+        match self {
+            FeedbackTone::Info => theme.text,
+            FeedbackTone::Success => theme.success,
+            FeedbackTone::Warning => theme.warning,
+            FeedbackTone::Error => theme.error,
+        }
+    }
+}
+
+/// Colours the feedback line by the tone of the current message. The wording
+/// already says what happened, so colour is a reinforcement, not the only cue.
+fn tint_feedback(
+    feedback: Res<PlacementFeedback>,
+    theme: Res<UiTheme>,
+    mut texts: Query<(&HudText, &mut TextColor)>,
+) {
+    if !feedback.is_changed() {
+        return;
+    }
+    let tone = feedback.0.as_deref().map_or(FeedbackTone::Info, feedback_tone);
+    let color = tone.color(&theme);
+    for (kind, mut text_color) in &mut texts {
+        if *kind == HudText::Feedback && text_color.0 != color {
+            text_color.0 = color;
+        }
+    }
+}
+
+/// Long messages wrap instead of running under the panels on the right.
+fn protect_feedback_layout(mut nodes: Query<(&HudText, &mut Node), Added<HudText>>) {
+    for (kind, mut node) in &mut nodes {
+        if *kind == HudText::Feedback {
+            node.max_width = percent(55);
+        }
+    }
+}
+
 pub struct StylePlugin;
 
 impl Plugin for StylePlugin {
@@ -197,6 +281,8 @@ impl Plugin for StylePlugin {
                 (
                     primary_button_interaction.after(super::common_button_interaction),
                     expire_feedback,
+                    tint_feedback,
+                    protect_feedback_layout,
                 ),
             );
     }
@@ -230,6 +316,44 @@ mod tests {
         // A's deadline has passed, B's has not.
         assert!(!clock.expired(FEEDBACK_SECONDS + 0.5, true));
         assert!(clock.expired(2.0 * FEEDBACK_SECONDS - 1.0, true));
+    }
+
+    #[test]
+    fn feedback_messages_are_classified_by_their_wording() {
+        use FeedbackTone::*;
+        for (message, tone) in [
+            ("Placed Wood Log at (1, 0, 2)", Success),
+            ("Removed Wood Log; 1 returned to your inventory.", Success),
+            ("Bought 3 x Wood Log for 9 coins.", Success),
+            ("Correct! Challenge solved.", Success),
+            ("The structure collapsed: 3 block(s) fell.", Warning),
+            ("Could not place Wood Log: That space is already occupied.", Error),
+            ("You have no Wood Log in your inventory.", Error),
+            ("Not enough money: you need 9 coins but have 3.", Error),
+            ("There is no placed block to remove.", Error),
+            ("Placement limit reached: this stage allows at most 5 of 'x'.", Error),
+            ("Quantity must be at least 1.", Error),
+            ("Something else entirely", Info),
+            ("", Info),
+        ] {
+            assert_eq!(feedback_tone(message), tone, "{message}");
+        }
+    }
+
+    #[test]
+    fn every_tone_has_its_own_colour_from_the_theme() {
+        let theme = UiTheme::default();
+        let colours = [
+            FeedbackTone::Info.color(&theme),
+            FeedbackTone::Success.color(&theme),
+            FeedbackTone::Warning.color(&theme),
+            FeedbackTone::Error.color(&theme),
+        ];
+        for (i, a) in colours.iter().enumerate() {
+            for b in &colours[i + 1..] {
+                assert_ne!(a, b);
+            }
+        }
     }
 
     #[test]

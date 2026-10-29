@@ -202,6 +202,7 @@ pub fn refresh_challenge_popup(
                 .spawn((
                     Node {
                         width: px(480),
+                        max_width: percent(95),
                         padding: UiRect::all(px(16)),
                         flex_direction: FlexDirection::Column,
                         row_gap: px(12),

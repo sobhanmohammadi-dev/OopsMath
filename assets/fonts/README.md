@@ -7,7 +7,7 @@ name without extension, lower case, letters and digits only.
 |---|---|
 | `Vazirmatn-Regular.ttf` | `font.vazirmatnregular` |
 | `Vazirmatn-Bold.ttf` | `font.vazirmatnbold` |
-| `NotoSans_Regular.otf` | `font.notosansregular` |
+| `NotoSans-Regular.otf` | `font.notosansregular` |
 
 A language names the ids it wants in `assets/i18n/<lang>/_meta.ron`
 (see `docs/i18n/README.md`). A missing file is not an error: the game logs one

@@ -213,6 +213,7 @@ pub fn refresh_blueprint_popup(
                 .spawn((
                     Node {
                         width: px(560),
+                        max_width: percent(95),
                         padding: UiRect::all(px(16)),
                         flex_direction: FlexDirection::Column,
                         row_gap: px(8),

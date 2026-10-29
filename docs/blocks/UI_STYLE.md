@@ -34,7 +34,7 @@ buttons differ in every state.
 Used so far: the menu, controls help and stage-complete overlays
 (`ui/hud/session.rs`), the Submit button of the Math Challenge and the Buy button
 of the Shop (primary), and the overlay colour of the Shop, Math Challenge and
-Plan popups. Other panels still use their own spacing and sizes.
+Plan popups, which also get `max_width: 95 %` so a fixed-width popup never exceeds a small window. Other panels still use their own spacing and sizes.
 
 ## Feedback line
 

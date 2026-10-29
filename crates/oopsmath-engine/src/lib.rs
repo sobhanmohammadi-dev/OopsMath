@@ -1,4 +1,5 @@
 pub mod app;
+pub mod audio;
 pub mod blocks;
 pub mod blueprint;
 pub mod challenges;

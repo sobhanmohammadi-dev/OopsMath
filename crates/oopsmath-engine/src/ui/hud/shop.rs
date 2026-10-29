@@ -198,6 +198,7 @@ pub fn refresh_shop_popup(
                 .spawn((
                     Node {
                         width: px(480),
+                        max_width: percent(95),
                         max_height: percent(90),
                         padding: UiRect::all(px(16)),
                         flex_direction: FlexDirection::Column,

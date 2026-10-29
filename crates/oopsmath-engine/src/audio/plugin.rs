@@ -1,6 +1,7 @@
 //! Loading, readiness and the single playback route for sound effects.
 
 use std::collections::{HashMap, HashSet};
+use std::time::Duration;
 
 use bevy::asset::LoadState;
 use bevy::audio::Volume;
@@ -29,17 +30,23 @@ pub struct SfxPlayback;
 /// Per-sound repetition guard.
 #[derive(Debug, Default)]
 pub struct Cooldowns {
-    last: HashMap<Sfx, f32>,
+    last: HashMap<Sfx, Duration>,
 }
 
 impl Cooldowns {
-    /// Whether `sfx` may play at `now` seconds; records the play when it may.
-    pub fn allow(&mut self, sfx: Sfx, now: f32) -> bool {
-        let interval = sfx.min_interval().as_secs_f32();
-        let ok = self.last.get(&sfx).is_none_or(|last| now - last >= interval);
+    /// Whether this sound may play at `now`; records the play when allowed.
+    pub fn allow(&mut self, sfx: Sfx, now: Duration) -> bool {
+        let interval = sfx.min_interval();
+
+        let ok = self
+            .last
+            .get(&sfx)
+            .is_none_or(|last| now.saturating_sub(*last) >= interval);
+
         if ok {
             self.last.insert(sfx, now);
         }
+
         ok
     }
 }
@@ -108,7 +115,11 @@ fn report_sfx_assets(assets: Option<Res<AssetServer>>, mut library: ResMut<SfxLi
     }
     library.summary_logged = true;
     if missing.is_empty() {
-        info!("audio: all {} sound effects loaded from assets/{}", loaded.len(), super::catalog::SFX_DIR);
+        info!(
+            "audio: all {} sound effects loaded from assets/{}",
+            loaded.len(),
+            super::catalog::SFX_DIR
+        );
     } else {
         let list: Vec<String> = missing
             .iter()
@@ -186,7 +197,7 @@ fn play_sfx(
     let Some(assets) = assets else {
         return;
     };
-    let now = time.elapsed_secs();
+    let now = time.elapsed();
     for sfx in wanted {
         let Some(handle) = library.handles.get(&sfx).cloned() else {
             continue;
@@ -218,27 +229,29 @@ mod tests {
     #[test]
     fn cooldowns_only_guard_the_bursty_sounds() {
         let mut cooldowns = Cooldowns::default();
-        // Ordinary actions are never suppressed.
         for i in 0..20 {
-            assert!(cooldowns.allow(Sfx::BlockPlace, i as f32 * 0.001));
+            assert!(cooldowns.allow(Sfx::BlockPlace, Duration::from_millis(i),));
         }
-        // A collapse sound is not repeated within its interval, but is after it.
-        assert!(cooldowns.allow(Sfx::StructureCollapse, 10.0));
-        assert!(!cooldowns.allow(Sfx::StructureCollapse, 10.2));
+        assert!(cooldowns.allow(Sfx::StructureCollapse, Duration::from_secs(10),));
+        assert!(!cooldowns.allow(Sfx::StructureCollapse, Duration::from_millis(10_200),));
         let interval = Sfx::StructureCollapse.min_interval();
-        assert!(cooldowns.allow(Sfx::StructureCollapse, 10.0 + interval.as_secs_f32()));
-        // Cooldowns are per sound.
-        assert!(cooldowns.allow(Sfx::ActionDenied, 10.2));
-        assert!(!cooldowns.allow(Sfx::ActionDenied, 10.2 + 0.01));
+        assert!(cooldowns.allow(Sfx::StructureCollapse, Duration::from_secs(10) + interval,));
+        assert!(cooldowns.allow(Sfx::ActionDenied, Duration::from_millis(10_200),));
+        assert!(!cooldowns.allow(
+            Sfx::ActionDenied,
+            Duration::from_millis(10_200) + Duration::from_millis(10),
+        ));
         assert!(Sfx::ActionDenied.min_interval() >= Duration::from_millis(100));
     }
 
     #[test]
     fn a_refused_request_does_not_start_the_cooldown() {
         let mut cooldowns = Cooldowns::default();
-        assert!(cooldowns.allow(Sfx::ActionDenied, 1.0));
-        assert!(!cooldowns.allow(Sfx::ActionDenied, 1.05));
-        // The refused request at 1.05 did not extend the guard past 1.0 + interval.
-        assert!(cooldowns.allow(Sfx::ActionDenied, 1.0 + Sfx::ActionDenied.min_interval().as_secs_f32()));
+        assert!(cooldowns.allow(Sfx::ActionDenied, Duration::from_secs(1),));
+        assert!(!cooldowns.allow(Sfx::ActionDenied, Duration::from_millis(1_050),));
+        assert!(cooldowns.allow(
+            Sfx::ActionDenied,
+            Duration::from_secs(1) + Sfx::ActionDenied.min_interval(),
+        ));
     }
 }

@@ -252,7 +252,10 @@ fn tint_feedback(
     if !feedback.is_changed() {
         return;
     }
-    let tone = feedback.0.as_deref().map_or(FeedbackTone::Info, feedback_tone);
+    let tone = feedback
+        .0
+        .as_deref()
+        .map_or(FeedbackTone::Info, feedback_tone);
     let color = tone.color(&theme);
     for (kind, mut text_color) in &mut texts {
         if *kind == HudText::Feedback && text_color.0 != color {
@@ -327,11 +330,17 @@ mod tests {
             ("Bought 3 x Wood Log for 9 coins.", Success),
             ("Correct! Challenge solved.", Success),
             ("The structure collapsed: 3 block(s) fell.", Warning),
-            ("Could not place Wood Log: That space is already occupied.", Error),
+            (
+                "Could not place Wood Log: That space is already occupied.",
+                Error,
+            ),
             ("You have no Wood Log in your inventory.", Error),
             ("Not enough money: you need 9 coins but have 3.", Error),
             ("There is no placed block to remove.", Error),
-            ("Placement limit reached: this stage allows at most 5 of 'x'.", Error),
+            (
+                "Placement limit reached: this stage allows at most 5 of 'x'.",
+                Error,
+            ),
             ("Quantity must be at least 1.", Error),
             ("Something else entirely", Info),
             ("", Info),

@@ -167,7 +167,9 @@ mod tests {
             let stem = sfx.file_stem();
             assert!(
                 !stem.is_empty()
-                    && stem.chars().all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '_')
+                    && stem
+                        .chars()
+                        .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '_')
                     && !stem.starts_with('_')
                     && !stem.ends_with('_'),
                 "{stem} is not lower-case snake_case"
@@ -186,8 +188,13 @@ mod tests {
         // Exhaustive on purpose: adding a variant breaks this match until ALL is updated.
         for sfx in Sfx::ALL {
             match sfx {
-                Sfx::BlockPlace | Sfx::BlockRemove | Sfx::ShopPurchase | Sfx::ActionDenied
-                | Sfx::MathCorrect | Sfx::MathIncorrect | Sfx::StructureCollapse
+                Sfx::BlockPlace
+                | Sfx::BlockRemove
+                | Sfx::ShopPurchase
+                | Sfx::ActionDenied
+                | Sfx::MathCorrect
+                | Sfx::MathIncorrect
+                | Sfx::StructureCollapse
                 | Sfx::StageComplete => {}
             }
         }
@@ -201,9 +208,17 @@ mod tests {
             assert!((0.2..=0.9).contains(&gain), "{sfx:?} gain {gain}");
             assert!((0.0..=1.0).contains(&sfx.trim()));
         }
-        let loud = SfxVolumes { master: 5.0, world: 5.0, ui: 5.0, major: 5.0 };
+        let loud = SfxVolumes {
+            master: 5.0,
+            world: 5.0,
+            ui: 5.0,
+            major: 5.0,
+        };
         assert!(Sfx::ALL.iter().all(|s| loud.gain(*s) <= 1.0));
-        let muted = SfxVolumes { master: 0.0, ..SfxVolumes::default() };
+        let muted = SfxVolumes {
+            master: 0.0,
+            ..SfxVolumes::default()
+        };
         assert!(Sfx::ALL.iter().all(|s| muted.gain(*s) == 0.0));
     }
 

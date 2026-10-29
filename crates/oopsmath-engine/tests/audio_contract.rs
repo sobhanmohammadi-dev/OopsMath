@@ -32,10 +32,18 @@ fn the_wrong_answer_feedback_matches_what_the_game_sets() {
     // Other results must not look like a wrong answer.
     panel.input.clear();
     panel.submit(&challenges, &mut tracker);
-    assert_ne!(panel.feedback.as_deref(), Some(INCORRECT_FEEDBACK), "empty input");
+    assert_ne!(
+        panel.feedback.as_deref(),
+        Some(INCORRECT_FEEDBACK),
+        "empty input"
+    );
     panel.input = "12".into();
     panel.submit(&challenges, &mut tracker);
-    assert_ne!(panel.feedback.as_deref(), Some(INCORRECT_FEEDBACK), "correct answer");
+    assert_ne!(
+        panel.feedback.as_deref(),
+        Some(INCORRECT_FEEDBACK),
+        "correct answer"
+    );
     assert!(tracker.is_solved_at(0));
 }
 
@@ -63,6 +71,9 @@ fn report_which_sound_files_are_present() {
     if missing.is_empty() {
         println!("all {} sound effect files are present", Sfx::ALL.len());
     } else {
-        println!("sound effect files still to supply:\n  {}", missing.join("\n  "));
+        println!(
+            "sound effect files still to supply:\n  {}",
+            missing.join("\n  ")
+        );
     }
 }

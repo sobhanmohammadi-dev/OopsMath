@@ -171,7 +171,12 @@ mod tests {
             }
         }
 
-        fn observe(&self, edges: &mut SfxEdges, shop_changed: bool, panel_changed: bool) -> Vec<Sfx> {
+        fn observe(
+            &self,
+            edges: &mut SfxEdges,
+            shop_changed: bool,
+            panel_changed: bool,
+        ) -> Vec<Sfx> {
             edges.observe(&Observed {
                 placed: self.placed,
                 balance: self.balance,
@@ -189,7 +194,10 @@ mod tests {
     fn started() -> (SfxEdges, World) {
         let mut edges = SfxEdges::default();
         let world = World::new();
-        assert!(world.observe(&mut edges, true, true).is_empty(), "the first observation is a baseline");
+        assert!(
+            world.observe(&mut edges, true, true).is_empty(),
+            "the first observation is a baseline"
+        );
         (edges, world)
     }
 
@@ -213,7 +221,10 @@ mod tests {
         assert!(world.observe(&mut edges, true, true).is_empty());
         world.placed = 0; // the stage is restarted
         edges.reset();
-        assert!(world.observe(&mut edges, true, true).is_empty(), "no 'removed' sound for the reset");
+        assert!(
+            world.observe(&mut edges, true, true).is_empty(),
+            "no 'removed' sound for the reset"
+        );
     }
 
     #[test]
@@ -224,7 +235,11 @@ mod tests {
             world.placed += 1;
             played.extend(world.observe(&mut edges, false, false));
         }
-        assert_eq!(played, vec![Sfx::BlockPlace; 5], "rapid placements are not suppressed");
+        assert_eq!(
+            played,
+            vec![Sfx::BlockPlace; 5],
+            "rapid placements are not suppressed"
+        );
         world.placed -= 1;
         assert_eq!(world.observe(&mut edges, false, false), [Sfx::BlockRemove]);
         assert!(world.observe(&mut edges, false, false).is_empty());
@@ -236,7 +251,10 @@ mod tests {
         world.balance = 7;
         world.shop.message = Some("Bought 1 x Wood Log for 3 coins.".into());
         assert_eq!(world.observe(&mut edges, true, false), [Sfx::ShopPurchase]);
-        assert!(world.observe(&mut edges, false, false).is_empty(), "no replay while the message stays");
+        assert!(
+            world.observe(&mut edges, false, false).is_empty(),
+            "no replay while the message stays"
+        );
     }
 
     #[test]
@@ -260,7 +278,10 @@ mod tests {
         world.shop.open = false;
         assert!(world.observe(&mut edges, true, false).is_empty());
         world.shop.message = None;
-        assert!(world.observe(&mut edges, true, false).is_empty(), "clearing the message is silent");
+        assert!(
+            world.observe(&mut edges, true, false).is_empty(),
+            "clearing the message is silent"
+        );
     }
 
     #[test]
@@ -268,10 +289,16 @@ mod tests {
         let (mut edges, mut world) = started();
         world.panel.open = true;
         world.panel.input = "13".into();
-        assert!(world.observe(&mut edges, false, true).is_empty(), "opening and typing are silent");
+        assert!(
+            world.observe(&mut edges, false, true).is_empty(),
+            "opening and typing are silent"
+        );
         world.panel.feedback = Some(INCORRECT_FEEDBACK.into());
         assert_eq!(world.observe(&mut edges, false, true), [Sfx::MathIncorrect]);
-        assert!(world.observe(&mut edges, false, false).is_empty(), "no replay while the result stays visible");
+        assert!(
+            world.observe(&mut edges, false, false).is_empty(),
+            "no replay while the result stays visible"
+        );
         // Submitting the same wrong answer again is a new submission.
         assert_eq!(world.observe(&mut edges, false, true), [Sfx::MathIncorrect]);
         // Typing after the result does not replay it.
@@ -291,19 +318,31 @@ mod tests {
         world.panel.input.clear();
         world.panel.feedback = Some("Correct! Challenge solved.".into());
         assert_eq!(world.observe(&mut edges, false, true), [Sfx::MathCorrect]);
-        assert!(world.observe(&mut edges, false, true).is_empty(), "the correct sound is tied to the solve, not the panel");
+        assert!(
+            world.observe(&mut edges, false, true).is_empty(),
+            "the correct sound is tied to the solve, not the panel"
+        );
     }
 
     #[test]
     fn a_collapse_plays_once_for_its_blocks_and_again_for_a_new_collapse() {
         let (mut edges, mut world) = started();
         world.falling = 4; // one collapse, four blocks at once
-        assert_eq!(world.observe(&mut edges, false, false), [Sfx::StructureCollapse]);
-        assert!(world.observe(&mut edges, false, false).is_empty(), "no replay while they fall");
+        assert_eq!(
+            world.observe(&mut edges, false, false),
+            [Sfx::StructureCollapse]
+        );
+        assert!(
+            world.observe(&mut edges, false, false).is_empty(),
+            "no replay while they fall"
+        );
         world.falling = 2; // some have landed
         assert!(world.observe(&mut edges, false, false).is_empty());
         world.falling = 5; // a second collapse starts during the animation
-        assert_eq!(world.observe(&mut edges, false, false), [Sfx::StructureCollapse]);
+        assert_eq!(
+            world.observe(&mut edges, false, false),
+            [Sfx::StructureCollapse]
+        );
         world.falling = 0;
         assert!(world.observe(&mut edges, false, false).is_empty());
     }
@@ -324,12 +363,22 @@ mod tests {
         let (mut edges, mut world) = started();
         world.placed = 3;
         edges.observe(&Observed {
-            placed: world.placed, balance: world.balance, shop: &world.shop, shop_changed: false,
-            panel: &world.panel, panel_changed: false, solved: 0, falling: 0, complete: false,
+            placed: world.placed,
+            balance: world.balance,
+            shop: &world.shop,
+            shop_changed: false,
+            panel: &world.panel,
+            panel_changed: false,
+            solved: 0,
+            falling: 0,
+            complete: false,
         });
         world.placed = 2;
         assert_eq!(world.observe(&mut edges, false, false), [Sfx::BlockRemove]);
         world.falling = 1;
-        assert_eq!(world.observe(&mut edges, false, false), [Sfx::StructureCollapse]);
+        assert_eq!(
+            world.observe(&mut edges, false, false),
+            [Sfx::StructureCollapse]
+        );
     }
 }

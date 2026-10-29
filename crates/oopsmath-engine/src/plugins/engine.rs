@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
-use crate::i18n::I18nPlugin;
 use crate::audio::SfxPlugin;
+use crate::i18n::I18nPlugin;
 use crate::{
     app::{
         boot::boot_system,

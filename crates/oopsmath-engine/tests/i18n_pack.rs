@@ -25,7 +25,14 @@ fn shipped_dir() -> std::path::PathBuf {
 fn a_pack_built_by_the_tool_is_readable() {
     let pack = PackFiles::from_zip_bytes("fa.zip", FA_ZIP).expect("valid zip");
     let keys: Vec<&str> = pack.files.keys().map(String::as_str).collect();
-    assert_eq!(keys, ["fa/_meta.ron", "fa/core.ftl", "fa/levels/001_first_wall.ftl"]);
+    assert_eq!(
+        keys,
+        [
+            "fa/_meta.ron",
+            "fa/core.ftl",
+            "fa/levels/001_first_wall.ftl"
+        ]
+    );
 
     let catalog = LanguageCatalog::from_packs(&[pack]);
     assert!(catalog.diagnostics.is_empty(), "{:?}", catalog.diagnostics);
@@ -60,18 +67,29 @@ fn the_shipped_languages_are_complete_and_valid() {
     for id in &ids {
         assert_ne!(&en.tr(id), id, "English message '{id}' does not resolve");
     }
-    assert!(en.diagnostics().next().is_none(), "{:?}", en.diagnostics().collect::<Vec<_>>());
+    assert!(
+        en.diagnostics().next().is_none(),
+        "{:?}",
+        en.diagnostics().collect::<Vec<_>>()
+    );
 
     // Every other shipped language only uses messages that exist in English
     // (a stale key is a typo or a removed string) and has no syntax errors.
     for code in catalog.codes().into_iter().filter(|c| *c != "en-US") {
         let i18n = I18n::new(catalog.clone(), code);
         assert_eq!(i18n.active_code(), code);
-        assert!(i18n.diagnostics().next().is_none(), "{code}: {:?}", i18n.diagnostics().collect::<Vec<_>>());
+        assert!(
+            i18n.diagnostics().next().is_none(),
+            "{code}: {:?}",
+            i18n.diagnostics().collect::<Vec<_>>()
+        );
         let data = catalog.language(code).unwrap();
         for source in &data.core {
             for (id, _) in scan_messages(source) {
-                assert!(ids.contains(&id), "{code} defines '{id}', which English does not");
+                assert!(
+                    ids.contains(&id),
+                    "{code} defines '{id}', which English does not"
+                );
             }
         }
     }
@@ -105,21 +123,42 @@ fn text_the_game_builds_is_recognised_and_translated() {
         PlacementRejection::NothingSelected.to_string(),
         PlacementRejection::NotAllowed(id.clone()).to_string(),
         PlacementRejection::NotRegistered(id.clone()).to_string(),
-        PlacementRejection::OutOfBounds { block: id.clone(), cell }.to_string(),
-        PlacementRejection::Occupied { block: id.clone(), cell }.to_string(),
+        PlacementRejection::OutOfBounds {
+            block: id.clone(),
+            cell,
+        }
+        .to_string(),
+        PlacementRejection::Occupied {
+            block: id.clone(),
+            cell,
+        }
+        .to_string(),
         PlacementRejection::Unsupported { block: id.clone() }.to_string(),
         PlacementRejection::NoInventory(id.clone()).to_string(),
-        PlacementRejection::LimitReached { block: id.clone(), max: 5 }.to_string(),
+        PlacementRejection::LimitReached {
+            block: id.clone(),
+            max: 5,
+        }
+        .to_string(),
         PurchaseError::ZeroQuantity.to_string(),
         PurchaseError::UnknownBlock(id.clone()).to_string(),
         PurchaseError::NotAllowed(id.clone()).to_string(),
         PurchaseError::NoPrice(id.clone()).to_string(),
         PurchaseError::PriceOverflow.to_string(),
-        PurchaseError::InsufficientFunds { needed: 9, balance: 3 }.to_string(),
+        PurchaseError::InsufficientFunds {
+            needed: 9,
+            balance: 3,
+        }
+        .to_string(),
         PurchaseError::InventoryFull.to_string(),
         PlanIssue::Unregistered(id.clone()).to_string(),
         PlanIssue::NotAllowed(id.clone()).to_string(),
-        PlanIssue::ExceedsStageLimit { block: id.clone(), required: 8, max: 5 }.to_string(),
+        PlanIssue::ExceedsStageLimit {
+            block: id.clone(),
+            required: 8,
+            max: 5,
+        }
+        .to_string(),
         PlanIssue::NoPrice(id.clone()).to_string(),
         PlanIssue::CostOverflow.to_string(),
         AnswerError::Empty.to_string(),
@@ -127,7 +166,13 @@ fn text_the_game_builds_is_recognised_and_translated() {
         AnswerError::OutOfRange.to_string(),
         SubmitError::UnknownChallenge.to_string(),
         format!("Cannot build: {}", PlanIssue::NotAllowed(id.clone())),
-        format!("Could not place Wood Log: {}", PlacementRejection::Occupied { block: id.clone(), cell }),
+        format!(
+            "Could not place Wood Log: {}",
+            PlacementRejection::Occupied {
+                block: id.clone(),
+                cell
+            }
+        ),
     ];
     for text in texts {
         let translated = fa
@@ -143,11 +188,23 @@ fn block_and_tool_names_inside_text_are_translated() {
     let en = shipped("en-US");
     // (text as the game builds it, part of the Persian result, the English result)
     for (built, persian_part, english_result) in [
-        ("You have no Wood Log in your inventory.", "کنده چوب", "You have no Wood Log in your inventory."),
-        ("Removed Wood Log; 1 returned to your inventory.", "کنده چوب", "Removed Wood Log; 1 returned to your inventory."),
+        (
+            "You have no Wood Log in your inventory.",
+            "کنده چوب",
+            "You have no Wood Log in your inventory.",
+        ),
+        (
+            "Removed Wood Log; 1 returned to your inventory.",
+            "کنده چوب",
+            "Removed Wood Log; 1 returned to your inventory.",
+        ),
         ("> [Tool] Hammer x1", "چکش", "> [Tool] Hammer x1"),
         ("Selected: Hammer (Tool)", "چکش", "Selected: Hammer (Tool)"),
-        ("Placed Wood Log at (1, 0, -2)", "کنده چوب", "Placed Wood Log at (1, 0, -2)"),
+        (
+            "Placed Wood Log at (1, 0, -2)",
+            "کنده چوب",
+            "Placed Wood Log at (1, 0, -2)",
+        ),
         (
             "Wood Log: need 8, have 2, 6 more needed (3 coins each = 9 coins)",
             "کنده چوب",
@@ -161,10 +218,13 @@ fn block_and_tool_names_inside_text_are_translated() {
             "You have no Wood Log in your inventory.",
         ),
     ] {
-        let translated = fa.translate_text(built).unwrap_or_else(|| panic!("{built}"));
+        let translated = fa
+            .translate_text(built)
+            .unwrap_or_else(|| panic!("{built}"));
         assert!(translated.contains(persian_part), "{built} -> {translated}");
         assert_eq!(
-            en.translate_text(built).unwrap_or_else(|| built.to_string()),
+            en.translate_text(built)
+                .unwrap_or_else(|| built.to_string()),
             english_result,
             "English output for: {built}"
         );
@@ -174,12 +234,22 @@ fn block_and_tool_names_inside_text_are_translated() {
 #[test]
 fn the_answer_label_and_the_other_dynamic_lines_follow_the_language() {
     let fa = shipped("fa");
-    assert_eq!(fa.translate_text("Answer: 12_").as_deref(), Some("پاسخ: 12_"));
-    assert_eq!(fa.translate_text("Answer: _").as_deref(), Some("پاسخ: _"));
-    assert_eq!(fa.translate_text("Challenge 1 / 2").as_deref(), Some("چالش 1 از 2"));
-    assert_eq!(fa.translate_text("Money: 25 coins").as_deref(), Some("پول: 25 سکه"));
     assert_eq!(
-        fa.translate_text("In inventory: 8\nPlaced: 3 / 20").as_deref(),
+        fa.translate_text("Answer: 12_").as_deref(),
+        Some("پاسخ: 12_")
+    );
+    assert_eq!(fa.translate_text("Answer: _").as_deref(), Some("پاسخ: _"));
+    assert_eq!(
+        fa.translate_text("Challenge 1 / 2").as_deref(),
+        Some("چالش 1 از 2")
+    );
+    assert_eq!(
+        fa.translate_text("Money: 25 coins").as_deref(),
+        Some("پول: 25 سکه")
+    );
+    assert_eq!(
+        fa.translate_text("In inventory: 8\nPlaced: 3 / 20")
+            .as_deref(),
         Some("در انبار: 8\nگذاشته‌شده: 3 از 20")
     );
     assert_eq!(
@@ -198,5 +268,8 @@ fn switching_back_to_english_restores_the_text() {
     assert!(i18n.set_language("en-US"));
     assert_eq!(i18n.translate_text(english).as_deref(), Some(english));
     assert!(i18n.set_language("fa"));
-    assert_eq!(i18n.translate_text(english).as_deref(), Some(persian.as_str()));
+    assert_eq!(
+        i18n.translate_text(english).as_deref(),
+        Some(persian.as_str())
+    );
 }
